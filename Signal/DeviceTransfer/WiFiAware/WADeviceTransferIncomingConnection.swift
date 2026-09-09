@@ -35,10 +35,17 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
         self.peers = peers
         self.discoveredPeerStream = peers.subscribe()
 
-        Task {
-            for try await peerList in internalPeerStream {
-                // Publish peer data to any internal subscribers
-                peers.update(peerList)
+        Task { [logger] in
+            do {
+                for try await peerList in internalPeerStream {
+                    // Publish peer data to any internal subscribers
+                    peers.update(peerList)
+                }
+            } catch {
+                // Handled explicitly rather than discarded: a throwing unstructured
+                // Task whose handle is dropped silently swallows its error, which
+                // Swift 6.2 rejects (#NoUseUnstructuredThrowingTask).
+                logger.warn("Peer discovery stream failed: \(error)")
             }
         }
     }

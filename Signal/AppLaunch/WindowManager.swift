@@ -82,6 +82,26 @@ class WindowManager {
         }
     }
 
+    /// `rootWindow` gets its `UIWindowScene` directly from `SceneDelegate`, but
+    /// our other windows are lazily constructed during launch — before the
+    /// scene connects — so copying `rootWindow.windowScene` at creation time
+    /// just copies `nil`. Once the scene actually connects, re-propagate it to
+    /// every window we own so they're eligible to be shown.
+    func windowSceneDidConnect(_ windowScene: UIWindowScene) {
+        AssertIsOnMainThread()
+
+        // If `setupWithRootWindow` never ran (running tests, or launch failed and
+        // we're showing a terminal error screen), none of these windows exist —
+        // and merely touching the lazy ones would `owsFail("rootWindow is nil")`.
+        guard rootWindow != nil else { return }
+
+        rootWindow.windowScene = windowScene
+        returnToCallWindow.windowScene = windowScene
+        callViewWindow.windowScene = windowScene
+        clockSkewBlockingWindow.windowScene = windowScene
+        screenBlockingWindow?.windowScene = windowScene
+    }
+
     // MARK: Windows
 
     // UIWindow.Level.normal
@@ -95,6 +115,7 @@ class WindowManager {
         }
 
         let window = OWSWindow(frame: rootWindow.bounds)
+        window.windowScene = rootWindow.windowScene
         window.windowLevel = ._returnToCall
         window.isHidden = true
         window.isOpaque = true
@@ -114,6 +135,7 @@ class WindowManager {
         }
 
         let window = OWSWindow(frame: rootWindow.bounds)
+        window.windowScene = rootWindow.windowScene
         window.windowLevel = ._callView
         window.isHidden = true
         window.isOpaque = true
@@ -146,6 +168,7 @@ class WindowManager {
         }
 
         let window = OWSWindow(frame: rootWindow.bounds)
+        window.windowScene = rootWindow.windowScene
         window.windowLevel = ._clockSkewBlocking
         window.isHidden = true
         window.isOpaque = true

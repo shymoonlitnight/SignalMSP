@@ -215,6 +215,7 @@ class ScreenLockUI {
         AssertIsOnMainThread()
 
         screenBlockingWindow.frame = rootWindow.bounds
+        screenBlockingWindow.windowScene = rootWindow.windowScene
         screenBlockingWindow.rootViewController = screenBlockingViewController
     }
 

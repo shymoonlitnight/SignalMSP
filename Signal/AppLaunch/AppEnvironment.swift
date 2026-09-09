@@ -18,6 +18,10 @@ public class AppEnvironment: NSObject {
     @objc
     public class var shared: AppEnvironment { _shared! }
 
+    /// `nil` until `AppDelegate` finishes enough of launch to set it, which it
+    /// skips entirely when running tests or when launch fails early.
+    static var sharedIfSet: AppEnvironment? { _shared }
+
     /// Objects tied to this AppEnvironment that simply need to be retained.
     @MainActor
     var ownedObjects = [AnyObject]()
