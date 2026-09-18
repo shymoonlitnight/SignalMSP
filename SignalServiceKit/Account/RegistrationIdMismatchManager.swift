@@ -59,7 +59,11 @@ public class RegistrationIdMismatchManagerImpl: RegistrationIdMismatchManager {
                 kvStore.writeValue(true, forKey: Constants.haveRegistrationIdsBeenChecked, tx: $0)
             }
         } catch {
-            owsFailDebug("Failed to validate registration IDs: \(error)")
+            if !error.isNetworkFailureOrTimeout {
+                owsFailDebug("Failed to validate registration IDs: \(error)")
+            } else {
+                Logger.warn("Failed to validate registration IDs: \(error)")
+            }
             return
         }
     }
