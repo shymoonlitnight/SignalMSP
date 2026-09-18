@@ -1984,7 +1984,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return handleOpenUrl(url)
     }
 
-    private func handleOpenUrl(_ url: URL) -> Bool {
+    @discardableResult
+    func handleOpenUrl(_ url: URL) -> Bool {
         AssertIsOnMainThread()
 
         if didAppLaunchFail {
