@@ -3769,6 +3769,7 @@
 		F9426241289B1B5500460798 /* MessageSenderJobRecordTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D0289B1B5400460798 /* MessageSenderJobRecordTest.swift */; };
 		F9426242289B1B5500460798 /* OWSURLBuilderUtilTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D1289B1B5400460798 /* OWSURLBuilderUtilTest.swift */; };
 		F9426243289B1B5500460798 /* HttpHeadersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D2289B1B5400460798 /* HttpHeadersTest.swift */; };
+		50A1B2C42E26F02B00A03829 /* HttpSecurityPolicyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */; };
 		F9426244289B1B5500460798 /* OWSRequestFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D3289B1B5400460798 /* OWSRequestFactoryTest.swift */; };
 		F9426246289B1B5500460798 /* MessageSendJobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D5289B1B5400460798 /* MessageSendJobQueueTest.swift */; };
 		F9426248289B1B5500460798 /* OWSIdentityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D9289B1B5400460798 /* OWSIdentityManagerTests.swift */; };
@@ -8263,6 +8264,7 @@
 		F94261D0289B1B5400460798 /* MessageSenderJobRecordTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSenderJobRecordTest.swift; sourceTree = "<group>"; };
 		F94261D1289B1B5400460798 /* OWSURLBuilderUtilTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OWSURLBuilderUtilTest.swift; sourceTree = "<group>"; };
 		F94261D2289B1B5400460798 /* HttpHeadersTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpHeadersTest.swift; sourceTree = "<group>"; };
+		50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSecurityPolicyTest.swift; sourceTree = "<group>"; };
 		F94261D3289B1B5400460798 /* OWSRequestFactoryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OWSRequestFactoryTest.swift; sourceTree = "<group>"; };
 		F94261D4289B1B5400460798 /* HTMLMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataTests.swift; sourceTree = "<group>"; };
 		F94261D5289B1B5400460798 /* MessageSendJobQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendJobQueueTest.swift; sourceTree = "<group>"; };
@@ -15017,6 +15019,7 @@
 				C1DF3F4A2B028409004B6986 /* Upload */,
 				509527F92E26F02B00A03829 /* ConnectionLockTest.swift */,
 				F94261D2289B1B5400460798 /* HttpHeadersTest.swift */,
+				50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */,
 				F94261D0289B1B5400460798 /* MessageSenderJobRecordTest.swift */,
 				F94261D5289B1B5400460798 /* MessageSendJobQueueTest.swift */,
 				500A76142E031CA600322493 /* OWSChatConnectionTest.swift */,
@@ -21103,6 +21106,7 @@
 				5010000E307EDEDB001B9098 /* GroupRecordTest.swift in Sources */,
 				50498C6C3037574400BD86EB /* GroupStoreTest.swift in Sources */,
 				F9426243289B1B5500460798 /* HttpHeadersTest.swift in Sources */,
+				50A1B2C42E26F02B00A03829 /* HttpSecurityPolicyTest.swift in Sources */,
 				50A0B3D0301015050053607C /* HydratedMessageBodyTest.swift in Sources */,
 				D9F399B02A967664001599EC /* IdentityKeyCheckerTest.swift in Sources */,
 				D9F399B42A96E54C001599EC /* IdentityKeyMismatchManagerTest.swift in Sources */,
