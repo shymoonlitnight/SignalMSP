@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-#import <CocoaLumberjack/CocoaLumberjack.h>
+#import <CocoaLumberjack/DDLog.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

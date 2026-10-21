@@ -14,12 +14,18 @@ PACKAGE_RESOLVED_PATH = WORKSPACE_PATH / "xcshareddata/swiftpm/Package.resolved"
 
 LICENSE_FILE_PATTERN = re.compile(r"^(LICEN[CS]E|COPYING)(\.(md|txt))?$", re.IGNORECASE)
 
+SWIFT_PACKAGE_LICENSE_PATHS = {
+    "mobilecoin-swift": {
+        "MobileCoin": "LICENSE",
+        "LibMobileCoin": "Vendor/libmobilecoin/LICENSE",
+    },
+}
+
 POD_TARGETS = [
     "Signal",
     "SignalNSE",
     "SignalServiceKit",
     "SignalServiceKitTests",
-    "SignalShareExtension",
     "SignalTests",
     "SignalUI",
     "SignalUITests",
@@ -138,15 +144,28 @@ def get_swift_package_specifiers():
             raise Exception(f"Unsupported kind for {identity}: {pin['kind']}")
 
         dependency = dependencies[identity]
-        specifiers.append(
-            {
-                "Type": "PSGroupSpecifier",
-                "Title": dependency["packageRef"]["name"],
-                "FooterText": get_swift_package_license_text(
-                    source_packages_path / "checkouts" / dependency["subpath"]
-                ),
-            }
-        )
+        checkout_path = source_packages_path / "checkouts" / dependency["subpath"]
+        license_paths = SWIFT_PACKAGE_LICENSE_PATHS.get(identity)
+        if license_paths is None:
+            specifiers.append(
+                {
+                    "Type": "PSGroupSpecifier",
+                    "Title": dependency["packageRef"]["name"],
+                    "FooterText": get_swift_package_license_text(checkout_path),
+                }
+            )
+            continue
+
+        for title, license_path in license_paths.items():
+            specifiers.append(
+                {
+                    "Type": "PSGroupSpecifier",
+                    "Title": title,
+                    "FooterText": (checkout_path / license_path).read_text(
+                        encoding="utf8"
+                    ),
+                }
+            )
     return specifiers
 
 

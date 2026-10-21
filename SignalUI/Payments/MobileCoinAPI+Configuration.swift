@@ -4,7 +4,7 @@
 //
 
 import Foundation
-import LibMobileCoin
+import LibMobileCoinHTTP
 import MobileCoin
 import SignalServiceKit
 
@@ -783,10 +783,10 @@ final class MobileCoinHttpRequester: NSObject, HttpRequester {
 
     func request(
         url: URL,
-        method: LibMobileCoin.HTTPMethod,
+        method: LibMobileCoinHTTP.HTTPMethod,
         headers headerMap: [String: String]?,
         body: Data?,
-        completion: @escaping (Result<LibMobileCoin.HTTPResponse, Error>) -> Void,
+        completion: @escaping (Result<LibMobileCoinHTTP.HTTPResponse, Error>) -> Void,
     ) {
         let owsUrlSession = OWSURLSession(securityPolicy: securityPolicy, configuration: Self.defaultConfiguration)
 
@@ -801,11 +801,11 @@ final class MobileCoinHttpRequester: NSObject, HttpRequester {
             let statusCode = response.responseStatusCode
             let responseData = response.responseBodyData
             let url = response.requestUrl
-            let httpResponse = LibMobileCoin.HTTPResponse(statusCode: statusCode, url: url, allHeaderFields: headerFields, responseData: responseData)
+            let httpResponse = LibMobileCoinHTTP.HTTPResponse(statusCode: statusCode, url: url, allHeaderFields: headerFields, responseData: responseData)
             completion(.success(httpResponse))
         }.catch { error in
             if let statusCode = error.httpStatusCode {
-                completion(.success(LibMobileCoin.HTTPResponse(statusCode: statusCode, url: nil, allHeaderFields: [:], responseData: nil)))
+                completion(.success(LibMobileCoinHTTP.HTTPResponse(statusCode: statusCode, url: nil, allHeaderFields: [:], responseData: nil)))
             } else {
                 Logger.warn("MobileCoin http request failed \(error)")
                 completion(.failure(ConnectionError.invalidServerResponse("No Response")))
@@ -814,7 +814,7 @@ final class MobileCoinHttpRequester: NSObject, HttpRequester {
     }
 }
 
-extension LibMobileCoin.HTTPMethod {
+extension LibMobileCoinHTTP.HTTPMethod {
     var sskHTTPMethod: SignalServiceKit.HTTPMethod {
         switch self {
         case .GET:

@@ -972,10 +972,28 @@
 		5F0FCB3F9BC04E7EB4B5A9DA /* ContactSharingRowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */; };
 		61475E7AED76A77DD11F9968 /* RegistrationSignalLoginDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE4F92E120FC707A4CBFF39 /* RegistrationSignalLoginDetailsViewController.swift */; };
 		616577F953D77424E32C7438 /* Pods_SignalUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 675486AB8F0612FF2C717BAE /* Pods_SignalUI.framework */; };
+		631CB51D307EDA1300EA5851 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB51C307EDA1300EA5851 /* Logging */; };
+		631CB51F307EDA1C00EA5851 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB51E307EDA1C00EA5851 /* Logging */; };
+		631CB522307EDA7800EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB521307EDA7800EA5851 /* SwiftProtobuf */; };
+		631CB524307EDA8B00EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB523307EDA8B00EA5851 /* SwiftProtobuf */; };
+		631CB526307EDA9900EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB525307EDA9900EA5851 /* SwiftProtobuf */; };
+		631CB528307EDAA500EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB527307EDAA500EA5851 /* SwiftProtobuf */; };
+		631CB52A307EDAAE00EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB529307EDAAE00EA5851 /* SwiftProtobuf */; };
+		631CB52D307EDB0000EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB52C307EDB0000EA5851 /* CocoaLumberjack */; };
+		631CB52F307EDB1400EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB52E307EDB1400EA5851 /* CocoaLumberjack */; };
+		631CB531307EDB2400EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB530307EDB2400EA5851 /* CocoaLumberjack */; };
+		631CB533307EDB2D00EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB532307EDB2D00EA5851 /* CocoaLumberjack */; };
+		631CB535307EDB3500EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB534307EDB3500EA5851 /* CocoaLumberjack */; };
+		631CB53D307FEE8E00EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB53C307FEE8E00EA5851 /* SwiftProtobuf */; };
+		631CB53F307FEFD600EA5851 /* CocoaLumberjack in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB53E307FEFD600EA5851 /* CocoaLumberjack */; };
+		631CB541307FEFDB00EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB540307FEFDB00EA5851 /* SwiftProtobuf */; };
 		632BFEC030752A2E005399C0 /* GroupViewHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632BFEBF30752A2E005399C0 /* GroupViewHelperTests.swift */; };
 		632BFEC630785953005399C0 /* BonMot in Frameworks */ = {isa = PBXBuildFile; productRef = 632BFEC530785953005399C0 /* BonMot */; };
 		632BFEC830785960005399C0 /* BonMot in Frameworks */ = {isa = PBXBuildFile; productRef = 632BFEC730785960005399C0 /* BonMot */; };
 		632BFECA30787503005399C0 /* BonMot in Frameworks */ = {isa = PBXBuildFile; productRef = 632BFEC930787503005399C0 /* BonMot */; };
+		636E63623089304B008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E63613089304B008905CF /* MobileCoinCore */; };
+		636E636430893053008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E636330893053008905CF /* MobileCoinCore */; };
+		636E636630893058008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E636530893058008905CF /* MobileCoinCore */; };
 		63C24D4D306AF7A100D4C167 /* ContactSharingPermissionPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D4C306AF7A100D4C167 /* ContactSharingPermissionPromptView.swift */; };
 		63C24D53306C50FD00D4C167 /* ContactShareAvatarFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D52306C50FD00D4C167 /* ContactShareAvatarFieldTests.swift */; };
 		63C24D55306C510200D4C167 /* ContactShareAvatarPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D54306C510200D4C167 /* ContactShareAvatarPickerSheet.swift */; };
@@ -1831,7 +1849,6 @@
 		88F5FA9428EBD4CF007AA1BF /* StorySharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F5FA9228EBD484007AA1BF /* StorySharing.swift */; };
 		88FE237E249C22080041670F /* ConversationViewController+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE237D249C22080041670F /* ConversationViewController+Scroll.swift */; };
 		954AEE6A1DF33E01002E5410 /* ContactsPickerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954AEE681DF33D32002E5410 /* ContactsPickerTest.swift */; };
-		9FDF89F65C026F8F33FD38C1 /* Pods_SignalShareExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39B85AE8CD37B05A1B144605 /* Pods_SignalShareExtension.framework */; };
 		A10FDF79184FB4BB007FF963 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76C87F18181EFCE600C4ACAB /* MediaPlayer.framework */; };
 		A11CD70D17FA230600A2D1B1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11CD70C17FA230600A2D1B1 /* QuartzCore.framework */; };
 		A123C14916F902EE000AE905 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A163E8AA16F3F6A90094D68B /* Security.framework */; };
@@ -4551,7 +4568,6 @@
 		058B49922C66804B00307D38 /* AVAssetExportSession+Async.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAssetExportSession+Async.swift"; sourceTree = "<group>"; };
 		05A180352CD1840F00579FA4 /* UIViewPropertyAnimator+SignalUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewPropertyAnimator+SignalUI.swift"; sourceTree = "<group>"; };
 		05B411242C62845000A1EDBC /* ChatListInboxFilterSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListInboxFilterSection.swift; sourceTree = "<group>"; };
-		05E3A4DD8B4442530268AFC1 /* Pods-SignalShareExtension.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.app store release.xcconfig"; path = "Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.app store release.xcconfig"; sourceTree = "<group>"; };
 		05EA61422CC9437F00B16D4E /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		05EA61432CC943D200B16D4E /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
 		05EA61442CC943DD00B16D4E /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
@@ -4589,7 +4605,6 @@
 		17EC850B29133CDB00319C82 /* CancelledGroupRing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelledGroupRing.swift; sourceTree = "<group>"; };
 		25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSharingRowCell.swift; sourceTree = "<group>"; };
 		299F6904BB7E4C0E2463A169 /* Pods-SignalNSE.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalNSE.app store release.xcconfig"; path = "Target Support Files/Pods-SignalNSE/Pods-SignalNSE.app store release.xcconfig"; sourceTree = "<group>"; };
-		2B0685730953D09782B1F911 /* Pods-SignalShareExtension.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.profiling.xcconfig"; path = "Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.profiling.xcconfig"; sourceTree = "<group>"; };
 		2C1CB05FE7FDA3C1F0138D7F /* Pods-SignalServiceKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalServiceKitTests.debug.xcconfig"; path = "Target Support Files/Pods-SignalServiceKitTests/Pods-SignalServiceKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2D205E8F7C927C969E2B7D84 /* AciContactShareNameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciContactShareNameStore.swift; sourceTree = "<group>"; };
 		2E997798B7AF35DBBC0905DF /* Pods-SignalUI.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalUI.testable release.xcconfig"; path = "Target Support Files/Pods-SignalUI/Pods-SignalUI.testable release.xcconfig"; sourceTree = "<group>"; };
@@ -4973,7 +4988,6 @@
 		34FB6A5425D2E17200E599B1 /* PaymentModelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentModelCell.swift; sourceTree = "<group>"; };
 		34FC7EEB265834F30046707A /* AvatarBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarBuilder.swift; sourceTree = "<group>"; };
 		34FCCA03264AEDFE00A63EDE /* CustomColorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomColorViewController.swift; sourceTree = "<group>"; };
-		39B85AE8CD37B05A1B144605 /* Pods_SignalShareExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalShareExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CE4F92E120FC707A4CBFF39 /* RegistrationSignalLoginDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationSignalLoginDetailsViewController.swift; sourceTree = "<group>"; };
 		44B6CDDFDDD0811DBBC57CD1 /* Pods-SignalTests.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalTests.profiling.xcconfig"; path = "Target Support Files/Pods-SignalTests/Pods-SignalTests.profiling.xcconfig"; sourceTree = "<group>"; };
 		4503F1BB20470A5B00CEE724 /* classic-quiet.aifc */ = {isa = PBXFileReference; lastKnownFileType = file; path = "classic-quiet.aifc"; sourceTree = "<group>"; };
@@ -5448,7 +5462,6 @@
 		50FA17113006F244007529C6 /* GroupInviteLinkTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupInviteLinkTest.swift; sourceTree = "<group>"; };
 		50FA17133006F635007529C6 /* GroupInviteLinkConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupInviteLinkConfiguration.swift; sourceTree = "<group>"; };
 		50FA1B812F2D2935000DDCF9 /* InstalledStickerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstalledStickerRecord.swift; sourceTree = "<group>"; };
-		538291A33C75754BC577D8C3 /* Pods-SignalShareExtension.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.testable release.xcconfig"; path = "Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.testable release.xcconfig"; sourceTree = "<group>"; };
 		5531BE0E2F15B97F002AF66F /* input_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = input_video.mp4; sourceTree = "<group>"; };
 		557238D22F2D53EF0033BC9A /* RingrtcVp9Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingrtcVp9Config.swift; sourceTree = "<group>"; };
 		55B305CB99EC1478F69D91CF /* Pods-SignalUITests.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalUITests.profiling.xcconfig"; path = "Target Support Files/Pods-SignalUITests/Pods-SignalUITests.profiling.xcconfig"; sourceTree = "<group>"; };
@@ -5951,7 +5964,6 @@
 		72B994DA2BE950DB000CBBFD /* TestAppContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppContext.swift; sourceTree = "<group>"; };
 		72DB95AD2C8C7C7B00FD2266 /* String+OWS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+OWS.swift"; sourceTree = "<group>"; };
 		7358C9DE9823FD80FD3F9815 /* AciContactShareNameManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciContactShareNameManagerTests.swift; sourceTree = "<group>"; };
-		741B66EF7DCE5EF90200211D /* Pods-SignalShareExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.debug.xcconfig"; path = "Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		76057C4A29D268A800C9EDBD /* VideoPlaybackControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlaybackControls.swift; sourceTree = "<group>"; };
 		760981872936DE90008F8300 /* BezierPathView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BezierPathView.swift; sourceTree = "<group>"; };
 		760981892936EC8D008F8300 /* OWSTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OWSTextView.swift; sourceTree = "<group>"; };
@@ -8765,12 +8777,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				631CB533307EDB2D00EA5851 /* CocoaLumberjack in Frameworks */,
 				342FFEA227245A07000AC89F /* Intents.framework in Frameworks */,
 				63DC4561307EA32800119464 /* libPhoneNumber in Frameworks */,
 				63DC4552307E7D7700119464 /* libwebp in Frameworks */,
 				46B99B83D9513F2B8641EAB1 /* Pods_SignalNSE.framework in Frameworks */,
 				63DC4548307E7D4E00119464 /* SDWebImage in Frameworks */,
 				63DC454A307E7D4E00119464 /* SDWebImageWebPCoder in Frameworks */,
+				631CB528307EDAA500EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8779,13 +8793,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				632BFEC830785960005399C0 /* BonMot in Frameworks */,
+				631CB52F307EDB1400EA5851 /* CocoaLumberjack in Frameworks */,
 				63DC455F307EA31400119464 /* libPhoneNumber in Frameworks */,
 				63DC4550307E7D7000119464 /* libwebp in Frameworks */,
+				631CB51F307EDA1C00EA5851 /* Logging in Frameworks */,
 				63DC45303079AF9100119464 /* Lottie in Frameworks */,
+				636E63623089304B008905CF /* MobileCoinCore in Frameworks */,
 				616577F953D77424E32C7438 /* Pods_SignalUI.framework in Frameworks */,
 				63DC45373079BADA00119464 /* PureLayout in Frameworks */,
 				63DC454C307E7D6400119464 /* SDWebImage in Frameworks */,
 				63DC454E307E7D6400119464 /* SDWebImageWebPCoder in Frameworks */,
+				631CB524307EDA8B00EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8802,12 +8820,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				631CB535307EDB3500EA5851 /* CocoaLumberjack in Frameworks */,
 				63DC4563307EA45C00119464 /* libPhoneNumber in Frameworks */,
 				63DC4558307E7DBB00119464 /* libwebp in Frameworks */,
-				9FDF89F65C026F8F33FD38C1 /* Pods_SignalShareExtension.framework in Frameworks */,
 				63DC45393079BCC100119464 /* PureLayout in Frameworks */,
 				63DC4556307E7DBB00119464 /* SDWebImage in Frameworks */,
 				63DC455A307E7DBB00119464 /* SDWebImageWebPCoder in Frameworks */,
+				631CB52A307EDAAE00EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8820,6 +8839,7 @@
 				632BFEC630785953005399C0 /* BonMot in Frameworks */,
 				D2AEACDC16C426DA00C364C0 /* CFNetwork.framework in Frameworks */,
 				347C37FF2526005800F3D941 /* CloudKit.framework in Frameworks */,
+				631CB531307EDB2400EA5851 /* CocoaLumberjack in Frameworks */,
 				45BD60821DE9547E00A8F436 /* Contacts.framework in Frameworks */,
 				B6B226971BE4B7D200860F4D /* ContactsUI.framework in Frameworks */,
 				FCB11D8C1A129A76002F93FB /* CoreMedia.framework in Frameworks */,
@@ -8830,11 +8850,13 @@
 				45847E871E4283C30080EAB3 /* Intents.framework in Frameworks */,
 				63DC4565307EA5DA00119464 /* libPhoneNumber in Frameworks */,
 				63DC453F307E7CAA00119464 /* libwebp in Frameworks */,
+				631CB51D307EDA1300EA5851 /* Logging in Frameworks */,
 				63DC45323079AF9C00119464 /* Lottie in Frameworks */,
 				76C87F19181EFCE600C4ACAB /* MediaPlayer.framework in Frameworks */,
 				B9EB5ABD1884C002007CBB57 /* MessageUI.framework in Frameworks */,
 				455A16DD1F1FEA0000F86704 /* Metal.framework in Frameworks */,
 				455A16DE1F1FEA0000F86704 /* MetalKit.framework in Frameworks */,
+				636E636430893053008905CF /* MobileCoinCore in Frameworks */,
 				4520D8D51D417D8E00123472 /* Photos.framework in Frameworks */,
 				0CE014267EDFBD2538E940A0 /* Pods_Signal.framework in Frameworks */,
 				63DC45353079BACE00119464 /* PureLayout in Frameworks */,
@@ -8846,6 +8868,7 @@
 				F9C5C8AA289451B900548EEE /* SignalServiceKit.framework in Frameworks */,
 				34A954BD271A471300B05242 /* SignalUI.framework in Frameworks */,
 				4CC1ECF9211A47CE00CC13BE /* StoreKit.framework in Frameworks */,
+				631CB526307EDA9900EA5851 /* SwiftProtobuf in Frameworks */,
 				D2179CFE16BB0B480006F3AB /* SystemConfiguration.framework in Frameworks */,
 				D221A08E169C9E5E00537ABF /* UIKit.framework in Frameworks */,
 				C109A87A2FDC90630065225E /* WiFiAware.framework in Frameworks */,
@@ -8865,9 +8888,11 @@
 				D221A0AE169C9E5F00537ABF /* Foundation.framework in Frameworks */,
 				A10FDF79184FB4BB007FF963 /* MediaPlayer.framework in Frameworks */,
 				E1368CBE18A1C36B00109378 /* MessageUI.framework in Frameworks */,
+				636E636630893058008905CF /* MobileCoinCore in Frameworks */,
 				2B5914CF7BCE3017430CFD84 /* Pods_SignalTests.framework in Frameworks */,
 				A1A018521805C5E800A052A6 /* QuartzCore.framework in Frameworks */,
 				A123C14916F902EE000AE905 /* Security.framework in Frameworks */,
+				631CB53D307FEE8E00EA5851 /* SwiftProtobuf in Frameworks */,
 				D202868216DBE0F4009068E9 /* SystemConfiguration.framework in Frameworks */,
 				D221A0AD169C9E5F00537ABF /* UIKit.framework in Frameworks */,
 				B69CD25119773E79005CE69A /* XCTest.framework in Frameworks */,
@@ -8879,11 +8904,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				63DC4567307EC00A00119464 /* blurhash in Frameworks */,
+				631CB52D307EDB0000EA5851 /* CocoaLumberjack in Frameworks */,
 				63DC455D307EA24D00119464 /* libPhoneNumber in Frameworks */,
 				63DC4554307E7D8700119464 /* libwebp in Frameworks */,
 				C26296B4BDCEDADBDA01DDD2 /* Pods_SignalServiceKit.framework in Frameworks */,
 				63DC4544307E7D0300119464 /* SDWebImage in Frameworks */,
 				63DC4546307E7D0300119464 /* SDWebImageWebPCoder in Frameworks */,
+				631CB522307EDA7800EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8891,8 +8918,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				631CB53F307FEFD600EA5851 /* CocoaLumberjack in Frameworks */,
 				259D4DF2486F14DB112B3999 /* Pods_SignalServiceKitTests.framework in Frameworks */,
 				F9C5C89F289451B900548EEE /* SignalServiceKit.framework in Frameworks */,
+				631CB541307FEFDB00EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9060,10 +9089,6 @@
 				2C1CB05FE7FDA3C1F0138D7F /* Pods-SignalServiceKitTests.debug.xcconfig */,
 				F70CAD4E12CCE311EC60A2C9 /* Pods-SignalServiceKitTests.profiling.xcconfig */,
 				5D6C4583F668E9D733E59B9B /* Pods-SignalServiceKitTests.testable release.xcconfig */,
-				05E3A4DD8B4442530268AFC1 /* Pods-SignalShareExtension.app store release.xcconfig */,
-				741B66EF7DCE5EF90200211D /* Pods-SignalShareExtension.debug.xcconfig */,
-				2B0685730953D09782B1F911 /* Pods-SignalShareExtension.profiling.xcconfig */,
-				538291A33C75754BC577D8C3 /* Pods-SignalShareExtension.testable release.xcconfig */,
 				FF39DCC8D1F7DFD3708276E2 /* Pods-SignalTests.app store release.xcconfig */,
 				C597942EF64D456BBE9782A2 /* Pods-SignalTests.debug.xcconfig */,
 				44B6CDDFDDD0811DBBC57CD1 /* Pods-SignalTests.profiling.xcconfig */,
@@ -12608,7 +12633,6 @@
 				7F965533D71CA51BE6704CC4 /* Pods_SignalNSE.framework */,
 				948B2FC201146EF3BA459226 /* Pods_SignalServiceKit.framework */,
 				91DA2BE463493965F5BC71C0 /* Pods_SignalServiceKitTests.framework */,
-				39B85AE8CD37B05A1B144605 /* Pods_SignalShareExtension.framework */,
 				0BADD293DAFC82BF3274F0F6 /* Pods_SignalTests.framework */,
 				675486AB8F0612FF2C717BAE /* Pods_SignalUI.framework */,
 				B3F39202F831935AAE1C5F54 /* Pods_SignalUITests.framework */,
@@ -16529,7 +16553,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 453518761FC635DD00210559 /* Build configuration list for PBXNativeTarget "SignalShareExtension" */;
 			buildPhases = (
-				77B735583EA1EEF806F941A9 /* [CP] Check Pods Manifest.lock */,
 				453518641FC635DD00210559 /* Sources */,
 				453518651FC635DD00210559 /* Frameworks */,
 				453518661FC635DD00210559 /* Resources */,
@@ -16787,6 +16810,10 @@
 				63DC453D307E7CAA00119464 /* XCRemoteSwiftPackageReference "libwebp-Xcode" */,
 				63DC4540307E7CD300119464 /* XCRemoteSwiftPackageReference "SDWebImageWebPCoder" */,
 				63DC455B307EA24D00119464 /* XCRemoteSwiftPackageReference "libPhoneNumber-iOS" */,
+				631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */,
+				631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
+				631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */,
+				636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */,
 			);
 			productRefGroup = D221A08A169C9E5E00537ABF /* Products */;
 			projectDirPath = "";
@@ -18328,11 +18355,6 @@
 				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/LibMobileCoin/LibMobileCoin.framework",
-				"${BUILT_PRODUCTS_DIR}/Logging/Logging.framework",
-				"${BUILT_PRODUCTS_DIR}/MobileCoin/MobileCoin.framework",
-				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -18341,38 +18363,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftProtobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibMobileCoin.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Logging.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MobileCoin.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Signal/Pods-Signal-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		77B735583EA1EEF806F941A9 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SignalShareExtension-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		8C4669F1AC92D639F8254584 /* [CP] Embed Pods Frameworks */ = {
@@ -18386,8 +18381,6 @@
 				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/CocoaLumberjack/CocoaLumberjack.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -18396,8 +18389,6 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftProtobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaLumberjack.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -22189,7 +22180,6 @@
 		};
 		453518731FC635DD00210559 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 741B66EF7DCE5EF90200211D /* Pods-SignalShareExtension.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -22226,7 +22216,6 @@
 		};
 		453518751FC635DD00210559 /* App Store Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 05E3A4DD8B4442530268AFC1 /* Pods-SignalShareExtension.app store release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -22490,7 +22479,6 @@
 		};
 		4C10B17D23176CEB0099396B /* Testable Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 538291A33C75754BC577D8C3 /* Pods-SignalShareExtension.testable release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -22751,7 +22739,6 @@
 		};
 		88238EAA24EAD2FD00F28079 /* Profiling */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B0685730953D09782B1F911 /* Pods-SignalShareExtension.profiling.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -23699,12 +23686,44 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				kind = exactVersion;
+				version = 1.4.0;
+			};
+		};
+		631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-protobuf";
+			requirement = {
+				kind = exactVersion;
+				version = 1.38.1;
+			};
+		};
+		631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/cocoalumberjack/cocoalumberjack";
+			requirement = {
+				kind = exactVersion;
+				version = 3.7.4;
+			};
+		};
 		632BFEC430785953005399C0 /* XCRemoteSwiftPackageReference "BonMot" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Rightpoint/BonMot";
 			requirement = {
 				kind = exactVersion;
 				version = 6.0.0;
+			};
+		};
+		636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/signalapp/MobileCoin-Swift";
+			requirement = {
+				kind = exactVersion;
+				version = "6.0.3-signal.1";
 			};
 		};
 		63DC452E3079AF9100119464 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
@@ -23758,6 +23777,81 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		631CB51C307EDA1300EA5851 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		631CB51E307EDA1C00EA5851 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		631CB521307EDA7800EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB523307EDA8B00EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB525307EDA9900EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB527307EDAA500EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB529307EDAAE00EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB52C307EDB0000EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB52E307EDB1400EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB530307EDB2400EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB532307EDB2D00EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB534307EDB3500EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB53C307FEE8E00EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
+		631CB53E307FEFD600EA5851 /* CocoaLumberjack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */;
+			productName = CocoaLumberjack;
+		};
+		631CB540307FEFDB00EA5851 /* SwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */;
+			productName = SwiftProtobuf;
+		};
 		632BFEC530785953005399C0 /* BonMot */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 632BFEC430785953005399C0 /* XCRemoteSwiftPackageReference "BonMot" */;
@@ -23772,6 +23866,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 632BFEC430785953005399C0 /* XCRemoteSwiftPackageReference "BonMot" */;
 			productName = BonMot;
+		};
+		636E63613089304B008905CF /* MobileCoinCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */;
+			productName = MobileCoinCore;
+		};
+		636E636330893053008905CF /* MobileCoinCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */;
+			productName = MobileCoinCore;
+		};
+		636E636530893058008905CF /* MobileCoinCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */;
+			productName = MobileCoinCore;
 		};
 		63DC452F3079AF9100119464 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;

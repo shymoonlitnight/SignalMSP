@@ -8,8 +8,6 @@ use_frameworks!
 
 source 'https://cdn.cocoapods.org/'
 
-pod 'SwiftProtobuf', "1.38.1"
-
 ENV['LIBSIGNAL_FFI_PREBUILD_CHECKSUM'] = '556a82414b545490085a0e21d94990788bdcbee4d769043f7889397872443faf'
 pod 'LibSignalClient', git: 'https://github.com/signalapp/libsignal.git', tag: 'v0.105.0', testspecs: ["Tests"]
 # pod 'LibSignalClient', path: '../libsignal', testspecs: ["Tests"]
@@ -29,16 +27,8 @@ pod 'SQLCipher', git: 'https://github.com/signalapp/sqlcipher.git', tag: 'v4.6.1
 # third party pods
 ####
 
-def ui_pods
-  pod 'LibMobileCoin/CoreHTTP', git: 'https://github.com/signalapp/libmobilecoin-ios-artifacts', tag: 'signal/6.0.2', submodules: true
-  pod 'MobileCoin/CoreHTTP', git: 'https://github.com/mobilecoinofficial/MobileCoin-Swift', tag: 'v6.0.3'
-end
-
 target 'Signal' do
   project 'Signal.xcodeproj', 'Debug' => :debug, 'Release' => :release
-
-  # Pods only available inside the main Signal app
-  ui_pods
 
   target 'SignalTests' do
     inherit! :search_paths
@@ -47,21 +37,13 @@ end
 
 # These extensions inherit all of the common pods
 
-target 'SignalShareExtension' do
-  ui_pods
-end
-
 target 'SignalUI' do
-  ui_pods
-
   target 'SignalUITests' do
     inherit! :search_paths
   end
 end
 
 target 'SignalServiceKit' do
-  pod 'CocoaLumberjack'
-
   target 'SignalServiceKitTests' do
     inherit! :search_paths
   end
