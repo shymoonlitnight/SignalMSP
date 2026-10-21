@@ -2228,8 +2228,8 @@ extension CallsListViewController: CallCellDelegate, NewCallViewControllerDelega
             callExpirations: callExpirations,
             memberLabelCoordinator: nil,
         )
-
-        showCallInfo(viewController: callDetailsView)
+        let navigationController = UINavigationController(rootViewController: callDetailsView)
+        presentFormSheet(navigationController, animated: true)
     }
 
     private func showCallInfo(forRootKey rootKey: CallLinkRootKey, callRecords: [CallRecord]) {
@@ -2237,12 +2237,12 @@ extension CallsListViewController: CallCellDelegate, NewCallViewControllerDelega
             return deps.callLinkStore.fetch(roomId: rootKey.deriveRoomId(), tx: tx)
                 .owsFailUnwrap("FOREIGN KEYs mean this must exist.")
         }
-        showCallInfo(viewController: CallLinkViewController.forExisting(callLinkRecord: callLinkRecord, callRecords: callRecords))
-    }
-
-    private func showCallInfo(viewController: UIViewController) {
-        viewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(viewController, animated: true)
+        let callLinkViewController = CallLinkViewController.forExisting(
+            callLinkRecord: callLinkRecord,
+            callRecords: callRecords,
+        )
+        callLinkViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(callLinkViewController, animated: true)
     }
 
     // MARK: NewCallViewControllerDelegate

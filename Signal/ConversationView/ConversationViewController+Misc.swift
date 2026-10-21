@@ -210,11 +210,6 @@ extension ConversationViewController {
     }
 
     func showConversationSettings(mode: ConversationSettingsPresentationMode) {
-        guard let viewControllersUpToSelf = self.viewControllersUpToSelf else {
-            return
-        }
-        var viewControllers = viewControllersUpToSelf
-
         let settingsView = ConversationSettingsViewController(
             threadViewModel: threadViewModel,
             isSystemContact: conversationViewModel.isSystemContact,
@@ -222,7 +217,8 @@ extension ConversationViewController {
             memberLabelCoordinator: memberLabelCoordinator,
         )
         settingsView.conversationSettingsViewDelegate = self
-        viewControllers.append(settingsView)
+
+        let navigationController = UINavigationController(rootViewController: settingsView)
 
         switch mode {
         case .default:
@@ -230,19 +226,17 @@ extension ConversationViewController {
         case .showVerification:
             settingsView.showVerificationOnAppear = true
         case .showMemberRequests:
-            if let view = settingsView.buildMemberRequestsAndInvitesView() {
-                viewControllers.append(view)
+            if let requestsAndInvitesVC = settingsView.buildMemberRequestsAndInvitesView() {
+                navigationController.pushViewController(requestsAndInvitesVC, animated: false)
             }
         case .showAllMedia:
-            viewControllers.append(AllMediaViewController(
-                thread: thread,
-                spoilerState: viewState.spoilerState,
-                name: title,
-            ))
+            navigationController.pushViewController(
+                AllMediaViewController(thread: thread, spoilerState: viewState.spoilerState, name: title),
+                animated: false,
+            )
         }
 
-        dismissKeyboard()
-        navigationController?.setViewControllers(viewControllers, animated: true)
+        presentFormSheet(navigationController, animated: true)
     }
 
     private var viewControllersUpToSelf: [UIViewController]? {
@@ -306,18 +300,14 @@ extension ConversationViewController {
 extension ConversationViewController: ConversationSettingsViewDelegate {
 
     public func conversationSettingsDidRequestConversationSearch() {
-        AssertIsOnMainThread()
+        uiMode = .search
 
-        self.uiMode = .search
-
-        self.popAllConversationSettingsViews {
+        popAllConversationSettingsViews {
             self.searchController.uiSearchController.searchBar.becomeFirstResponder()
         }
     }
 
     private func popAllConversationSettingsViews(completion: @escaping () -> Void) {
-        AssertIsOnMainThread()
-
         guard let presentedViewController else {
             navigationController?.popToViewController(self, animated: true, completion: completion)
             return

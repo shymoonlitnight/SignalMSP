@@ -208,15 +208,20 @@ class ConversationSettingsViewController: OWSTableViewController2, BadgeCollecti
     }
 
     func updateNavigationBar() {
-        guard canEditConversationAttributes, isGroupThread, !isTerminatedGroup else {
-            navigationItem.rightBarButtonItem = nil
-            return
+        // (X) close button on the left.
+        navigationItem.leftBarButtonItem = .closeButton { [weak self] in
+            self?.dismiss(animated: true)
         }
 
-        navigationItem.rightBarButtonItem = .systemItem(.edit) { [weak self] in
-            guard let self else { return }
-            owsAssertDebug(self.canEditConversationAttributes)
-            self.showGroupAttributesView(editAction: .none)
+        // Edit button on the right for active groups that are editable by user.
+        if canEditConversationAttributes, isGroupThread, !isTerminatedGroup {
+            navigationItem.rightBarButtonItem = .systemItem(.edit) { [weak self] in
+                guard let self else { return }
+                owsAssertDebug(self.canEditConversationAttributes)
+                self.showGroupAttributesView(editAction: .none)
+            }
+        } else {
+            navigationItem.rightBarButtonItem = nil
         }
     }
 
