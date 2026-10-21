@@ -537,14 +537,6 @@ class StickerPackViewController: OWSViewController, StickerPackDataSourceDelegat
         return true
     }
 
-    func didRequestQuoteReplyPreview(for stickerMetadata: any StickerMetadata, stickerView: UIView) {
-        owsFailDebug("")
-    }
-
-    func shouldShowStickerPreview() -> Bool {
-        return false
-    }
-
     // MARK: - SendMessageDelegate
 
     func sendMessageFlowDidComplete(threads: [TSThread]) {

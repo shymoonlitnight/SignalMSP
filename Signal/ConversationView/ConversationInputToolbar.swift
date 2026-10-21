@@ -3363,10 +3363,6 @@ extension ConversationInputToolbar: ConversationTextViewToolbarDelegate {
 }
 
 extension ConversationInputToolbar: StickerKeyboardDelegate {
-    func shouldShowStickerPreview() -> Bool {
-        return hasQuotedMessage
-    }
-
     func stickerKeyboard(_: StickerKeyboard, didSelect stickerInfo: StickerInfo) {
         AssertIsOnMainThread()
         inputToolbarDelegate?.sendSticker(stickerInfo)

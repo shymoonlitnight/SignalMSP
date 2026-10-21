@@ -78,11 +78,6 @@ public class StickerPickerView: UIView {
         storyStickerConfiguration: storyStickerConfigation,
     )
 
-    // MARK: Quote Reply preview state
-
-    private var quoteReplyPreviewView: UIView?
-    private var quoteReplyPreviewStickerInfo: StickerInfo?
-
     override public func layoutMarginsDidChange() {
         super.layoutMarginsDidChange()
         updateStickerPageViewContentInsets()
@@ -122,10 +117,6 @@ extension StickerPickerView: StickerPacksToolbarDelegate {
 }
 
 extension StickerPickerView: StickerPickerPageViewDelegate {
-    public func shouldShowStickerPreview() -> Bool {
-        delegate?.shouldShowStickerPreview() ?? false
-    }
-
     func setItems(_ items: [any StickerHorizontalListViewItem]) {
         toolbar.packsCollectionView.items = items
     }
@@ -135,86 +126,6 @@ extension StickerPickerView: StickerPickerPageViewDelegate {
     }
 
     public func didSelectSticker(_ stickerMetadata: any StickerMetadata) {
-        delegate?.didSelectSticker(stickerMetadata)
-    }
-
-    func didRequestQuoteReplyPreview(for stickerMetadata: any StickerMetadata, stickerView: UIView) {
-        showQuoteReplyPreview(for: stickerMetadata, stickerView: stickerView)
-    }
-
-    // MARK: - Quote Reply preview
-
-    public func dismissQuoteReplyPreviewIfNeeded() {
-        guard quoteReplyPreviewView != nil else { return }
-        handleQuoteReplyPreviewDismiss()
-    }
-
-    private func hideQuoteReplyPreview() {
-        quoteReplyPreviewView?.removeFromSuperview()
-        quoteReplyPreviewView = nil
-        quoteReplyPreviewStickerInfo = nil
-    }
-
-    private func showQuoteReplyPreview(for stickerMetadata: any StickerMetadata, stickerView: UIView) {
-        let replyLabel = UILabel()
-        let replyText = NSAttributedString(
-            string: OWSLocalizedString(
-                "QUOTE_REPLY_STICKER",
-                comment: "Label to show above a sticker used to reply to a message",
-            ),
-            attributes: [.font: UIFont.dynamicTypeSubheadline.semibold()],
-        )
-        replyLabel.attributedText = SignalSymbol.reply.attributedString(dynamicTypeBaseSize: 15) + " " + replyText
-        replyLabel.textColor = UIColor.Signal.secondaryLabel
-
-        let sendButton = UIButton(configuration: .tintedRoundMedia(
-            image: UIImage(imageLiteralResourceName: "arrow-up"),
-        ))
-
-        let dismissButton = UIButton(configuration: .roundMedia(
-            image: UIImage(imageLiteralResourceName: "x-26"),
-            size: 24,
-        ))
-
-        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
-        addSubview(blurView)
-        blurView.autoPinEdgesToSuperviewEdges()
-
-        blurView.contentView.addSubview(stickerView)
-        stickerView.autoSetDimensions(to: CGSize(square: 200))
-        stickerView.autoCenterInSuperview()
-
-        blurView.contentView.addSubview(replyLabel)
-        replyLabel.autoAlignAxis(.vertical, toSameAxisOf: stickerView)
-        replyLabel.autoPinEdge(.bottom, to: .top, of: stickerView, withOffset: -16)
-
-        blurView.contentView.addSubview(sendButton)
-        sendButton.autoSetDimensions(to: CGSize(square: 44))
-        sendButton.autoPinEdge(toSuperviewEdge: .top, withInset: 24)
-        sendButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 24)
-
-        sendButton.addAction(UIAction { [weak self] _ in
-            self?.handleSendQuoteReplySticker(stickerMetadata: stickerMetadata)
-        }, for: .touchUpInside)
-
-        blurView.contentView.addSubview(dismissButton)
-        dismissButton.autoSetDimensions(to: CGSize(square: 44))
-        dismissButton.autoPinEdge(toSuperviewEdge: .top, withInset: 24)
-        dismissButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 24)
-
-        dismissButton.addAction(UIAction { [weak self] _ in
-            self?.handleQuoteReplyPreviewDismiss()
-        }, for: .touchUpInside)
-
-        quoteReplyPreviewView = blurView
-        quoteReplyPreviewStickerInfo = stickerMetadata.stickerInfo
-    }
-
-    private func handleQuoteReplyPreviewDismiss() {
-        hideQuoteReplyPreview()
-    }
-
-    private func handleSendQuoteReplySticker(stickerMetadata: any StickerMetadata) {
         delegate?.didSelectSticker(stickerMetadata)
     }
 }
@@ -451,8 +362,6 @@ private protocol StickerPickerPageViewDelegate: StickerPickerDelegate {
     func setItems(_ items: [StickerHorizontalListViewItem])
 
     func updateSelections(scrollToSelectedItem: Bool)
-
-    func didRequestQuoteReplyPreview(for stickerMetadata: any StickerMetadata, stickerView: UIView)
 }
 
 private class StickerPickerPageView: UIView {
@@ -936,10 +845,6 @@ extension StickerPickerPageView: UIScrollViewDelegate {
 // MARK: StickerPackCollectionViewDelegate
 
 extension StickerPickerPageView: StickerPackCollectionViewDelegate {
-    func shouldShowStickerPreview() -> Bool {
-        delegate?.shouldShowStickerPreview() ?? false
-    }
-
     func didSelectSticker(_ stickerMetadata: any StickerMetadata) {
         delegate?.didSelectSticker(stickerMetadata)
     }
@@ -950,9 +855,5 @@ extension StickerPickerPageView: StickerPackCollectionViewDelegate {
 
     func stickerPreviewHasOverlay() -> Bool {
         return true
-    }
-
-    func didRequestQuoteReplyPreview(for stickerMetadata: any StickerMetadata, stickerView: UIView) {
-        delegate?.didRequestQuoteReplyPreview(for: stickerMetadata, stickerView: stickerView)
     }
 }
