@@ -17,12 +17,6 @@ ENV['RINGRTC_PREBUILD_CHECKSUM'] = 'eb2579b7507ad206bec3b582e6d289793c77cdf23937
 pod 'SignalRingRTC', git: 'https://github.com/signalapp/ringrtc', tag: 'v2.73.0', inhibit_warnings: true
 # pod 'SignalRingRTC', path: '../ringrtc', testspecs: ["Tests"]
 
-pod 'GRDB.swift/SQLCipher'
-# pod 'GRDB.swift/SQLCipher', path: '../GRDB.swift'
-
-pod 'SQLCipher', git: 'https://github.com/signalapp/sqlcipher.git', tag: 'v4.6.1-f_barrierfsync'
-# pod 'SQLCipher', path: '../sqlcipher'
-
 ###
 # third party pods
 ####

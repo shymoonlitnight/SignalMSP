@@ -1,5 +1,5 @@
 {
-  "originHash" : "839c78cdc1a5cf8c02174775daea30881df869233b0c616be3413eb726995c9c",
+  "originHash" : "765333fa829b0ebfe5c38786f765f466ff8e43424eb550254d702f1052a67b1d",
   "pins" : [
     {
       "identity" : "bonmot",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "80ada1f753b0d53d9b57c465936a7c4169375002",
         "version" : "3.7.4"
+      }
+    },
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/signalapp/GRDB.swift",
+      "state" : {
+        "revision" : "cec18428f1a3acdab1185b0031623e57b1fe2a0d",
+        "version" : "5.26.0-signal.1"
       }
     },
     {
@@ -80,6 +89,15 @@
       "state" : {
         "revision" : "f534cfe830a7807ecc3d0332127a502426cfa067",
         "version" : "0.14.6"
+      }
+    },
+    {
+      "identity" : "sqlcipher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/signalapp/sqlcipher",
+      "state" : {
+        "revision" : "89086bf48830c5e6c780ca09561f2e8342277e37",
+        "version" : "4.6.1-signal.1"
       }
     },
     {

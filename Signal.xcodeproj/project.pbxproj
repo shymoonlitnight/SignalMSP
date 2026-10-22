@@ -858,6 +858,7 @@
 		509DC8DA2BCED88600375E86 /* RemoteMegaphoneFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DD85D28EE53B00089333E /* RemoteMegaphoneFetcher.swift */; };
 		50A0B3D0301015050053607C /* HydratedMessageBodyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A0B3CF301015050053607C /* HydratedMessageBodyTest.swift */; };
 		50A156C72FA11AA8008FE086 /* Fingerprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A156C62FA11AA8008FE086 /* Fingerprint.swift */; };
+		50A1B2C42E26F02B00A03829 /* HttpSecurityPolicyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */; };
 		50A1CE3A2A00931900730C40 /* DebugLogger+MainApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A1CE392A00931900730C40 /* DebugLogger+MainApp.swift */; };
 		50A26F1A2FB6991F000A2D8B /* SVR2PinHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A26F192FB6991F000A2D8B /* SVR2PinHash.swift */; };
 		50A40ED32B88005A0060C5A5 /* DisplayName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A40ED22B88005A0060C5A5 /* DisplayName.swift */; };
@@ -994,9 +995,19 @@
 		636E63623089304B008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E63613089304B008905CF /* MobileCoinCore */; };
 		636E636430893053008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E636330893053008905CF /* MobileCoinCore */; };
 		636E636630893058008905CF /* MobileCoinCore in Frameworks */ = {isa = PBXBuildFile; productRef = 636E636530893058008905CF /* MobileCoinCore */; };
+		638C27C1308A51C100EE57E0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 638C27C0308A51C100EE57E0 /* GRDB */; };
+		638C27C3308A51D200EE57E0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 638C27C2308A51D200EE57E0 /* GRDB */; };
+		638C27C5308A51DD00EE57E0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 638C27C4308A51DD00EE57E0 /* GRDB */; };
+		638C27C7308A51E500EE57E0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 638C27C6308A51E500EE57E0 /* GRDB */; };
+		638C27C9308A51ED00EE57E0 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 638C27C8308A51ED00EE57E0 /* GRDB */; };
 		63C24D4D306AF7A100D4C167 /* ContactSharingPermissionPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D4C306AF7A100D4C167 /* ContactSharingPermissionPromptView.swift */; };
 		63C24D53306C50FD00D4C167 /* ContactShareAvatarFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D52306C50FD00D4C167 /* ContactShareAvatarFieldTests.swift */; };
 		63C24D55306C510200D4C167 /* ContactShareAvatarPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C24D54306C510200D4C167 /* ContactShareAvatarPickerSheet.swift */; };
+		63DAB298308A59A000764C31 /* SQLCipher in Frameworks */ = {isa = PBXBuildFile; productRef = 63DAB297308A59A000764C31 /* SQLCipher */; };
+		63DAB29A308A59AD00764C31 /* SQLCipher in Frameworks */ = {isa = PBXBuildFile; productRef = 63DAB299308A59AD00764C31 /* SQLCipher */; };
+		63DAB29C308A5DEC00764C31 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 63DAB29B308A5DEC00764C31 /* GRDB */; };
+		63DAB29E308A5DF800764C31 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 63DAB29D308A5DF800764C31 /* GRDB */; };
+		63DAB2A0308A5E0000764C31 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 63DAB29F308A5E0000764C31 /* GRDB */; };
 		63DC45303079AF9100119464 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 63DC452F3079AF9100119464 /* Lottie */; };
 		63DC45323079AF9C00119464 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 63DC45313079AF9C00119464 /* Lottie */; };
 		63DC45353079BACE00119464 /* PureLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 63DC45343079BACE00119464 /* PureLayout */; };
@@ -3786,7 +3797,6 @@
 		F9426241289B1B5500460798 /* MessageSenderJobRecordTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D0289B1B5400460798 /* MessageSenderJobRecordTest.swift */; };
 		F9426242289B1B5500460798 /* OWSURLBuilderUtilTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D1289B1B5400460798 /* OWSURLBuilderUtilTest.swift */; };
 		F9426243289B1B5500460798 /* HttpHeadersTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D2289B1B5400460798 /* HttpHeadersTest.swift */; };
-		50A1B2C42E26F02B00A03829 /* HttpSecurityPolicyTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */; };
 		F9426244289B1B5500460798 /* OWSRequestFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D3289B1B5400460798 /* OWSRequestFactoryTest.swift */; };
 		F9426246289B1B5500460798 /* MessageSendJobQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D5289B1B5400460798 /* MessageSendJobQueueTest.swift */; };
 		F9426248289B1B5500460798 /* OWSIdentityManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94261D9289B1B5400460798 /* OWSIdentityManagerTests.swift */; };
@@ -5361,6 +5371,7 @@
 		509BBF7928CA556700F4D8A0 /* Data+SSKTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+SSKTest.swift"; sourceTree = "<group>"; };
 		50A0B3CF301015050053607C /* HydratedMessageBodyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HydratedMessageBodyTest.swift; sourceTree = "<group>"; };
 		50A156C62FA11AA8008FE086 /* Fingerprint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fingerprint.swift; sourceTree = "<group>"; };
+		50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSecurityPolicyTest.swift; sourceTree = "<group>"; };
 		50A1CE372A00894C00730C40 /* DebugLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogger.swift; sourceTree = "<group>"; };
 		50A1CE392A00931900730C40 /* DebugLogger+MainApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DebugLogger+MainApp.swift"; sourceTree = "<group>"; };
 		50A26F192FB6991F000A2D8B /* SVR2PinHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SVR2PinHash.swift; sourceTree = "<group>"; };
@@ -8276,7 +8287,6 @@
 		F94261D0289B1B5400460798 /* MessageSenderJobRecordTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSenderJobRecordTest.swift; sourceTree = "<group>"; };
 		F94261D1289B1B5400460798 /* OWSURLBuilderUtilTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OWSURLBuilderUtilTest.swift; sourceTree = "<group>"; };
 		F94261D2289B1B5400460798 /* HttpHeadersTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpHeadersTest.swift; sourceTree = "<group>"; };
-		50A1B2C32E26F02B00A03829 /* HttpSecurityPolicyTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpSecurityPolicyTest.swift; sourceTree = "<group>"; };
 		F94261D3289B1B5400460798 /* OWSRequestFactoryTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OWSRequestFactoryTest.swift; sourceTree = "<group>"; };
 		F94261D4289B1B5400460798 /* HTMLMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLMetadataTests.swift; sourceTree = "<group>"; };
 		F94261D5289B1B5400460798 /* MessageSendJobQueueTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageSendJobQueueTest.swift; sourceTree = "<group>"; };
@@ -8778,6 +8788,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				631CB533307EDB2D00EA5851 /* CocoaLumberjack in Frameworks */,
+				638C27C3308A51D200EE57E0 /* GRDB in Frameworks */,
 				342FFEA227245A07000AC89F /* Intents.framework in Frameworks */,
 				63DC4561307EA32800119464 /* libPhoneNumber in Frameworks */,
 				63DC4552307E7D7700119464 /* libwebp in Frameworks */,
@@ -8794,6 +8805,7 @@
 			files = (
 				632BFEC830785960005399C0 /* BonMot in Frameworks */,
 				631CB52F307EDB1400EA5851 /* CocoaLumberjack in Frameworks */,
+				638C27C7308A51E500EE57E0 /* GRDB in Frameworks */,
 				63DC455F307EA31400119464 /* libPhoneNumber in Frameworks */,
 				63DC4550307E7D7000119464 /* libwebp in Frameworks */,
 				631CB51F307EDA1C00EA5851 /* Logging in Frameworks */,
@@ -8811,6 +8823,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63DAB2A0308A5E0000764C31 /* GRDB in Frameworks */,
 				EC7A9D369AF9724FEEE5B653 /* Pods_SignalUITests.framework in Frameworks */,
 				34A954B2271A471300B05242 /* SignalUI.framework in Frameworks */,
 			);
@@ -8821,6 +8834,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				631CB535307EDB3500EA5851 /* CocoaLumberjack in Frameworks */,
+				638C27C5308A51DD00EE57E0 /* GRDB in Frameworks */,
 				63DC4563307EA45C00119464 /* libPhoneNumber in Frameworks */,
 				63DC4558307E7DBB00119464 /* libwebp in Frameworks */,
 				63DC45393079BCC100119464 /* PureLayout in Frameworks */,
@@ -8847,6 +8861,7 @@
 				D2179CFC16BB0B3A0006F3AB /* CoreTelephony.framework in Frameworks */,
 				C109A87C2FDC906F0065225E /* DeviceDiscoveryUI.framework in Frameworks */,
 				D221A090169C9E5E00537ABF /* Foundation.framework in Frameworks */,
+				638C27C1308A51C100EE57E0 /* GRDB in Frameworks */,
 				45847E871E4283C30080EAB3 /* Intents.framework in Frameworks */,
 				63DC4565307EA5DA00119464 /* libPhoneNumber in Frameworks */,
 				63DC453F307E7CAA00119464 /* libwebp in Frameworks */,
@@ -8867,6 +8882,7 @@
 				A163E8AB16F3F6AA0094D68B /* Security.framework in Frameworks */,
 				F9C5C8AA289451B900548EEE /* SignalServiceKit.framework in Frameworks */,
 				34A954BD271A471300B05242 /* SignalUI.framework in Frameworks */,
+				63DAB29A308A59AD00764C31 /* SQLCipher in Frameworks */,
 				4CC1ECF9211A47CE00CC13BE /* StoreKit.framework in Frameworks */,
 				631CB526307EDA9900EA5851 /* SwiftProtobuf in Frameworks */,
 				D2179CFE16BB0B480006F3AB /* SystemConfiguration.framework in Frameworks */,
@@ -8886,6 +8902,7 @@
 				A1A018531805C60D00A052A6 /* CoreGraphics.framework in Frameworks */,
 				D202868316DBE0FC009068E9 /* CoreTelephony.framework in Frameworks */,
 				D221A0AE169C9E5F00537ABF /* Foundation.framework in Frameworks */,
+				63DAB29C308A5DEC00764C31 /* GRDB in Frameworks */,
 				A10FDF79184FB4BB007FF963 /* MediaPlayer.framework in Frameworks */,
 				E1368CBE18A1C36B00109378 /* MessageUI.framework in Frameworks */,
 				636E636630893058008905CF /* MobileCoinCore in Frameworks */,
@@ -8905,11 +8922,13 @@
 			files = (
 				63DC4567307EC00A00119464 /* blurhash in Frameworks */,
 				631CB52D307EDB0000EA5851 /* CocoaLumberjack in Frameworks */,
+				638C27C9308A51ED00EE57E0 /* GRDB in Frameworks */,
 				63DC455D307EA24D00119464 /* libPhoneNumber in Frameworks */,
 				63DC4554307E7D8700119464 /* libwebp in Frameworks */,
 				C26296B4BDCEDADBDA01DDD2 /* Pods_SignalServiceKit.framework in Frameworks */,
 				63DC4544307E7D0300119464 /* SDWebImage in Frameworks */,
 				63DC4546307E7D0300119464 /* SDWebImageWebPCoder in Frameworks */,
+				63DAB298308A59A000764C31 /* SQLCipher in Frameworks */,
 				631CB522307EDA7800EA5851 /* SwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8919,6 +8938,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				631CB53F307FEFD600EA5851 /* CocoaLumberjack in Frameworks */,
+				63DAB29E308A5DF800764C31 /* GRDB in Frameworks */,
 				259D4DF2486F14DB112B3999 /* Pods_SignalServiceKitTests.framework in Frameworks */,
 				F9C5C89F289451B900548EEE /* SignalServiceKit.framework in Frameworks */,
 				631CB541307FEFDB00EA5851 /* SwiftProtobuf in Frameworks */,
@@ -16505,6 +16525,9 @@
 				7254656C2BA0401700EABFD2 /* PBXTargetDependency */,
 			);
 			name = SignalNSE;
+			packageProductDependencies = (
+				638C27C2308A51D200EE57E0 /* GRDB */,
+			);
 			productName = SignalNSE;
 			productReference = 342FFE8827245850000AC89F /* SignalNSE.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -16525,6 +16548,9 @@
 				7254656E2BA0401E00EABFD2 /* PBXTargetDependency */,
 			);
 			name = SignalUI;
+			packageProductDependencies = (
+				638C27C6308A51E500EE57E0 /* GRDB */,
+			);
 			productName = SignalUI;
 			productReference = 34A954A8271A471200B05242 /* SignalUI.framework */;
 			productType = "com.apple.product-type.framework";
@@ -16545,6 +16571,9 @@
 				34A954B6271A471300B05242 /* PBXTargetDependency */,
 			);
 			name = SignalUITests;
+			packageProductDependencies = (
+				63DAB29F308A5E0000764C31 /* GRDB */,
+			);
 			productName = SignalUITests;
 			productReference = 34A954B1271A471300B05242 /* SignalUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -16564,6 +16593,9 @@
 				34A954D1271B4D3C00B05242 /* PBXTargetDependency */,
 			);
 			name = SignalShareExtension;
+			packageProductDependencies = (
+				638C27C4308A51DD00EE57E0 /* GRDB */,
+			);
 			productName = SignalShareExtension;
 			productReference = 453518681FC635DD00210559 /* SignalShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -16590,6 +16622,10 @@
 				F9C5C8A9289451B900548EEE /* PBXTargetDependency */,
 			);
 			name = Signal;
+			packageProductDependencies = (
+				638C27C0308A51C100EE57E0 /* GRDB */,
+				63DAB299308A59AD00764C31 /* SQLCipher */,
+			);
 			productName = RedPhone;
 			productReference = D221A089169C9E5E00537ABF /* Signal.app */;
 			productType = "com.apple.product-type.application";
@@ -16611,6 +16647,9 @@
 				B6AFCEBB19A93DA60098CFCB /* PBXTargetDependency */,
 			);
 			name = SignalTests;
+			packageProductDependencies = (
+				63DAB29B308A5DEC00764C31 /* GRDB */,
+			);
 			productName = RedPhoneTests;
 			productReference = D221A0AA169C9E5F00537ABF /* SignalTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -16630,6 +16669,10 @@
 			dependencies = (
 			);
 			name = SignalServiceKit;
+			packageProductDependencies = (
+				638C27C8308A51ED00EE57E0 /* GRDB */,
+				63DAB297308A59A000764C31 /* SQLCipher */,
+			);
 			productName = SignalServiceKit;
 			productReference = F9C5C897289451B900548EEE /* SignalServiceKit.framework */;
 			productType = "com.apple.product-type.framework";
@@ -16650,6 +16693,9 @@
 				F9C5C8A3289451B900548EEE /* PBXTargetDependency */,
 			);
 			name = SignalServiceKitTests;
+			packageProductDependencies = (
+				63DAB29D308A5DF800764C31 /* GRDB */,
+			);
 			productName = SignalServiceKitTests;
 			productReference = F9C5C89E289451B900548EEE /* SignalServiceKitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -16814,6 +16860,8 @@
 				631CB520307EDA7800EA5851 /* XCRemoteSwiftPackageReference "swift-protobuf" */,
 				631CB52B307EDB0000EA5851 /* XCRemoteSwiftPackageReference "cocoalumberjack" */,
 				636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */,
+				638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */,
+				63DAB296308A59A000764C31 /* XCRemoteSwiftPackageReference "sqlcipher" */,
 			);
 			productRefGroup = D221A08A169C9E5E00537ABF /* Products */;
 			projectDirPath = "";
@@ -18351,17 +18399,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Signal/Pods-Signal-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
 				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
@@ -18377,17 +18421,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SignalTests/Pods-SignalTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GRDB.swift/GRDB.framework",
 				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
-				"${BUILT_PRODUCTS_DIR}/SQLCipher/SQLCipher.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRDB.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLCipher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
@@ -23726,6 +23766,22 @@
 				version = "6.0.3-signal.1";
 			};
 		};
+		638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/signalapp/GRDB.swift";
+			requirement = {
+				kind = exactVersion;
+				version = "5.26.0-signal.1";
+			};
+		};
+		63DAB296308A59A000764C31 /* XCRemoteSwiftPackageReference "sqlcipher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/signalapp/sqlcipher";
+			requirement = {
+				kind = exactVersion;
+				version = "4.6.1-signal.1";
+			};
+		};
 		63DC452E3079AF9100119464 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -23881,6 +23937,56 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */;
 			productName = MobileCoinCore;
+		};
+		638C27C0308A51C100EE57E0 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		638C27C2308A51D200EE57E0 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		638C27C4308A51DD00EE57E0 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		638C27C6308A51E500EE57E0 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		638C27C8308A51ED00EE57E0 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		63DAB297308A59A000764C31 /* SQLCipher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63DAB296308A59A000764C31 /* XCRemoteSwiftPackageReference "sqlcipher" */;
+			productName = SQLCipher;
+		};
+		63DAB299308A59AD00764C31 /* SQLCipher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63DAB296308A59A000764C31 /* XCRemoteSwiftPackageReference "sqlcipher" */;
+			productName = SQLCipher;
+		};
+		63DAB29B308A5DEC00764C31 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		63DAB29D308A5DF800764C31 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
+		63DAB29F308A5E0000764C31 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
 		};
 		63DC452F3079AF9100119464 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
