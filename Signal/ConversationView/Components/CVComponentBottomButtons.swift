@@ -176,7 +176,7 @@ class CVComponentBottomButtons: CVComponentBase, CVComponent {
         }
     }
 
-    private class CVComponentViewBottomButtons: NSObject, CVComponentView {
+    private class CVComponentViewBottomButtons: CVComponentView {
 
         let stackView = ManualStackView(name: "bottomButtons")
         var buttonViews = [CVMessageActionButton]()

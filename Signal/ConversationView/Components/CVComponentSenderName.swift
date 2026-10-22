@@ -219,7 +219,7 @@ class CVComponentSenderName: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewSenderName: NSObject, CVComponentView {
+    class CVComponentViewSenderName: CVComponentView {
 
         fileprivate var label = UILabel()
 

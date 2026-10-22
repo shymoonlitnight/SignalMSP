@@ -90,7 +90,7 @@ class CVComponentQuotedReply: CVComponentBase, CVComponent, CVAccessibilityCompo
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewQuotedReply: NSObject, CVComponentView {
+    class CVComponentViewQuotedReply: CVComponentView {
 
         fileprivate let quotedMessageView = CVQuotedMessageView(name: "quotedMessageView")
 

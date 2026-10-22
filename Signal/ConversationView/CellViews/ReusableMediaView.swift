@@ -85,7 +85,7 @@ class ReusableMediaView {
 
     // MARK: - Ownership
 
-    weak var owner: NSObject?
+    weak var owner: AnyObject?
 
     // MARK: - Initializers
 
@@ -146,7 +146,7 @@ class ReusableMediaView {
             guard let self else {
                 return
             }
-            guard loadOwner == self.owner else {
+            guard loadOwner === self.owner else {
                 // Owner has changed; ignore.
                 return
             }

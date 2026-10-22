@@ -87,7 +87,7 @@ class CVComponentBottomLabel: CVComponentBase, CVComponent {
         return stackMeasurement.measuredSize
     }
 
-    private class CVComponentViewBottomLabel: NSObject, CVComponentView {
+    private class CVComponentViewBottomLabel: CVComponentView {
 
         let stackView = ManualStackView(name: "bottomLabel")
 

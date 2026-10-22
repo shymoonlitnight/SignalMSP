@@ -6,7 +6,7 @@
 import SignalServiceKit
 import SignalUI
 
-class CVRenderItem: NSObject, ConversationViewLayoutItem {
+class CVRenderItem: ConversationViewLayoutItem, Equatable, CustomDebugStringConvertible {
     let itemModel: CVItemModel
 
     var componentState: CVComponentState { itemModel.componentState }
@@ -88,12 +88,18 @@ class CVRenderItem: NSObject, ConversationViewLayoutItem {
         NSStringFromOWSInteractionType(interaction.interactionType)
     }
 
-    override var debugDescription: String {
+    var debugDescription: String {
         "\(interactionUniqueId) \(interactionTypeName)"
     }
 
     var reactionState: InteractionReactionState? {
         componentState.reactions?.reactionState
+    }
+
+    // MARK: - Equatable
+
+    static func ==(lhs: CVRenderItem, rhs: CVRenderItem) -> Bool {
+        lhs.interactionUniqueId == rhs.interactionUniqueId
     }
 
     // MARK: - ConversationViewLayoutItem

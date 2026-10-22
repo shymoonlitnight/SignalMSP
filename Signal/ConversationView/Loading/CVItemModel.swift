@@ -10,7 +10,7 @@ import SignalUI
 // Could be a date header or a unread indicator.
 //
 // All of the state in this class should be immutable.
-class CVItemModel: NSObject {
+class CVItemModel {
     let interaction: TSInteraction
     let thread: TSThread
 
@@ -30,10 +30,6 @@ class CVItemModel: NSObject {
     private let coreState: CVCoreState
     var conversationStyle: ConversationStyle { coreState.conversationStyle }
     var mediaCache: CVMediaCache { coreState.mediaCache }
-
-    var itemModel: CVItemModel {
-        self
-    }
 
     init(
         interaction: TSInteraction,

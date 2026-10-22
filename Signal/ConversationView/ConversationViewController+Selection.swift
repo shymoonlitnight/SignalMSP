@@ -65,7 +65,7 @@ protocol CVSelectionStateDelegate: AnyObject {
 // MARK: -
 
 // In selection mode, represents which interactions (or portions thereof) are currently selected.
-class CVSelectionState: NSObject {
+class CVSelectionState {
     weak var delegate: CVSelectionStateDelegate?
 
     // A map of interaction uniqueId-to-CVSelectionItem.

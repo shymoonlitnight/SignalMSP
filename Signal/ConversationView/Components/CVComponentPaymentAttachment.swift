@@ -338,7 +338,7 @@ class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewPaymentAttachment: NSObject, CVComponentView {
+    class CVComponentViewPaymentAttachment: CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "PaymentAttachment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "PaymentAttachment.vStackView")

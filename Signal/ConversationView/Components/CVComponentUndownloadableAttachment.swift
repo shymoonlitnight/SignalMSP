@@ -210,7 +210,7 @@ class CVComponentUndownloadableAttachment: CVComponentBase, CVComponent {
         return true
     }
 
-    class CVComponentViewUndownloadableAttachment: NSObject, CVComponentView {
+    class CVComponentViewUndownloadableAttachment: CVComponentView {
         fileprivate let stackView = ManualStackView(name: "CVComponentViewAudioAttachment.stackView")
         fileprivate var footerOverlayView: CVComponentView?
 

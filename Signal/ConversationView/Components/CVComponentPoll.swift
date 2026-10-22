@@ -90,7 +90,7 @@ class CVComponentPoll: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewPoll: NSObject, CVComponentView {
+    class CVComponentViewPoll: CVComponentView {
 
         fileprivate var pollView = CVPollView(name: "CVPollView")
 

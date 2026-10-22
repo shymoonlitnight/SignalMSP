@@ -624,7 +624,7 @@ class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewSystemMessage: NSObject, CVComponentView {
+    class CVComponentViewSystemMessage: CVComponentView {
 
         fileprivate let innerHStack = ManualStackView(name: "systemMessage.innerHStack")
         fileprivate let outerHStack = ManualStackView(name: "systemMessage.outerHStack")

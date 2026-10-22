@@ -2189,7 +2189,7 @@ class CVComponentMessage: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewMessage: NSObject, CVComponentView {
+    class CVComponentViewMessage: CVComponentView {
 
         // Contains the cell contents which are arranged horizontally:
         //
@@ -2440,7 +2440,7 @@ class CVComponentMessage: CVComponentBase, CVRootComponent {
 
         // MARK: -
 
-        override init() {
+        init() {
             chatColorView.layoutMargins = .zero
             chatColorView.ensureSubviewsFillBounds = true
 

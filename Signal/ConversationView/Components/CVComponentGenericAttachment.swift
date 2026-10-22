@@ -460,7 +460,7 @@ class CVComponentGenericAttachment: CVComponentBase, CVComponent, CVAccessibilit
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewGenericAttachment: NSObject, CVComponentView {
+    class CVComponentViewGenericAttachment: CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "GenericAttachment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "GenericAttachment.vStackView")

@@ -127,7 +127,7 @@ class CVComponentGiftBadge: CVComponentBase, CVComponent {
         return true
     }
 
-    class CVComponentViewGiftBadge: NSObject, CVComponentView {
+    class CVComponentViewGiftBadge: CVComponentView {
         fileprivate let giftBadgeView = GiftBadgeView(name: "GiftBadgeView")
 
         fileprivate var messageUniqueId: String?

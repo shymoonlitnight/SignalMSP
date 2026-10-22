@@ -6,8 +6,7 @@
 import Lottie
 import SignalServiceKit
 
-class CVMediaCache: NSObject {
-
+class CVMediaCache {
     enum CacheKey: Hashable, Equatable {
         case blurHash(String)
         case attachment(Attachment.IDType)
@@ -30,12 +29,6 @@ class CVMediaCache: NSObject {
 
     private let lottieAnimationCache = LRUCache<String, LottieAnimation>(maxSize: 8, shouldEvacuateInBackground: true)
     private let lottieImageProvider = BundleImageProvider(bundle: .main, searchPath: nil)
-
-    override init() {
-        AssertIsOnMainThread()
-
-        super.init()
-    }
 
     func getMedia(_ key: CacheKey, isAnimated: Bool) -> AnyObject? {
         let cache = isAnimated ? animatedMediaCache : stillMediaCache

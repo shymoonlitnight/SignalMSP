@@ -15,7 +15,7 @@ protocol CVViewStateDelegate: AnyObject {
 // This can be a simple place to hang CVC's mutable view state.
 //
 // These properties should only be accessed on the main thread.
-class CVViewState: NSObject {
+class CVViewState {
     weak var delegate: CVViewStateDelegate?
 
     let threadUniqueId: String

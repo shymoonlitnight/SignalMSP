@@ -217,7 +217,7 @@ class CVComponentSticker: CVComponentBase, CVComponent, CVAccessibilityComponent
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewSticker: NSObject, CVComponentView {
+    class CVComponentViewSticker: CVComponentView {
 
         fileprivate let stackView = ManualStackView(name: "sticker.container")
 
@@ -233,14 +233,14 @@ class CVComponentSticker: CVComponentBase, CVComponent, CVAccessibilityComponent
             if isCellVisible {
                 if
                     let reusableMediaView,
-                    reusableMediaView.owner == self
+                    reusableMediaView.owner === self
                 {
                     reusableMediaView.load()
                 }
             } else {
                 if
                     let reusableMediaView,
-                    reusableMediaView.owner == self
+                    reusableMediaView.owner === self
                 {
                     reusableMediaView.unload()
                 }
@@ -252,12 +252,11 @@ class CVComponentSticker: CVComponentBase, CVComponent, CVAccessibilityComponent
 
             if
                 let reusableMediaView,
-                reusableMediaView.owner == self
+                reusableMediaView.owner === self
             {
                 reusableMediaView.unload()
             }
         }
-
     }
 
     // MARK: - CVAccessibilityComponent

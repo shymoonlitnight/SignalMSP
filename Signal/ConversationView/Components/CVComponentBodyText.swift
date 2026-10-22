@@ -844,7 +844,7 @@ class CVComponentBodyText: CVComponentBase, CVComponent, CVAccessibilityComponen
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewBodyText: NSObject, CVComponentView {
+    class CVComponentViewBodyText: CVComponentView {
 
         weak var componentDelegate: CVComponentDelegate?
 
@@ -860,8 +860,6 @@ class CVComponentBodyText: CVComponentBase, CVComponent, CVAccessibilityComponen
 
         init(componentDelegate: CVComponentDelegate) {
             self.componentDelegate = componentDelegate
-
-            super.init()
         }
 
         func setIsCellVisible(_ isCellVisible: Bool) {

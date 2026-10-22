@@ -8,7 +8,7 @@ import SignalServiceKit
 import SignalUI
 
 // This entity performs a single load.
-class CVLoader: NSObject {
+class CVLoader {
     private let threadUniqueId: String
     private let loadRequest: CVLoadRequest
     private let viewStateSnapshot: CVViewStateSnapshot

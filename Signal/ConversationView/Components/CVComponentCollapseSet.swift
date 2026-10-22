@@ -406,7 +406,7 @@ class CVComponentCollapseSet: CVComponentBase, CVRootComponent {
 
     // MARK: - CVComponentViewCollapseSet
 
-    class CVComponentViewCollapseSet: NSObject, CVComponentView {
+    class CVComponentViewCollapseSet: CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "collapseSet.outerStack")
         fileprivate let innerStack = ManualStackView(name: "collapseSet.innerStack")
@@ -433,8 +433,7 @@ class CVComponentCollapseSet: CVComponentBase, CVRootComponent {
 
         var rootView: UIView { outerStack }
 
-        override init() {
-            super.init()
+        init() {
             chevronContainer.addSubview(chevronLabel)
         }
 

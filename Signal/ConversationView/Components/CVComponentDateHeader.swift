@@ -280,7 +280,7 @@ class CVComponentDateHeader: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewDateHeader: NSObject, CVComponentView {
+    class CVComponentViewDateHeader: CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "dateHeader.outerStackView")
         fileprivate let doubleContentWrapper = ManualLayoutView(name: "dateHeader.doubleContentWrapper")

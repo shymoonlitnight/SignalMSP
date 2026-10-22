@@ -215,7 +215,7 @@ class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewUnreadIndicator: NSObject, CVComponentView {
+    class CVComponentViewUnreadIndicator: CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "unreadIndicator.outerStack")
         fileprivate let innerStack = ManualStackView(name: "unreadIndicator.innerStack")

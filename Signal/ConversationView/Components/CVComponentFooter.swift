@@ -869,7 +869,7 @@ class CVComponentFooter: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewFooter: NSObject, CVComponentView {
+    class CVComponentViewFooter: CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "footer.outerStack")
         fileprivate let innerStack = ManualStackViewWithLayer(name: "footer.innerStack")
@@ -900,7 +900,7 @@ class CVComponentFooter: CVComponentBase, CVComponent {
             outerStack
         }
 
-        override init() {
+        init() {
             timestampLabel.textAlignment = .trailing
         }
 

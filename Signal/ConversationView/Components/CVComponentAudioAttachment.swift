@@ -335,7 +335,7 @@ class CVComponentAudioAttachment:
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewAudioAttachment: NSObject, CVComponentView {
+    class CVComponentViewAudioAttachment: CVComponentView {
 
         fileprivate let stackView = ManualStackView(name: "CVComponentViewAudioAttachment.stackView")
 

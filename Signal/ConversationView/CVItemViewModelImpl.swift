@@ -6,8 +6,9 @@
 import SignalServiceKit
 import SignalUI
 
-class CVComponentStateWrapper: NSObject, CVItemViewModel {
+class CVComponentStateWrapper: CVItemViewModel {
     var interaction: TSInteraction
+
     var componentState: CVComponentState
 
     init(interaction: TSInteraction, componentState: CVComponentState) {
@@ -175,11 +176,8 @@ class CVItemViewModelImpl: CVComponentStateWrapper {
         }
         return bodyMedia.items.contains(where: { $0.attachment.attachment.attachment.asStream() == nil })
     }
-}
 
-// MARK: - Actions
-
-extension CVItemViewModelImpl {
+    // MARK: - Actions
 
     var canEditMessage: Bool {
         return DependenciesBridge.shared.editManager.canShowEditMenu(interaction: interaction, thread: thread)

@@ -316,7 +316,7 @@ class CVComponentArchivedPayment: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    class CVComponentViewArchivedPayment: NSObject, CVComponentView {
+    class CVComponentViewArchivedPayment: CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "ArchivedPayment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "ArchivedPayment.vStackView")
