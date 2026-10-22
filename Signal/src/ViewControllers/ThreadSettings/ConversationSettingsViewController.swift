@@ -197,9 +197,10 @@ class ConversationSettingsViewController: OWSTableViewController2, BadgeCollecti
             // Makes tableView clear so the wallpaper can show through.
             backgroundStyle = .clear
 
-            if Theme.isDarkThemeEnabled {
-                overrideCellBackgroundColor = UIColor(rgbHex: 0x424757, alpha: 1)
-            }
+            overrideCellBackgroundColor = UIColor(
+                light: .Signal.secondaryGroupedBackground, // use default cell bg color for light mode
+                dark: UIColor(rgbHex: 0x424757, alpha: 1),
+            )
 
             view.insertSubview(backgroundContainer, belowSubview: tableView)
             backgroundContainer.autoPinEdgesToSuperviewEdges()

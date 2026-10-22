@@ -149,13 +149,14 @@ public class WallpaperView {
             case .releaseNotesView:
                 let image = UIImage(named: "official-wallpaper")
                 let imageView = UIImageView(image: image)
-                if Theme.isDarkThemeEnabled {
-                    imageView.tintColor = UIColor(rgbHex: 0x272C3C)
-                    imageView.backgroundColor = UIColor(rgbHex: 0x353A49)
-                } else {
-                    imageView.tintColor = UIColor(rgbHex: 0xE3E4E9)
-                    imageView.backgroundColor = UIColor(rgbHex: 0xECEDF4)
-                }
+                imageView.tintColor = UIColor(
+                    light: UIColor(rgbHex: 0xE3E4E9),
+                    dark: UIColor(rgbHex: 0x272C3C),
+                )
+                imageView.backgroundColor = UIColor(
+                    light: UIColor(rgbHex: 0xECEDF4),
+                    dark: UIColor(rgbHex: 0x353A49),
+                )
                 imageView.contentMode = .scaleAspectFill
                 imageView.clipsToBounds = true
                 return imageView
