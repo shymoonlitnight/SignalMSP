@@ -293,13 +293,10 @@ extension ConversationViewController {
         )
         .presentAppropriateSheet(from: self)
     }
-}
 
-// MARK: -
+    // MARK: - ConversationSettingsViewDelegate
 
-extension ConversationViewController: ConversationSettingsViewDelegate {
-
-    public func conversationSettingsDidRequestConversationSearch() {
+    func conversationSettingsDidRequestConversationSearch() {
         uiMode = .search
 
         popAllConversationSettingsViews {
@@ -317,18 +314,16 @@ extension ConversationViewController: ConversationSettingsViewDelegate {
         }
     }
 
-    public func deleteConversation() {
+    func deleteConversation() {
         threadActionProviderDelegate?.deleteThreadWithConfirmation(threadViewModel: threadViewModel)
     }
 
-    public func toggleConversationArchived() {
+    func toggleConversationArchived() {
         threadActionProviderDelegate?.toggleThreadIsArchived(threadViewModel: threadViewModel)
     }
-}
 
-// MARK: - Preview / 3D Touch / UIContextMenu Methods
+    // MARK: - Preview / 3D Touch / UIContextMenu Methods
 
-public extension ConversationViewController {
     var isInPreviewPlatter: Bool {
         get { viewState.isInPreviewPlatter }
         set {
@@ -347,12 +342,10 @@ public extension ConversationViewController {
         isInPreviewPlatter = true
         actionOnOpen = .none
     }
-}
 
-// MARK: - Timers
+    // MARK: - Timers
 
-extension ConversationViewController {
-    public func startReadTimer(caller: String = #function) {
+    func startReadTimer(caller: String = #function) {
         AssertIsOnMainThread()
 
         readTimer?.invalidate()
@@ -381,7 +374,7 @@ extension ConversationViewController {
         markVisibleMessagesAsRead()
     }
 
-    public func cancelReadTimer(caller: String = #function) {
+    func cancelReadTimer(caller: String = #function) {
         AssertIsOnMainThread()
 
         readTimer?.invalidate()
@@ -454,7 +447,7 @@ extension ConversationViewController {
         self.lastSortIdMarkedRead = lastSortIdMarkedRead
     }
 
-    public func markVisibleMessagesAsRead(caller: String = #function) {
+    func markVisibleMessagesAsRead(caller: String = #function) {
         AssertIsOnMainThread()
 
         guard

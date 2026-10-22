@@ -4,17 +4,17 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
+class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
 
-    public var componentKey: CVComponentKey { .typingIndicator }
+    var componentKey: CVComponentKey { .typingIndicator }
 
-    public var cellReuseIdentifier: CVCellReuseIdentifier {
+    var cellReuseIdentifier: CVCellReuseIdentifier {
         CVCellReuseIdentifier.typingIndicator
     }
 
-    public let isDedicatedCell = true
+    let isDedicatedCell = true
 
     private let typingIndicator: CVComponentState.TypingIndicator
 
@@ -27,7 +27,7 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func configureCellRootComponent(
+    func configureCellRootComponent(
         cellView: UIView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -43,7 +43,7 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
         )
     }
 
-    override public func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
+    override func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
         guard let componentView = componentView as? CVComponentViewTypingIndicator else {
             owsFailDebug("Unexpected componentView.")
             return nil
@@ -51,11 +51,11 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
         return componentView.wallpaperBlurView
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewTypingIndicator()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -156,7 +156,7 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
     private static let measurementKey_outerStack = "CVComponentTypingIndicator.measurementKey_outerStack"
     private static let measurementKey_innerStack = "CVComponentTypingIndicator.measurementKey_innerStack"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         var outerSubviewInfos = [ManualStackSubviewInfo]()
@@ -197,7 +197,7 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewTypingIndicator: NSObject, CVComponentView {
+    class CVComponentViewTypingIndicator: NSObject, CVComponentView {
 
         fileprivate let outerStackView = ManualStackView(name: "Typing indicator outer")
         fileprivate let innerStackView = ManualStackView(name: "Typing indicator inner")
@@ -222,15 +222,15 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
 
         fileprivate let typingIndicatorView = TypingIndicatorView()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             outerStackView
         }
 
         // MARK: -
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {
+        func setIsCellVisible(_ isCellVisible: Bool) {
             if isCellVisible {
                 typingIndicatorView.startAnimation()
             } else {
@@ -238,7 +238,7 @@ public class CVComponentTypingIndicator: CVComponentBase, CVRootComponent {
             }
         }
 
-        public func reset() {
+        func reset() {
             owsAssertDebug(isDedicatedCellView)
 
             outerStackView.reset()

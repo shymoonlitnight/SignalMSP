@@ -4,9 +4,9 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVContactShareView: ManualStackView {
+class CVContactShareView: ManualStackView {
 
     struct State: Equatable {
         let contactShare: ContactShareViewModel
@@ -127,7 +127,7 @@ public class CVContactShareView: ManualStackView {
         return outerStackMeasurement.measuredSize
     }
 
-    override public func reset() {
+    override func reset() {
         super.reset()
 
         labelStack.reset()

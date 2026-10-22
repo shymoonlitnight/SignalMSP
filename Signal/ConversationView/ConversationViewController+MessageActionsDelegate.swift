@@ -5,9 +5,8 @@
 
 import AVFAudio
 import LibSignalClient
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
-public import UIKit
 
 extension ConversationViewController: MessageActionsDelegate {
     func messageActionsEditItem(_ itemViewModel: CVItemViewModelImpl) {
@@ -178,7 +177,7 @@ extension ConversationViewController: MessageActionsDelegate {
         populateReplyForMessage(itemViewModel)
     }
 
-    public func populateReplyForMessage(_ itemViewModel: CVItemViewModelImpl) {
+    func populateReplyForMessage(_ itemViewModel: CVItemViewModelImpl) {
         AssertIsOnMainThread()
 
         guard let inputToolbar else {
@@ -502,7 +501,7 @@ extension ConversationViewController: MessageActionsDelegate {
         }
     }
 
-    public func handleActionUnpin(message: TSMessage, modalDelegate: UIViewController) {
+    func handleActionUnpin(message: TSMessage, modalDelegate: UIViewController) {
         let pinnedMessageManager = DependenciesBridge.shared.pinnedMessageManager
         let db = DependenciesBridge.shared.db
 
@@ -533,7 +532,7 @@ extension ConversationViewController: MessageActionsDelegate {
         }
     }
 
-    public func handleActionUnpinAsync(message: TSMessage) async {
+    func handleActionUnpinAsync(message: TSMessage) async {
         let pinnedMessageManager = DependenciesBridge.shared.pinnedMessageManager
         let db = DependenciesBridge.shared.db
 

@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
-import UIKit
 
 enum CVCBottomViewType: Equatable {
     // For perf reasons, we don't use a bottom view until
@@ -31,11 +29,9 @@ protocol ConversationBottomBar: UIView {
     var shouldAttachToKeyboardLayoutGuide: Bool { get }
 }
 
-// MARK: -
+extension ConversationViewController {
 
-public extension ConversationViewController {
-
-    internal var bottomViewType: CVCBottomViewType {
+    var bottomViewType: CVCBottomViewType {
         get { viewState.bottomViewType }
         set {
             // For perf reasons, we avoid adding any "bottom view"

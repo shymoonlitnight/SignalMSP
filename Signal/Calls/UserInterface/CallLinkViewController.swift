@@ -4,10 +4,8 @@
 //
 
 import Combine
-import Foundation
 import SignalServiceKit
 import SignalUI
-import UIKit
 
 final class CallLinkViewController: OWSTableViewController2, DatabaseChangeDelegate, SendMessageDelegate {
     override var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }

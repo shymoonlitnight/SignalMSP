@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public class CVComponentBodyText: CVComponentBase, CVComponent {
+class CVComponentBodyText: CVComponentBase, CVComponent, CVAccessibilityComponent {
 
-    public var componentKey: CVComponentKey { .bodyText }
+    var componentKey: CVComponentKey { .bodyText }
 
     struct State: Equatable {
         let bodyText: CVComponentState.BodyText
@@ -68,7 +68,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         bodyTextState.hasPendingMessageRequest
     }
 
-    public var shouldUseAttributedText: Bool {
+    var shouldUseAttributedText: Bool {
         bodyTextState.shouldUseAttributedText
     }
 
@@ -78,7 +78,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewBodyText(componentDelegate: componentDelegate)
     }
 
@@ -130,7 +130,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
 
     private static let unfairLock = UnfairLock()
 
-    public static func detectItems(
+    static func detectItems(
         text: DisplayableText,
         hasPendingMessageRequest: Bool,
         shouldAllowLinkification: Bool,
@@ -348,7 +348,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         return nil
     }
 
-    public var textMessageFont: UIFont {
+    var textMessageFont: UIFont {
         owsAssertDebug(DisplayableText.kMaxJumbomojiCount == 5)
 
         if let jumbomojiCount = bodyText.jumbomojiCount {
@@ -394,7 +394,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         ]
     }
 
-    public func bodyTextLabelConfig(textViewConfig: CVTextViewConfig) -> CVTextLabel.Config {
+    func bodyTextLabelConfig(textViewConfig: CVTextViewConfig) -> CVTextLabel.Config {
         CVTextLabel.Config(
             text: textViewConfig.text,
             displayConfig: textViewConfig.displayConfiguration,
@@ -410,7 +410,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         )
     }
 
-    public func bodyTextLabelConfig(labelConfig: CVLabelConfig) -> CVTextLabel.Config {
+    func bodyTextLabelConfig(labelConfig: CVLabelConfig) -> CVTextLabel.Config {
         // CVTextLabel requires that attributedString has
         // default attributes applied to the entire string's range.
         let textAlignment: NSTextAlignment = labelConfig.textAlignment ?? .natural
@@ -432,7 +432,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         )
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -475,7 +475,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         }
     }
 
-    public func buildBodyTextLabelConfig() -> CVTextLabel.Config {
+    func buildBodyTextLabelConfig() -> CVTextLabel.Config {
         switch bodyText {
         case .bodyText(let displayableText, _), .oversizeTextUndownloadable(let displayableText), .oversizeTextSkipped(let displayableText), .oversizeTextDownloading(let displayableText):
             return bodyTextLabelConfig(textViewConfig: textConfig(displayableText: displayableText))
@@ -619,7 +619,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         return self.textViewConfig(displayableText: displayableText)
     }
 
-    public static func configureTextView(
+    static func configureTextView(
         _ textView: UITextView,
         interaction: TSInteraction,
         displayableText: DisplayableText,
@@ -721,16 +721,16 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
     private static let measurementKey_maxWidth = "CVComponentBodyText.measurementKey_maxWidth"
 
     // Extract the max width used for measuring for this component.
-    public static func bodyTextMaxWidth(measurementBuilder: CVCellMeasurement.Builder) -> CGFloat? {
+    static func bodyTextMaxWidth(measurementBuilder: CVCellMeasurement.Builder) -> CGFloat? {
         measurementBuilder.getValue(key: measurementKey_maxWidth)
     }
 
     // Extract the overall measurement for this component.
-    public static func bodyTextMeasurement(measurementBuilder: CVCellMeasurement.Builder) -> CVTextLabel.Measurement? {
+    static func bodyTextMeasurement(measurementBuilder: CVCellMeasurement.Builder) -> CVTextLabel.Measurement? {
         measurementBuilder.getObject(key: measurementKey_textMeasurement) as? CVTextLabel.Measurement
     }
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
         let maxWidth = max(maxWidth, 0)
 
@@ -753,7 +753,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -796,7 +796,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
         return false
     }
 
-    override public func findLongPressHandler(
+    override func findLongPressHandler(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -828,7 +828,7 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
 
     fileprivate class BodyTextRootView: ManualStackView {}
 
-    public static func findBodyTextRootView(_ view: UIView) -> UIView? {
+    static func findBodyTextRootView(_ view: UIView) -> UIView? {
         if view is BodyTextRootView {
             return view
         }
@@ -844,17 +844,17 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewBodyText: NSObject, CVComponentView {
+    class CVComponentViewBodyText: NSObject, CVComponentView {
 
-        public weak var componentDelegate: CVComponentDelegate?
+        weak var componentDelegate: CVComponentDelegate?
 
         fileprivate let stackView = BodyTextRootView(name: "bodyText")
 
-        public let bodyTextLabel = CVTextLabel()
+        let bodyTextLabel = CVTextLabel()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             stackView
         }
 
@@ -864,11 +864,11 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
             super.init()
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {
+        func setIsCellVisible(_ isCellVisible: Bool) {
             bodyTextLabel.setIsCellVisible(isCellVisible)
         }
 
-        public func reset() {
+        func reset() {
             if !isDedicatedCellView {
                 stackView.reset()
             }
@@ -876,12 +876,10 @@ public class CVComponentBodyText: CVComponentBase, CVComponent {
             bodyTextLabel.reset()
         }
     }
-}
 
-// MARK: -
+    // MARK: - CVAccessibilityComponent
 
-extension CVComponentBodyText: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         switch bodyText {
         case .bodyText(let displayableText, _), .oversizeTextUndownloadable(let displayableText), .oversizeTextSkipped(let displayableText), .oversizeTextDownloading(let displayableText):
             // NOTE: we use the full text.

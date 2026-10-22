@@ -6,8 +6,6 @@
 import SignalServiceKit
 import SignalUI
 
-// MARK: -
-
 class LinkPreviewGroupLink: LinkPreviewState {
     private let linkPreview: OWSLinkPreview
     let linkType: LinkPreviewLinkType

@@ -7,7 +7,7 @@ import Foundation
 import LibSignalClient
 import MessageUI
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
 // This extension reproduces some of the UITextView link interaction behavior.
 // This is how UITextView behaves:
@@ -29,7 +29,7 @@ public import SignalUI
 //   * long press - show email address + new email message / facetime audio / facetime video / send message / add to contacts / copy email.
 extension ConversationViewController {
 
-    public func didTapBodyTextItem(_ item: CVTextLabel.Item) {
+    func didTapBodyTextItem(_ item: CVTextLabel.Item) {
         AssertIsOnMainThread()
 
         guard DependenciesBridge.shared.tsAccountManager.registrationStateWithMaybeSneakyTransaction.isRegistered else {
@@ -72,7 +72,7 @@ extension ConversationViewController {
         }
     }
 
-    public func didLongPressBodyTextItem(_ item: CVTextLabel.Item) {
+    func didLongPressBodyTextItem(_ item: CVTextLabel.Item) {
         AssertIsOnMainThread()
 
         guard DependenciesBridge.shared.tsAccountManager.registrationStateWithMaybeSneakyTransaction.isRegistered else {

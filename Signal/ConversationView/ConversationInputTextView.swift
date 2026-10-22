@@ -5,23 +5,18 @@
 
 import SignalServiceKit
 import SignalUI
-public import UIKit
 
-public protocol ConversationInputTextViewDelegate: AnyObject {
+protocol ConversationInputTextViewDelegate: AnyObject {
     func didAttemptAttachmentPaste()
     func didAttemptAccountEntropyPoolPaste(completePaste: @escaping () -> Void)
     func inputTextViewSendMessagePressed()
     func textViewDidChange(_ textView: UITextView)
 }
 
-// MARK: -
-
 protocol ConversationTextViewToolbarDelegate: AnyObject {
     func textViewDidChange(_ textView: UITextView)
     func textViewDidChangeSelection(_ textView: UITextView)
 }
-
-// MARK: -
 
 class ConversationInputTextView: BodyRangesTextView {
 

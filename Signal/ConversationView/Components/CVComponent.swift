@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 // Represents some _renderable_ portion of an Conversation View item.
 // It could be the entire item or some part thereof.
-public protocol CVComponent: AnyObject {
+protocol CVComponent: AnyObject {
 
     var componentKey: CVComponentKey { get }
 
@@ -90,7 +90,7 @@ public protocol CVComponent: AnyObject {
 
 // MARK: -
 
-public protocol CVRootComponent: CVComponent {
+protocol CVRootComponent: CVComponent {
 
     var componentState: CVComponentState { get }
 
@@ -109,7 +109,7 @@ public protocol CVRootComponent: CVComponent {
 
 // MARK: -
 
-public protocol CVAccessibilityComponent: CVComponent {
+protocol CVAccessibilityComponent: CVComponent {
     var accessibilityDescription: String { get }
 
     // TODO: We should have a getter for "accessiblity actions",
@@ -118,14 +118,14 @@ public protocol CVAccessibilityComponent: CVComponent {
 
 // MARK: -
 
-public class CVComponentBase: NSObject {
-    public let itemModel: CVItemModel
+class CVComponentBase: NSObject, CVNode {
+    let itemModel: CVItemModel
 
     init(itemModel: CVItemModel) {
         self.itemModel = itemModel
     }
 
-    public func handleTap(
+    func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -134,7 +134,7 @@ public class CVComponentBase: NSObject {
         return false
     }
 
-    public func canHandleDoubleTap(
+    func canHandleDoubleTap(
         sender: UIGestureRecognizer,
         componentDelegate: any CVComponentDelegate,
         renderItem: CVRenderItem,
@@ -142,7 +142,7 @@ public class CVComponentBase: NSObject {
         return false
     }
 
-    public func handleDoubleTap(
+    func handleDoubleTap(
         sender: UIGestureRecognizer,
         componentDelegate: any CVComponentDelegate,
         renderItem: CVRenderItem,
@@ -150,7 +150,7 @@ public class CVComponentBase: NSObject {
         false
     }
 
-    public func findLongPressHandler(
+    func findLongPressHandler(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -159,7 +159,7 @@ public class CVComponentBase: NSObject {
         return nil
     }
 
-    public func findPanHandler(
+    func findPanHandler(
         sender: UIPanGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -169,7 +169,7 @@ public class CVComponentBase: NSObject {
         return nil
     }
 
-    public func startPanGesture(
+    func startPanGesture(
         sender: UIPanGestureRecognizer,
         panHandler: CVPanHandler,
         componentDelegate: CVComponentDelegate,
@@ -180,7 +180,7 @@ public class CVComponentBase: NSObject {
         owsFailDebug("No pan in progress.")
     }
 
-    public func handlePanGesture(
+    func handlePanGesture(
         sender: UIPanGestureRecognizer,
         panHandler: CVPanHandler,
         componentDelegate: CVComponentDelegate,
@@ -191,15 +191,15 @@ public class CVComponentBase: NSObject {
         owsFailDebug("No pan in progress.")
     }
 
-    public func cellWillBecomeVisible(componentDelegate: CVComponentDelegate) {
+    func cellWillBecomeVisible(componentDelegate: CVComponentDelegate) {
         // Do nothing.
     }
 
-    public func contextMenuAccessoryViews(componentView: CVComponentView) -> [ContextMenuTargetedPreviewAccessory]? {
+    func contextMenuAccessoryViews(componentView: CVComponentView) -> [ContextMenuTargetedPreviewAccessory]? {
         return nil
     }
 
-    public func apply(
+    func apply(
         layoutAttributes: CVCollectionViewLayoutAttributes,
         componentView: CVComponentView,
     ) {
@@ -213,7 +213,7 @@ public class CVComponentBase: NSObject {
 
     // MARK: - Root Components
 
-    public static func configureCellRootComponent(
+    static func configureCellRootComponent(
         rootComponent: CVRootComponent,
         cellView: UIView,
         cellMeasurement: CVCellMeasurement,
@@ -240,11 +240,11 @@ public class CVComponentBase: NSObject {
 
     // MARK: -
 
-    public func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
+    func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
         nil
     }
 
-    public func configureWallpaperBlurView(
+    func configureWallpaperBlurView(
         wallpaperBlurView: CVWallpaperBlurView,
         componentDelegate: CVComponentDelegate,
         bubbleConfig: BubbleConfiguration,
@@ -256,7 +256,7 @@ public class CVComponentBase: NSObject {
         )
     }
 
-    public static func configureWallpaperBlurView(
+    static func configureWallpaperBlurView(
         wallpaperBlurView: CVWallpaperBlurView,
         componentDelegate: CVComponentDelegate,
         bubbleConfig: BubbleConfiguration,
@@ -269,7 +269,7 @@ public class CVComponentBase: NSObject {
         )
     }
 
-    public func updateScrollingContent(componentView: CVComponentView) {
+    func updateScrollingContent(componentView: CVComponentView) {
         updateWallpaperBlur(componentView: componentView)
     }
 
@@ -279,25 +279,23 @@ public class CVComponentBase: NSObject {
         }
         wallpaperBlurView.updateIfNecessary()
     }
-}
 
-// MARK: -
+    // MARK: - CVNode
 
-extension CVComponentBase: CVNode {
-    public var thread: TSThread { itemModel.thread }
-    public var interaction: TSInteraction { itemModel.interaction }
-    public var componentState: CVComponentState { itemModel.componentState }
-    public var itemViewState: CVItemViewState { itemModel.itemViewState }
-    public var messageCellType: CVMessageCellType { componentState.messageCellType }
-    public var conversationStyle: ConversationStyle { itemModel.conversationStyle }
-    public var mediaCache: CVMediaCache { itemModel.mediaCache }
-    public var isDarkThemeEnabled: Bool { conversationStyle.isDarkThemeEnabled }
+    var thread: TSThread { itemModel.thread }
+    var interaction: TSInteraction { itemModel.interaction }
+    var componentState: CVComponentState { itemModel.componentState }
+    var itemViewState: CVItemViewState { itemModel.itemViewState }
+    var messageCellType: CVMessageCellType { componentState.messageCellType }
+    var conversationStyle: ConversationStyle { itemModel.conversationStyle }
+    var mediaCache: CVMediaCache { itemModel.mediaCache }
+    var isDarkThemeEnabled: Bool { conversationStyle.isDarkThemeEnabled }
 
-    public var isGroupThread: Bool {
+    var isGroupThread: Bool {
         thread.isGroupThread
     }
 
-    public var isBorderless: Bool {
+    var isBorderless: Bool {
         componentState.isBorderlessJumbomojiMessage
             || componentState.isBorderlessBodyMediaMessage
             || componentState.isBorderlessStickerMessage
@@ -309,7 +307,7 @@ extension CVComponentBase: CVNode {
 // Used for rendering some portion of an Conversation View item.
 // It could be the entire item or some part thereof.
 @objc
-public protocol CVComponentView {
+protocol CVComponentView {
 
     var rootView: UIView { get }
 
@@ -343,7 +341,7 @@ public protocol CVComponentView {
 
 // MARK: -
 
-public struct CVComponentAndView {
+struct CVComponentAndView {
     let key: CVComponentKey
     let component: CVComponent
     let componentView: CVComponentView
@@ -351,7 +349,7 @@ public struct CVComponentAndView {
 
 // MARK: -
 
-public enum CVComponentKey: CustomStringConvertible, CaseIterable {
+enum CVComponentKey: CustomStringConvertible, CaseIterable {
     // These components appear in CVComponentMessage.
     case footer
     case bodyText
@@ -386,7 +384,7 @@ public enum CVComponentKey: CustomStringConvertible, CaseIterable {
     case collapseSet
     case messageRoot
 
-    public var description: String {
+    var description: String {
         switch self {
         case .bodyText:
             return ".bodyText"

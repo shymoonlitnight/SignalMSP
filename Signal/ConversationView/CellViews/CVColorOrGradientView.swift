@@ -4,7 +4,7 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
 // Compare with ColorOrGradientSwatchView:
 //
@@ -17,7 +17,7 @@ public import SignalUI
 //
 // Although we could combine these two views, these two scenarios are
 // just different enough that its convenient to have two separate views.
-public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
+class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView, OWSBubbleViewHost {
 
     private weak var referenceView: UIView?
     private var value: ColorOrGradientValue?
@@ -30,10 +30,10 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
     private let maskLayer = CAShapeLayer()
     private var dimmerLayer: CALayer?
 
-    public var ensureSubviewsFillBounds = false
-    public var animationsEnabled = false
+    var ensureSubviewsFillBounds = false
+    var animationsEnabled = false
 
-    public init() {
+    init() {
         super.init(name: "CVColorOrGradientView")
 
         strokeLayer.fillColor = nil
@@ -57,7 +57,7 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
         }
     }
 
-    public func configure(
+    func configure(
         value: ColorOrGradientValue,
         referenceView: UIView,
         bubbleConfig: BubbleConfiguration? = nil,
@@ -71,7 +71,7 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
         updateAppearance()
     }
 
-    public func updateAppearance() {
+    func updateAppearance() {
 
         guard let value, let referenceView else {
             backgroundColor = nil
@@ -251,7 +251,7 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
         ensureSubviewLayout()
     }
 
-    override public func reset() {
+    override func reset() {
         super.reset()
 
         referenceView = nil
@@ -265,7 +265,7 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
 
     // MARK: - CALayerDelegate
 
-    override public func action(for layer: CALayer, forKey event: String) -> CAAction? {
+    override func action(for layer: CALayer, forKey event: String) -> CAAction? {
         // Disable all implicit CALayer animations if needed
         if animationsEnabled {
             return super.action(for: layer, forKey: event)
@@ -282,18 +282,15 @@ public class CVColorOrGradientView: ManualLayoutViewWithLayer, CVDimmableView {
     var dimsContent = false
 
     var backgroundLayer: CALayer? { gradientLayer }
-}
 
-// MARK: -
+    // MARK: - OWSBubbleViewHost
 
-extension CVColorOrGradientView: OWSBubbleViewHost {
-
-    public var maskPath: UIBezierPath {
+    var maskPath: UIBezierPath {
         guard let bubbleConfig else {
             return UIBezierPath(rect: bounds)
         }
         return bubbleConfig.bubblePath(for: bounds)
     }
 
-    public var bubbleReferenceView: UIView { self }
+    var bubbleReferenceView: UIView { self }
 }

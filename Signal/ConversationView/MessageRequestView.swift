@@ -17,7 +17,7 @@ protocol MessageRequestDelegate: AnyObject {
 
 // MARK: -
 
-public enum MessageRequestMode: UInt {
+enum MessageRequestMode: UInt {
     case none
     case contactOrGroupRequest
     case groupInviteRequest
@@ -25,7 +25,7 @@ public enum MessageRequestMode: UInt {
 
 // MARK: -
 
-public struct MessageRequestType: Equatable {
+struct MessageRequestType: Equatable {
     let isGroupV1Thread: Bool
     let isGroupV2Thread: Bool
     let isThreadBlocked: Bool

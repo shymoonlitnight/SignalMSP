@@ -4,7 +4,6 @@
 //
 
 import BonMot
-import Foundation
 import Lottie
 import QuartzCore
 import SignalServiceKit

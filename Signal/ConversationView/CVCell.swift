@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import UIKit
+import SignalServiceKit
 
 // TODO: This will be part of our reuse strategy.
 // We'll probably want to have reuse identifiers
@@ -13,7 +12,7 @@ public import UIKit
 //
 // * Text-only message with optional sender name + footer.
 // * Media message with optional text + sender name + footer.
-public enum CVCellReuseIdentifier: String, CaseIterable {
+enum CVCellReuseIdentifier: String, CaseIterable {
     case `default`
     case dateHeader
     case unreadIndicator
@@ -26,18 +25,18 @@ public enum CVCellReuseIdentifier: String, CaseIterable {
 
 // MARK: -
 
-public class CVCell: UICollectionViewCell, CVRootComponentHost {
+class CVCell: UICollectionViewCell, CVRootComponentHost {
 
-    public var isCellVisible: Bool = false {
+    var isCellVisible: Bool = false {
         didSet {
             componentView?.setIsCellVisible(isCellVisible)
         }
     }
 
-    public var renderItem: CVRenderItem?
-    public var componentView: CVComponentView?
-    public var hostView: UIView { contentView }
-    public var rootComponent: CVRootComponent? { renderItem?.rootComponent }
+    var renderItem: CVRenderItem?
+    var componentView: CVComponentView?
+    var hostView: UIView { contentView }
+    var rootComponent: CVRootComponent? { renderItem?.rootComponent }
 
     private var messageSwipeActionState: CVMessageSwipeActionState?
 
@@ -49,17 +48,17 @@ public class CVCell: UICollectionViewCell, CVRootComponentHost {
     }
 
     @available(*, unavailable, message: "Unimplemented")
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public static func registerReuseIdentifiers(collectionView: UICollectionView) {
+    static func registerReuseIdentifiers(collectionView: UICollectionView) {
         for value in CVCellReuseIdentifier.allCases {
             collectionView.register(self, forCellWithReuseIdentifier: value.rawValue)
         }
     }
 
-    override public func systemLayoutSizeFitting(_ targetSize: CGSize) -> CGSize {
+    override func systemLayoutSizeFitting(_ targetSize: CGSize) -> CGSize {
         guard let renderItem else {
             owsFailDebug("Missing renderItem.")
             return super.systemLayoutSizeFitting(targetSize)
@@ -72,7 +71,7 @@ public class CVCell: UICollectionViewCell, CVRootComponentHost {
         return targetSize
     }
 
-    override public func systemLayoutSizeFitting(
+    override func systemLayoutSizeFitting(
         _ targetSize: CGSize,
         withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority,
         verticalFittingPriority: UILayoutPriority,
@@ -94,13 +93,13 @@ public class CVCell: UICollectionViewCell, CVRootComponentHost {
     }
 
     // For perf reasons, skip the default implementation which is only relevant for self-sizing cells.
-    override public func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
         layoutAttributes
     }
 
     private var lastLayoutAttributes: CVCollectionViewLayoutAttributes?
 
-    override public func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         super.apply(layoutAttributes)
 
         guard let layoutAttributes = layoutAttributes as? CVCollectionViewLayoutAttributes else {
@@ -156,7 +155,7 @@ public class CVCell: UICollectionViewCell, CVRootComponentHost {
         )
     }
 
-    override public func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
 
         var isDedicatedCell = false
@@ -190,24 +189,24 @@ public class CVCell: UICollectionViewCell, CVRootComponentHost {
 // This view hosts the cell contents.
 // This allows us to display message cells outside of
 // UICollectionView, e.g. in the message details view.
-public class CVCellView: UIView, CVRootComponentHost {
+class CVCellView: UIView, CVRootComponentHost {
 
-    public var isCellVisible: Bool = false {
+    var isCellVisible: Bool = false {
         didSet {
             componentView?.setIsCellVisible(isCellVisible)
         }
     }
 
-    public var renderItem: CVRenderItem?
-    public var componentView: CVComponentView?
-    public var hostView: UIView { self }
-    public var rootComponent: CVRootComponent? { renderItem?.rootComponent }
+    var renderItem: CVRenderItem?
+    var componentView: CVComponentView?
+    var hostView: UIView { self }
+    var rootComponent: CVRootComponent? { renderItem?.rootComponent }
 
     init() {
         super.init(frame: .zero)
     }
 
-    public func configure(
+    func configure(
         renderItem: CVRenderItem,
         componentDelegate: CVComponentDelegate,
     ) {
@@ -224,7 +223,7 @@ public class CVCellView: UIView, CVRootComponentHost {
     }
 
     @available(*, unavailable, message: "Unimplemented")
-    public required init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -241,7 +240,7 @@ public class CVCellView: UIView, CVRootComponentHost {
 
 // MARK: -
 
-public protocol CVRootComponentHost: AnyObject {
+protocol CVRootComponentHost: AnyObject {
     var renderItem: CVRenderItem? { get set }
     var componentView: CVComponentView? { get set }
     var rootComponent: CVRootComponent? { get }
@@ -251,7 +250,7 @@ public protocol CVRootComponentHost: AnyObject {
 
 // MARK: -
 
-public extension CVRootComponentHost {
+extension CVRootComponentHost {
     fileprivate func configureForHosting(
         renderItem: CVRenderItem,
         componentDelegate: CVComponentDelegate,

@@ -8,7 +8,10 @@ import SafariServices
 import SignalServiceKit
 import SignalUI
 
-extension ConversationViewController: MessageRequestDelegate {
+extension ConversationViewController {
+
+    // MARK: - MessageRequestDelegate
+
     func messageRequestViewDidTapBlock() {
         AssertIsOnMainThread()
 
@@ -126,9 +129,9 @@ extension ConversationViewController: MessageRequestDelegate {
         let safariVC = SFSafariViewController(url: URL.Support.profilesAndMessageRequests)
         present(safariVC, animated: true)
     }
-}
 
-private extension ConversationViewController {
+    // MARK: -
+
     func declineMessageRequest(responseType: OutgoingMessageRequestResponseSyncMessage.ResponseType) {
         MessageRequestDecliner.declineMessageRequest(
             inThread: self.thread,
@@ -267,11 +270,8 @@ private extension ConversationViewController {
             NotificationCenter.default.post(name: ChatListViewController.clearSearch, object: nil)
         }
     }
-}
 
-// MARK: - Action Sheets
-
-extension ConversationViewController {
+    // MARK: - Action Sheets
 
     func createBlockThreadActionSheet(sheetCompletion: ((Bool) -> Void)? = nil) -> ActionSheetController {
         Logger.info("")
@@ -397,9 +397,8 @@ extension ConversationViewController {
             declineMessageRequest: self.declineMessageRequest(responseType:),
         )
     }
-}
 
-extension ConversationViewController: NameCollisionResolutionDelegate {
+    // MARK: - NameCollisionResolutionDelegate
 
     func nameCollisionControllerDidComplete(_ controller: NameCollisionResolutionViewController, dismissConversationView: Bool) {
         if dismissConversationView {

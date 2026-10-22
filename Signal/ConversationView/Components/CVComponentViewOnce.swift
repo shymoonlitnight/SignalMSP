@@ -4,7 +4,7 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
 enum ViewOnceState: Equatable {
     case unknown
@@ -57,9 +57,9 @@ enum ViewOnceState: Equatable {
 
 // MARK: -
 
-public class CVComponentViewOnce: CVComponentBase, CVComponent {
+class CVComponentViewOnce: CVComponentBase, CVComponent, CVAccessibilityComponent {
 
-    public var componentKey: CVComponentKey { .viewOnce }
+    var componentKey: CVComponentKey { .viewOnce }
 
     private enum ViewOnceMessageType: Equatable {
         case unknown
@@ -114,11 +114,11 @@ public class CVComponentViewOnce: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewViewOnce()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -187,7 +187,7 @@ public class CVComponentViewOnce: CVComponentBase, CVComponent {
 
     private static let measurementKey_stackView = "CVComponentViewOnce.measurementKey_stackView"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         var subviewInfos = [ManualStackSubviewInfo]()
@@ -219,7 +219,7 @@ public class CVComponentViewOnce: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -257,33 +257,31 @@ public class CVComponentViewOnce: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewViewOnce: NSObject, CVComponentView {
+    class CVComponentViewViewOnce: NSObject, CVComponentView {
 
         fileprivate let stackView = ManualStackView(name: "viewOnce")
         fileprivate let iconView = CVImageView()
         fileprivate let label = CVLabel()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             stackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             stackView.reset()
             iconView.image = nil
             label.text = nil
         }
 
     }
-}
 
-// MARK: -
+    // MARK: -
 
-private extension CVComponentViewOnce {
-    var iconName: String? {
+    private var iconName: String? {
         switch viewOnceState {
         case .unknown:
             owsFailDebug("Invalid value.")
@@ -308,7 +306,7 @@ private extension CVComponentViewOnce {
         }
     }
 
-    var textColor: UIColor {
+    private var textColor: UIColor {
         switch viewOnceState {
         case .unknown:
             owsFailDebug("Invalid value.")
@@ -329,7 +327,7 @@ private extension CVComponentViewOnce {
         }
     }
 
-    var labelConfig: CVLabelConfig {
+    private var labelConfig: CVLabelConfig {
         func buildDefaultConfig(text: String) -> CVLabelConfig {
             return CVLabelConfig.unstyledText(
                 text,
@@ -435,12 +433,10 @@ private extension CVComponentViewOnce {
             return .unknown
         }
     }
-}
 
-// MARK: -
+    // MARK: - CVAccessibilityComponent
 
-extension CVComponentViewOnce: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         // TODO: We could include the media type (video, image, animated image).
         labelConfig.text.accessibilityDescription
     }

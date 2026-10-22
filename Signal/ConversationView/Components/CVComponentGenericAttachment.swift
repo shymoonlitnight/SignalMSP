@@ -3,16 +3,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import PassKit
-public import QuickLook
-public import SignalServiceKit
-public import SignalUI
+import PassKit
+import QuickLook
+import SignalServiceKit
+import SignalUI
 
-public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
+class CVComponentGenericAttachment: CVComponentBase, CVComponent, CVAccessibilityComponent,
+    QLPreviewControllerDataSource, QLPreviewControllerDelegate
+{
 
-    public var componentKey: CVComponentKey { .genericAttachment }
+    var componentKey: CVComponentKey { .genericAttachment }
 
-    public var attachmentId: Attachment.IDType { genericAttachment.attachment.attachment.attachment.id }
+    var attachmentId: Attachment.IDType { genericAttachment.attachment.attachment.attachment.id }
 
     private let genericAttachment: CVComponentState.GenericAttachment
     private var attachment: ReferencedAttachment { genericAttachment.attachment.attachment }
@@ -30,7 +32,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         self.qlPreviewTmpFileUrl = nil
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewGenericAttachment()
     }
 
@@ -40,7 +42,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         return isIncomingOverride ?? (interaction is TSIncomingMessage)
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -297,7 +299,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
     private static let measurementKey_hStack = "CVComponentGenericAttachment.measurementKey_hStack"
     private static let measurementKey_vStack = "CVComponentGenericAttachment.measurementKey_vStack"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         return Self.measure(
             maxWidth: maxWidth,
             measurementBuilder: measurementBuilder,
@@ -364,7 +366,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -411,7 +413,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         }
     }
 
-    public func createQLPreviewController() -> QLPreviewController? {
+    func createQLPreviewController() -> QLPreviewController? {
         guard #available(iOS 14.8, *) else { return nil }
 
         guard let attachmentStream else {
@@ -435,7 +437,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
     }
 
     /// Returns the `PKPass` represented by this attachment, if any.
-    public func representedPKPass() -> PKPass? {
+    func representedPKPass() -> PKPass? {
         guard attachmentStream?.mimeType == "application/vnd.apple.pkpass" else {
             return nil
         }
@@ -445,7 +447,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         return try? PKPass(data: data)
     }
 
-    public func showShareUI(from view: UIView) {
+    func showShareUI(from view: UIView) {
         guard let attachmentStream = (try? [genericAttachment.attachment.attachment.asReferencedStream].compacted().asShareableAttachments())?.first else {
             owsFailDebug("should not show the share UI unless there's a downloaded attachment")
             return
@@ -458,7 +460,7 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewGenericAttachment: NSObject, CVComponentView {
+    class CVComponentViewGenericAttachment: NSObject, CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "GenericAttachment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "GenericAttachment.vStackView")
@@ -467,15 +469,15 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         fileprivate let fileTypeLabel = CVLabel()
         fileprivate let iconImageView = CVImageView()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             hStackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             hStackView.reset()
             vStackView.reset()
 
@@ -486,14 +488,14 @@ public class CVComponentGenericAttachment: CVComponentBase, CVComponent {
         }
 
     }
-}
 
-extension CVComponentGenericAttachment: QLPreviewControllerDataSource, QLPreviewControllerDelegate {
-    public func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+    // MARK: - QLPreviewControllerDataSource, QLPreviewControllerDelegate
+
+    func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
         return 1
     }
 
-    public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
         owsAssertDebug(index == 0)
 
         let url: URL? = {
@@ -506,19 +508,17 @@ extension CVComponentGenericAttachment: QLPreviewControllerDataSource, QLPreview
         return url.map { $0 as NSURL } ?? UnavailableItem()
     }
 
-    public func previewControllerDidDismiss(_ controller: QLPreviewController) {
+    func previewControllerDidDismiss(_ controller: QLPreviewController) {
         self.qlPreviewTmpFileUrl = nil
     }
 
     private class UnavailableItem: NSObject, QLPreviewItem {
         var previewItemURL: URL? { nil }
     }
-}
 
-// MARK: -
+    // MARK: - CVAccessibilityComponent
 
-extension CVComponentGenericAttachment: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         // TODO: We could include information about the attachment format,
         //       and/or filename, and download state.
         OWSLocalizedString(

@@ -3,13 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import LibSignalClient
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
-public import UIKit
 
-public extension TSInteraction {
+extension TSInteraction {
     func presentDeletionActionSheet(from fromViewController: UIViewController, forceDarkTheme: Bool = false) {
         let (
             associatedThread,
@@ -345,7 +343,7 @@ public extension TSInteraction {
 }
 
 extension CommonStrings {
-    public static var deleteForEveryoneButton: String {
+    static var deleteForEveryoneButton: String {
         OWSLocalizedString(
             "MESSAGE_ACTION_DELETE_FOR_EVERYONE",
             comment: "The title for the action that deletes a message for all users in the conversation.",

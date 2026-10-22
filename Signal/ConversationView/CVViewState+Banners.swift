@@ -4,7 +4,7 @@
 //
 
 import LibSignalClient
-public import SignalServiceKit
+import SignalServiceKit
 
 /// Manages state for banners that might be hidden.
 private class BannerHiding {
@@ -136,7 +136,7 @@ private class PendingMemberRequestsBannerHiding: BannerHiding {
     }
 }
 
-public extension CVViewState {
+extension CVViewState {
 
     /// This banner will snooze for 1 week after each hiding, and is
     /// responsive to changes in pending member request state.

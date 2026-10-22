@@ -5,17 +5,17 @@
 
 import LibSignalClient
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
+class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
 
-    public var componentKey: CVComponentKey { .systemMessage }
+    var componentKey: CVComponentKey { .systemMessage }
 
-    public var cellReuseIdentifier: CVCellReuseIdentifier {
+    var cellReuseIdentifier: CVCellReuseIdentifier {
         CVCellReuseIdentifier.systemMessage
     }
 
-    public let isDedicatedCell = true
+    let isDedicatedCell = true
 
     private let systemMessage: CVComponentState.SystemMessage
 
@@ -29,7 +29,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func configureCellRootComponent(
+    func configureCellRootComponent(
         cellView: UIView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -99,7 +99,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
         )
     }
 
-    override public func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
+    override func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
         guard let componentView = componentView as? CVComponentViewSystemMessage else {
             owsFailDebug("Unexpected componentView.")
             return nil
@@ -107,11 +107,11 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
         return componentView.wallpaperBlurView
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewSystemMessage()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -462,7 +462,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
     private static let measurementKey_outerVStack = "CVComponentSystemMessage.measurementKey_outerVStack"
     private static let measurementKey_buttonSize = "CVComponentSystemMessage.measurementKey_buttonSize"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         var maxContentWidth = (
@@ -562,7 +562,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -607,7 +607,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
         return false
     }
 
-    override public func findLongPressHandler(
+    override func findLongPressHandler(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -624,7 +624,7 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewSystemMessage: NSObject, CVComponentView {
+    class CVComponentViewSystemMessage: NSObject, CVComponentView {
 
         fileprivate let innerHStack = ManualStackView(name: "systemMessage.innerHStack")
         fileprivate let outerHStack = ManualStackView(name: "systemMessage.outerHStack")
@@ -645,31 +645,31 @@ public class CVComponentSystemMessage: CVComponentBase, CVRootComponent {
 
         fileprivate var backgroundView: UIView?
 
-        public let textLabel = CVTextLabel()
-        public fileprivate(set) var button: UIButton?
+        let textLabel = CVTextLabel()
+        fileprivate(set) var button: UIButton?
 
         fileprivate var hasWallpaper = false
         fileprivate var isDarkThemeEnabled = false
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var isShowingSelectionUI = false
-        public var wasShowingSelectionUI = false
-        public var hasActionButton = false
+        var isShowingSelectionUI = false
+        var wasShowingSelectionUI = false
+        var hasActionButton = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             outerHStack
         }
 
         // MARK: -
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             reset(resetReusableState: false)
         }
 
-        public func reset(resetReusableState: Bool) {
+        func reset(resetReusableState: Bool) {
             owsAssertDebug(isDedicatedCellView)
 
             if resetReusableState {

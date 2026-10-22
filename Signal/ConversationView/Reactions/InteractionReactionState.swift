@@ -5,7 +5,7 @@
 
 import SignalServiceKit
 
-public final class InteractionReactionState: Equatable {
+final class InteractionReactionState: Equatable {
     struct EmojiCount {
         let emoji: Emoji
         let emojiVariant: String
@@ -78,7 +78,7 @@ public final class InteractionReactionState: Equatable {
         self.localUserEmojiVariant = localUserEmojiVariant
     }
 
-    public static func ==(lhs: InteractionReactionState, rhs: InteractionReactionState) -> Bool {
+    static func ==(lhs: InteractionReactionState, rhs: InteractionReactionState) -> Bool {
         return lhs === rhs
     }
 }

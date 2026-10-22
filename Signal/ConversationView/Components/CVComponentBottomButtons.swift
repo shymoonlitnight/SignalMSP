@@ -4,11 +4,11 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentBottomButtons: CVComponentBase, CVComponent {
+class CVComponentBottomButtons: CVComponentBase, CVComponent {
 
-    public var componentKey: CVComponentKey { .bottomButtons }
+    var componentKey: CVComponentKey { .bottomButtons }
 
     private let bottomButtonsState: CVComponentState.BottomButtons
 
@@ -21,11 +21,11 @@ public class CVComponentBottomButtons: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewBottomButtons()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -82,7 +82,7 @@ public class CVComponentBottomButtons: CVComponentBase, CVComponent {
     private static let measurementKey_stackView = "CVComponentBottomButtons.measurementKey_stackView"
     private static let measurementKey_isHorizontal = "CVComponentBottomButtons.measurementKey_isHorizontal"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let contentWidth = max(0, maxWidth - Self.stackConfig(isHorizontal: true).layoutMargins.totalWidth)
@@ -110,7 +110,7 @@ public class CVComponentBottomButtons: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,

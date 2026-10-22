@@ -4,30 +4,24 @@
 //
 
 import LibSignalClient
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public struct CVSelectionType: OptionSet {
-    public let rawValue: UInt
+struct CVSelectionType: OptionSet {
+    let rawValue: UInt
 
-    public init(rawValue: UInt) {
-        self.rawValue = rawValue
-    }
-
-    public static var none: CVSelectionType { CVSelectionType(rawValue: 0) }
-    public static let primaryContent = CVSelectionType(rawValue: 1 << 0)
-    public static let secondaryContent = CVSelectionType(rawValue: 1 << 1)
-    public static var allContent: CVSelectionType { primaryContent.union(secondaryContent) }
+    static var none: CVSelectionType { CVSelectionType(rawValue: 0) }
+    static let primaryContent = CVSelectionType(rawValue: 1 << 0)
+    static let secondaryContent = CVSelectionType(rawValue: 1 << 1)
+    static var allContent: CVSelectionType { primaryContent.union(secondaryContent) }
 }
 
-// MARK: -
+struct CVSelectionItem {
+    let interactionId: String
+    let interactionType: OWSInteractionType
+    let isForwardable: Bool
 
-public struct CVSelectionItem {
-    public let interactionId: String
-    public let interactionType: OWSInteractionType
-    public let isForwardable: Bool
-
-    public let selectionType: CVSelectionType
+    let selectionType: CVSelectionType
 
     init(
         interactionId: String,
@@ -64,28 +58,24 @@ public struct CVSelectionItem {
     }
 }
 
-// MARK: -
-
-public protocol CVSelectionStateDelegate: AnyObject {
+protocol CVSelectionStateDelegate: AnyObject {
     func selectionStateDidChange()
 }
 
 // MARK: -
 
 // In selection mode, represents which interactions (or portions thereof) are currently selected.
-public class CVSelectionState: NSObject {
-    public weak var delegate: CVSelectionStateDelegate?
+class CVSelectionState: NSObject {
+    weak var delegate: CVSelectionStateDelegate?
 
     // A map of interaction uniqueId-to-CVSelectionItem.
     //
     // For items in this map, selectionType should never be .none.
     private var itemMap = [String: CVSelectionItem]()
 
-    public var interactionCount: Int { itemMap.count }
+    var interactionCount: Int { itemMap.count }
 
-    public func add(interaction: TSInteraction, hasRenderableContent: Bool, selectionType: CVSelectionType) {
-        AssertIsOnMainThread()
-
+    func add(interaction: TSInteraction, hasRenderableContent: Bool, selectionType: CVSelectionType) {
         guard !selectionType.isEmpty else {
             owsFailDebug("Cannot add or remote empty selection type.")
             return
@@ -119,7 +109,7 @@ public class CVSelectionState: NSObject {
         delegate?.selectionStateDidChange()
     }
 
-    public func add(itemViewModel: CVItemViewModel, selectionType: CVSelectionType) {
+    func add(itemViewModel: CVItemViewModel, selectionType: CVSelectionType) {
         add(
             interaction: itemViewModel.interaction,
             hasRenderableContent: itemViewModel.hasRenderableContent,
@@ -127,9 +117,7 @@ public class CVSelectionState: NSObject {
         )
     }
 
-    public func remove(interaction: TSInteraction, hasRenderableContent: Bool, selectionType: CVSelectionType) {
-        AssertIsOnMainThread()
-
+    func remove(interaction: TSInteraction, hasRenderableContent: Bool, selectionType: CVSelectionType) {
         guard !selectionType.isEmpty else {
             owsFailDebug("Cannot add or remote empty selection type.")
             return
@@ -162,7 +150,7 @@ public class CVSelectionState: NSObject {
         delegate?.selectionStateDidChange()
     }
 
-    public func remove(itemViewModel: CVItemViewModel, selectionType: CVSelectionType) {
+    func remove(itemViewModel: CVItemViewModel, selectionType: CVSelectionType) {
         remove(
             interaction: itemViewModel.interaction,
             hasRenderableContent: itemViewModel.hasRenderableContent,
@@ -170,9 +158,7 @@ public class CVSelectionState: NSObject {
         )
     }
 
-    public func isSelected(_ interactionId: String, selectionType: CVSelectionType) -> Bool {
-        AssertIsOnMainThread()
-
+    func isSelected(_ interactionId: String, selectionType: CVSelectionType) -> Bool {
         guard let oldItem = itemMap[interactionId] else {
             return false
         }
@@ -180,9 +166,7 @@ public class CVSelectionState: NSObject {
         return oldItem.selectionType.contains(selectionType)
     }
 
-    public func hasAnySelection(_ interactionId: String) -> Bool {
-        AssertIsOnMainThread()
-
+    func hasAnySelection(_ interactionId: String) -> Bool {
         guard let oldItem = itemMap[interactionId] else {
             return false
         }
@@ -190,13 +174,11 @@ public class CVSelectionState: NSObject {
         return true
     }
 
-    public func hasAnySelection(interaction: TSInteraction) -> Bool {
+    func hasAnySelection(interaction: TSInteraction) -> Bool {
         hasAnySelection(interaction.uniqueId)
     }
 
-    public func reset() {
-        AssertIsOnMainThread()
-
+    func reset() {
         guard !itemMap.isEmpty else {
             return
         }
@@ -206,18 +188,11 @@ public class CVSelectionState: NSObject {
         delegate?.selectionStateDidChange()
     }
 
-    public var selectionItems: [CVSelectionItem] {
-        AssertIsOnMainThread()
-
-        return Array(itemMap.values)
+    var selectionItems: [CVSelectionItem] {
+        Array(itemMap.values)
     }
-}
 
-// MARK: -
-
-extension CVSelectionState {
-
-    public var selectionCanBeDeleted: Bool {
+    var selectionCanBeDeleted: Bool {
         guard !itemMap.isEmpty else {
             return false
         }
@@ -239,7 +214,7 @@ extension CVSelectionState {
         return true
     }
 
-    public var selectionCanBeForwarded: Bool {
+    var selectionCanBeForwarded: Bool {
         guard !itemMap.isEmpty else {
             return false
         }
@@ -268,11 +243,9 @@ extension CVSelectionState {
     }
 }
 
-// MARK: -
-
 extension ConversationViewController {
 
-    public func buildSelectionToolbar() -> MessageActionsToolbar {
+    func buildSelectionToolbar() -> MessageActionsToolbar {
         let deleteMessagesAction = MessageAction(
             .delete,
             accessibilityLabel: OWSLocalizedString(
@@ -556,7 +529,7 @@ extension ConversationViewController {
         ForwardMessageViewController.present(forSelectionItems: selectionItems, from: self, delegate: self)
     }
 
-    public func updateSelectionButtons() {
+    func updateSelectionButtons() {
         guard let selectionToolbar = self.selectionToolbar else {
             owsFailDebug("Missing selectionToolbar.")
             return
@@ -584,11 +557,6 @@ extension ConversationViewController {
             return
         }
     }
-}
-
-// MARK: - Selection
-
-extension ConversationViewController {
 
     var cancelSelectionBarButtonItem: UIBarButtonItem {
         .cancelButton { [weak self] in
@@ -641,14 +609,8 @@ extension ConversationViewController {
         alert.addAction(delete)
         present(alert, animated: true)
     }
-}
 
-// MARK: -
-
-extension ConversationViewController: CVSelectionStateDelegate {
-    public func selectionStateDidChange() {
-        AssertIsOnMainThread()
-
+    func selectionStateDidChange() {
         updateSelectionButtons()
     }
 }

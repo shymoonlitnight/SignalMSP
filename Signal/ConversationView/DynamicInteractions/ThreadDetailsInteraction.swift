@@ -3,19 +3,19 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 
-public class ThreadDetailsInteraction: TSInteraction {
+class ThreadDetailsInteraction: TSInteraction {
 
-    override public var isDynamicInteraction: Bool {
+    override var isDynamicInteraction: Bool {
         true
     }
 
-    override public var interactionType: OWSInteractionType {
+    override var interactionType: OWSInteractionType {
         .threadDetails
     }
 
-    public init(threadUniqueId: String, timestamp: UInt64) {
+    init(threadUniqueId: String, timestamp: UInt64) {
         // Include timestamp in uniqueId to ensure invariant that
         // interactions don't move in the chat history ordering.
         super.init(
@@ -26,11 +26,11 @@ public class ThreadDetailsInteraction: TSInteraction {
         )
     }
 
-    override public var shouldBeSaved: Bool {
+    override var shouldBeSaved: Bool {
         return false
     }
 
-    override public func anyWillInsert(with transaction: DBWriteTransaction) {
+    override func anyWillInsert(with transaction: DBWriteTransaction) {
         owsFailDebug("The transient interaction should not be saved in the database.")
     }
 }

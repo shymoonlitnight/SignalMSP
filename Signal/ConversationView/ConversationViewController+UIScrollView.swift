@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
 import SignalServiceKit
-public import UIKit
 
 extension ConversationViewController {
 
@@ -21,17 +19,17 @@ extension ConversationViewController {
         set { viewState.isHidingScrollToNextMentionButton = newValue }
     }
 
-    public var scrollUpdateTimer: Timer? {
+    var scrollUpdateTimer: Timer? {
         get { viewState.scrollUpdateTimer }
         set { viewState.scrollUpdateTimer = newValue }
     }
 
-    public var isWaitingForDeceleration: Bool {
+    var isWaitingForDeceleration: Bool {
         get { viewState.isWaitingForDeceleration }
         set { viewState.isWaitingForDeceleration = newValue }
     }
 
-    public var userHasScrolled: Bool {
+    var userHasScrolled: Bool {
         get { viewState.userHasScrolled }
         set {
             guard viewState.userHasScrolled != newValue else {
@@ -42,11 +40,9 @@ extension ConversationViewController {
         }
     }
 
-    // MARK: -
+    // MARK: - Scroll Down Button
 
-    public func configureScrollDownButtons() {
-        AssertIsOnMainThread()
-
+    func configureScrollDownButtons() {
         guard hasAppearedAndHasAppliedFirstLoad else {
             scrollDownButton.isHidden = true
             scrollToNextMentionButton.isHidden = true
@@ -143,12 +139,36 @@ extension ConversationViewController {
             completionBlock()
         }
     }
-}
 
-// MARK: -
+    func createConversationScrollButtons() {
+        scrollDownButton.addAction(
+            UIAction { [weak self] _ in self?.scrollDownButtonTapped() },
+            for: .primaryActionTriggered,
+        )
+        scrollDownButton.isHidden = true
+        scrollDownButton.alpha = 0
+        view.addSubview(scrollDownButton)
+        scrollDownButton.accessibilityIdentifier = "scrollDownButton"
 
-extension ConversationViewController: UIScrollViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        scrollDownButton.autoPinEdge(.bottom, to: .top, of: bottomBarContainer, withOffset: -24)
+        scrollDownButton.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 15)
+
+        scrollToNextMentionButton.addAction(
+            UIAction { [weak self] _ in self?.scrollToNextMentionButtonTapped() },
+            for: .primaryActionTriggered,
+        )
+        scrollToNextMentionButton.isHidden = true
+        scrollToNextMentionButton.alpha = 0
+        view.addSubview(scrollToNextMentionButton)
+        scrollToNextMentionButton.accessibilityIdentifier = "scrollToNextMentionButton"
+
+        scrollToNextMentionButton.autoPinEdge(.bottom, to: .top, of: scrollDownButton, withOffset: -30)
+        scrollToNextMentionButton.autoPinEdge(.trailing, to: .trailing, of: scrollDownButton)
+    }
+
+    // MARK: - UIScrollViewDelegate
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         AssertIsOnMainThread()
 
         // Constantly try to update the lastKnownDistanceFromBottom.
@@ -202,7 +222,7 @@ extension ConversationViewController: UIScrollViewDelegate {
         }
     }
 
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         AssertIsOnMainThread()
 
         self.userHasScrolled = true
@@ -210,7 +230,7 @@ extension ConversationViewController: UIScrollViewDelegate {
         scrollingAnimationDidStart()
     }
 
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate: Bool) {
         AssertIsOnMainThread()
 
         if !willDecelerate {
@@ -230,7 +250,7 @@ extension ConversationViewController: UIScrollViewDelegate {
         }
     }
 
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         AssertIsOnMainThread()
 
         scrollingAnimationDidComplete()
@@ -244,7 +264,7 @@ extension ConversationViewController: UIScrollViewDelegate {
         scheduleScrollUpdateTimer()
     }
 
-    public func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         AssertIsOnMainThread()
 
         // If the user taps on the status bar, the UIScrollView tries to perform
@@ -269,47 +289,15 @@ extension ConversationViewController: UIScrollViewDelegate {
         }
     }
 
-    public func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
         AssertIsOnMainThread()
 
         scrollingAnimationDidComplete()
     }
 
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         AssertIsOnMainThread()
 
         scrollingAnimationDidComplete()
-    }
-}
-
-// MARK: - Scroll Down Button
-
-extension ConversationViewController {
-    public func createConversationScrollButtons() {
-        AssertIsOnMainThread()
-
-        scrollDownButton.addAction(
-            UIAction { [weak self] _ in self?.scrollDownButtonTapped() },
-            for: .primaryActionTriggered,
-        )
-        scrollDownButton.isHidden = true
-        scrollDownButton.alpha = 0
-        view.addSubview(scrollDownButton)
-        scrollDownButton.accessibilityIdentifier = "scrollDownButton"
-
-        scrollDownButton.autoPinEdge(.bottom, to: .top, of: bottomBarContainer, withOffset: -24)
-        scrollDownButton.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 15)
-
-        scrollToNextMentionButton.addAction(
-            UIAction { [weak self] _ in self?.scrollToNextMentionButtonTapped() },
-            for: .primaryActionTriggered,
-        )
-        scrollToNextMentionButton.isHidden = true
-        scrollToNextMentionButton.alpha = 0
-        view.addSubview(scrollToNextMentionButton)
-        scrollToNextMentionButton.accessibilityIdentifier = "scrollToNextMentionButton"
-
-        scrollToNextMentionButton.autoPinEdge(.bottom, to: .top, of: scrollDownButton, withOffset: -30)
-        scrollToNextMentionButton.autoPinEdge(.trailing, to: .trailing, of: scrollDownButton)
     }
 }

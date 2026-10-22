@@ -6,8 +6,6 @@
 public import SignalRingRTC
 public import SignalServiceKit
 
-// MARK: -
-
 public class LinkPreviewCallLink: LinkPreviewState {
     public let conversationStyle: ConversationStyle?
 

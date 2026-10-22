@@ -3,58 +3,58 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public class CVComponentStateWrapper: NSObject, CVItemViewModel {
-    public var interaction: TSInteraction
-    public var componentState: CVComponentState
+class CVComponentStateWrapper: NSObject, CVItemViewModel {
+    var interaction: TSInteraction
+    var componentState: CVComponentState
 
     init(interaction: TSInteraction, componentState: CVComponentState) {
         self.interaction = interaction
         self.componentState = componentState
     }
 
-    public var contactShare: ContactShareViewModel? {
+    var contactShare: ContactShareViewModel? {
         AssertIsOnMainThread()
 
         return componentState.contactShareModel
     }
 
-    public var isGiftBadge: Bool {
+    var isGiftBadge: Bool {
         AssertIsOnMainThread()
 
         return componentState.giftBadge != nil
     }
 
-    public var stickerMetadata: (any StickerMetadata)? {
+    var stickerMetadata: (any StickerMetadata)? {
         AssertIsOnMainThread()
 
         return componentState.stickerMetadata
     }
 
-    public var stickerAttachment: AttachmentStream? {
+    var stickerAttachment: AttachmentStream? {
         AssertIsOnMainThread()
 
         return componentState.stickerAttachment
     }
 
-    public var linkPreview: OWSLinkPreview? {
+    var linkPreview: OWSLinkPreview? {
         AssertIsOnMainThread()
 
         return componentState.linkPreviewModel
     }
 
-    public var hasRenderableContent: Bool {
+    var hasRenderableContent: Bool {
         return componentState.hasRenderableContent
     }
 }
 
 // This class should only be accessed on the main thread.
-public class CVItemViewModelImpl: CVComponentStateWrapper {
-    public let renderItem: CVRenderItem
+class CVItemViewModelImpl: CVComponentStateWrapper {
+    let renderItem: CVRenderItem
 
-    public init(renderItem: CVRenderItem) {
+    init(renderItem: CVRenderItem) {
         AssertIsOnMainThread()
 
         self.renderItem = renderItem
@@ -64,25 +64,25 @@ public class CVItemViewModelImpl: CVComponentStateWrapper {
 
     // MARK: -
 
-    public var thread: TSThread {
+    var thread: TSThread {
         AssertIsOnMainThread()
 
         return renderItem.itemModel.thread
     }
 
-    public var messageCellType: CVMessageCellType {
+    var messageCellType: CVMessageCellType {
         AssertIsOnMainThread()
 
         return componentState.messageCellType
     }
 
-    public var paymentAttachment: CVComponentState.PaymentAttachment? {
+    var paymentAttachment: CVComponentState.PaymentAttachment? {
         AssertIsOnMainThread()
 
         return componentState.paymentAttachment
     }
 
-    public var archivedPaymentAttachment: CVComponentState.ArchivedPaymentAttachment? {
+    var archivedPaymentAttachment: CVComponentState.ArchivedPaymentAttachment? {
         AssertIsOnMainThread()
 
         return componentState.archivedPaymentAttachment
@@ -94,13 +94,13 @@ public class CVItemViewModelImpl: CVComponentStateWrapper {
         return componentState.reactions?.reactionState
     }
 
-    public var displayableBodyText: DisplayableText? {
+    var displayableBodyText: DisplayableText? {
         AssertIsOnMainThread()
 
         return componentState.displayableBodyText
     }
 
-    public var isViewOnce: Bool {
+    var isViewOnce: Bool {
         AssertIsOnMainThread()
 
         guard let message = interaction as? TSMessage else {
@@ -109,7 +109,7 @@ public class CVItemViewModelImpl: CVComponentStateWrapper {
         return message.isViewOnceMessage
     }
 
-    public var isSmsMessageRestoredFromBackup: Bool {
+    var isSmsMessageRestoredFromBackup: Bool {
         AssertIsOnMainThread()
 
         guard let message = interaction as? TSMessage else {
@@ -119,25 +119,25 @@ public class CVItemViewModelImpl: CVComponentStateWrapper {
         return message.isSmsMessageRestoredFromBackup
     }
 
-    public var wasRemotelyDeleted: Bool {
+    var wasRemotelyDeleted: Bool {
         AssertIsOnMainThread()
 
         return (interaction as? TSMessage)?.wasRemotelyDeleted == true
     }
 
-    public var audioAttachmentStream: AttachmentStream? {
+    var audioAttachmentStream: AttachmentStream? {
         AssertIsOnMainThread()
 
         return componentState.audioAttachmentStream?.attachmentStream
     }
 
-    public var genericAttachmentStream: AttachmentStream? {
+    var genericAttachmentStream: AttachmentStream? {
         AssertIsOnMainThread()
 
         return componentState.genericAttachmentStream?.attachmentStream
     }
 
-    public var bodyMediaAttachmentStreams: [AttachmentStream] {
+    var bodyMediaAttachmentStreams: [AttachmentStream] {
         AssertIsOnMainThread()
 
         return componentState.bodyMediaAttachmentStreams.map(\.attachmentStream)
@@ -285,7 +285,7 @@ extension CVItemViewModelImpl {
 
 // MARK: -
 
-public extension CVComponentState {
+extension CVComponentState {
 
     var displayableBodyText: DisplayableText? {
         bodyText?.displayableText

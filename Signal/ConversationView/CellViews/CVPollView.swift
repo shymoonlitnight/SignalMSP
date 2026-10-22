@@ -3,16 +3,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import LibSignalClient
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public protocol CVPollVoteDelegate: AnyObject {
+protocol CVPollVoteDelegate: AnyObject {
     func didTapVoteOnPoll(poll: OWSPoll, optionIndex: UInt32, isUnvote: Bool)
 }
 
-public class CVPollView: ManualStackView {
+class CVPollView: ManualStackView {
     struct State: Equatable {
         let poll: OWSPoll
         let isIncoming: Bool
@@ -20,7 +19,7 @@ public class CVPollView: ManualStackView {
         let localAci: Aci
     }
 
-    public weak var pollVoteDelegate: CVPollVoteDelegate?
+    weak var pollVoteDelegate: CVPollVoteDelegate?
 
     private let questionTextLabel = CVLabel()
     private let pollSubtitleLabel = CVLabel()
@@ -419,7 +418,7 @@ public class CVPollView: ManualStackView {
         )
     }
 
-    override public func reset() {
+    override func reset() {
         super.reset()
 
         questionTextLabel.text = nil

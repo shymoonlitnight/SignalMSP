@@ -5,9 +5,8 @@
 
 import SignalServiceKit
 import SignalUI
-public import UIKit
 
-public class ConversationScrollButton: UIButton {
+class ConversationScrollButton: UIButton {
 
     let iconName: String
 
@@ -55,7 +54,7 @@ public class ConversationScrollButton: UIButton {
         addUnreadLabel()
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
@@ -67,7 +66,7 @@ public class ConversationScrollButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public var intrinsicContentSize: CGSize {
+    override var intrinsicContentSize: CGSize {
         .square(ConversationScrollButton.circleDiameter)
     }
 

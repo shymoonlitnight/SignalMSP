@@ -4,7 +4,6 @@
 //
 
 import SignalUI
-import UIKit
 
 class CVReactionCountsView: ManualStackView {
 

@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
 import SignalUI
 
@@ -15,7 +14,7 @@ import SignalUI
 //       db transactions and updates.
 //       It might help ensure that CVComponentState equality
 //       works correctly.
-public class CVAvatarBuilder {
+class CVAvatarBuilder {
 
     private let transaction: DBReadTransaction
 

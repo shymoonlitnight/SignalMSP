@@ -3,13 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentGiftBadge: CVComponentBase, CVComponent {
+class CVComponentGiftBadge: CVComponentBase, CVComponent {
 
-    public var componentKey: CVComponentKey { .giftBadge }
+    var componentKey: CVComponentKey { .giftBadge }
 
     private let giftBadge: CVComponentState.GiftBadge
 
@@ -50,11 +49,11 @@ public class CVComponentGiftBadge: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewGiftBadge(componentDelegate: componentDelegate)
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -73,11 +72,11 @@ public class CVComponentGiftBadge: CVComponentBase, CVComponent {
         )
     }
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         return GiftBadgeView.measurement(for: self.state, maxWidth: maxWidth, measurementBuilder: measurementBuilder)
     }
 
-    public func configureGiftWrapIfNeeded(componentView: CVComponentView) -> (ManualLayoutView, OWSBubbleViewPartner)? {
+    func configureGiftWrapIfNeeded(componentView: CVComponentView) -> (ManualLayoutView, OWSBubbleViewPartner)? {
         guard let componentView = componentView as? CVComponentViewGiftBadge else {
             owsFailDebug("unexpected componentView")
             return nil
@@ -88,7 +87,7 @@ public class CVComponentGiftBadge: CVComponentBase, CVComponent {
         return (giftWrap.rootView, giftWrap.bubbleViewPartner)
     }
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -128,22 +127,22 @@ public class CVComponentGiftBadge: CVComponentBase, CVComponent {
         return true
     }
 
-    public class CVComponentViewGiftBadge: NSObject, CVComponentView {
+    class CVComponentViewGiftBadge: NSObject, CVComponentView {
         fileprivate let giftBadgeView = GiftBadgeView(name: "GiftBadgeView")
 
         fileprivate var messageUniqueId: String?
 
         private weak var componentDelegate: CVComponentDelegate?
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView { giftBadgeView }
+        var rootView: UIView { giftBadgeView }
 
         init(componentDelegate: CVComponentDelegate) {
             self.componentDelegate = componentDelegate
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {
+        func setIsCellVisible(_ isCellVisible: Bool) {
             guard
                 isCellVisible,
                 let giftWrap = self.giftBadgeView.giftWrap,
@@ -158,7 +157,7 @@ public class CVComponentGiftBadge: CVComponentBase, CVComponent {
             giftWrap.animateShake()
         }
 
-        public func reset() {
+        func reset() {
             self.messageUniqueId = nil
             giftBadgeView.reset()
         }

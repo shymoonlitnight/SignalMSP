@@ -4,9 +4,9 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public protocol ConversationCollectionViewDelegate: AnyObject {
+protocol ConversationCollectionViewDelegate: AnyObject {
 
     func collectionViewWillChangeSize(from oldSize: CGSize, to size: CGSize)
     func collectionViewDidChangeSize(from oldSize: CGSize, to size: CGSize)
@@ -14,11 +14,11 @@ public protocol ConversationCollectionViewDelegate: AnyObject {
     func collectionViewShouldRecognizeSimultaneously(with otherGestureRecognizer: UIGestureRecognizer) -> Bool
 }
 
-public class ConversationCollectionView: UICollectionView {
+class ConversationCollectionView: UICollectionView {
 
     weak var layoutDelegate: ConversationCollectionViewDelegate?
 
-    override public var frame: CGRect {
+    override var frame: CGRect {
         get { super.frame }
         set {
             AssertIsOnMainThread()
@@ -46,7 +46,7 @@ public class ConversationCollectionView: UICollectionView {
         }
     }
 
-    override public var bounds: CGRect {
+    override var bounds: CGRect {
         get { super.bounds }
         set {
             AssertIsOnMainThread()
@@ -74,7 +74,7 @@ public class ConversationCollectionView: UICollectionView {
         }
     }
 
-    override public func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {
+    override func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {
         AssertIsOnMainThread()
         if animated {
             layoutDelegate?.collectionViewWillAnimate()
@@ -82,7 +82,7 @@ public class ConversationCollectionView: UICollectionView {
         super.setContentOffset(contentOffset, animated: animated)
     }
 
-    override public var contentOffset: CGPoint {
+    override var contentOffset: CGPoint {
         get { super.contentOffset }
         set {
             AssertIsOnMainThread()
@@ -107,7 +107,7 @@ public class ConversationCollectionView: UICollectionView {
         }
     }
 
-    override public func scrollRectToVisible(_ rect: CGRect, animated: Bool) {
+    override func scrollRectToVisible(_ rect: CGRect, animated: Bool) {
         if animated {
             layoutDelegate?.collectionViewWillAnimate()
         }

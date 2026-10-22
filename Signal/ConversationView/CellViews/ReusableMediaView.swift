@@ -4,9 +4,8 @@
 //
 
 import SDWebImage
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
-public import UIKit
 
 // MARK: -
 
@@ -28,7 +27,7 @@ private enum LoadState {
 
 // MARK: -
 
-public protocol MediaViewAdapter {
+protocol MediaViewAdapter {
     var mediaView: UIView { get }
     var isLoaded: Bool { get }
     var cacheKey: CVMediaCache.CacheKey { get }
@@ -41,18 +40,18 @@ public protocol MediaViewAdapter {
 
 // MARK: -
 
-public enum ReusableMediaError: Error {
+enum ReusableMediaError: Error {
     case redundantLoad
 }
 
 // MARK: -
 
-public class ReusableMediaView {
+class ReusableMediaView {
 
     private let mediaViewAdapter: MediaViewAdapter
     private let mediaCache: CVMediaCache
 
-    public var mediaView: UIView {
+    var mediaView: UIView {
         mediaViewAdapter.mediaView
     }
 
@@ -86,11 +85,11 @@ public class ReusableMediaView {
 
     // MARK: - Ownership
 
-    public weak var owner: NSObject?
+    weak var owner: NSObject?
 
     // MARK: - Initializers
 
-    public init(
+    init(
         mediaViewAdapter: MediaViewAdapter,
         mediaCache: CVMediaCache,
     ) {
@@ -104,7 +103,7 @@ public class ReusableMediaView {
 
     // MARK: - Initializers
 
-    public func load() {
+    func load() {
         AssertIsOnMainThread()
 
         switch loadState {
@@ -117,7 +116,7 @@ public class ReusableMediaView {
         }
     }
 
-    public func unload() {
+    func unload() {
         AssertIsOnMainThread()
 
         loadState = .unloaded
@@ -505,13 +504,13 @@ class MediaViewAdapterVideo: MediaViewAdapter {
 
 // MARK: -
 
-public class MediaViewAdapterSticker: MediaViewAdapter {
+class MediaViewAdapterSticker: MediaViewAdapter {
 
     private let attachmentStream: AttachmentStream
     private let isAnimated: Bool
     private let imageView: UIImageView
 
-    public init(attachmentStream: AttachmentStream, isAnimated: Bool) {
+    init(attachmentStream: AttachmentStream, isAnimated: Bool) {
         self.attachmentStream = attachmentStream
         self.isAnimated = isAnimated
 
@@ -524,23 +523,23 @@ public class MediaViewAdapterSticker: MediaViewAdapter {
         imageView.contentMode = .scaleAspectFit
     }
 
-    public var shouldBeRenderedByYY: Bool {
+    var shouldBeRenderedByYY: Bool {
         isAnimated
     }
 
-    public var mediaView: UIView {
+    var mediaView: UIView {
         imageView
     }
 
-    public var isLoaded: Bool {
+    var isLoaded: Bool {
         imageView.image != nil
     }
 
-    public var cacheKey: CVMediaCache.CacheKey {
+    var cacheKey: CVMediaCache.CacheKey {
         .attachment(attachmentStream.id)
     }
 
-    public func loadMedia() async throws -> AnyObject {
+    func loadMedia() async throws -> AnyObject {
         if isAnimated {
             guard let animatedImage = try? attachmentStream.decryptedSDAnimatedImage() else {
                 throw OWSAssertionError("Invalid animated image.")
@@ -554,7 +553,7 @@ public class MediaViewAdapterSticker: MediaViewAdapter {
         }
     }
 
-    public func applyMedia(_ media: AnyObject) {
+    func applyMedia(_ media: AnyObject) {
         AssertIsOnMainThread()
 
         if isAnimated {
@@ -572,7 +571,7 @@ public class MediaViewAdapterSticker: MediaViewAdapter {
         }
     }
 
-    public func unloadMedia() {
+    func unloadMedia() {
         AssertIsOnMainThread()
 
         imageView.image = nil

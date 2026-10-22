@@ -3,10 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
-public import SignalServiceKit
-public import SignalUI
-import UIKit
+import SignalServiceKit
+import SignalUI
 
 protocol CVLoadCoordinatorDelegate: UIScrollViewDelegate {
     var viewState: CVViewState { get }
@@ -47,7 +45,7 @@ struct CVUpdateToken {
     let lastKnownDistanceFromBottom: CGFloat?
 }
 
-public class CVLoadCoordinator: NSObject {
+class CVLoadCoordinator: NSObject {
 
     private weak var delegate: CVLoadCoordinatorDelegate?
     private weak var componentDelegate: CVComponentDelegate?
@@ -65,11 +63,11 @@ public class CVLoadCoordinator: NSObject {
     // CVC is perf-sensitive during its initial load and
     // presentation. We can use this flag to skip any expensive
     // work before the first load is complete.
-    public var hasRenderState: Bool {
+    var hasRenderState: Bool {
         !renderState.isEmptyInitialState
     }
 
-    public var shouldHideCollectionViewContent = true {
+    var shouldHideCollectionViewContent = true {
         didSet {
             owsAssertDebug(!shouldHideCollectionViewContent)
         }
@@ -127,7 +125,7 @@ public class CVLoadCoordinator: NSObject {
     // MARK: -
 
     @MainActor
-    public func viewDidLoad() {
+    func viewDidLoad() {
         addNotificationListeners()
     }
 
@@ -316,11 +314,11 @@ public class CVLoadCoordinator: NSObject {
 
     // MARK: -
 
-    public var canLoadOlderItems: Bool {
+    var canLoadOlderItems: Bool {
         renderState.canLoadOlderItems
     }
 
-    public var canLoadNewerItems: Bool {
+    var canLoadNewerItems: Bool {
         renderState.canLoadNewerItems
     }
 
@@ -334,7 +332,7 @@ public class CVLoadCoordinator: NSObject {
     private let autoLoadMoreThreshold: TimeInterval = 2 * .second
 
     private var lastLoadOlderDate: Date?
-    public var didLoadOlderRecently: Bool {
+    var didLoadOlderRecently: Bool {
         AssertIsOnMainThread()
 
         guard let lastLoadOlderDate else {
@@ -344,7 +342,7 @@ public class CVLoadCoordinator: NSObject {
     }
 
     private var lastLoadNewerDate: Date?
-    public var didLoadNewerRecently: Bool {
+    var didLoadNewerRecently: Bool {
         AssertIsOnMainThread()
 
         guard let lastLoadNewerDate else {
@@ -359,7 +357,7 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func loadOlderItems() {
+    func loadOlderItems() {
         guard !renderState.isEmptyInitialState else {
             return
         }
@@ -367,7 +365,7 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func loadNewerItems() {
+    func loadNewerItems() {
         guard !renderState.isEmptyInitialState else {
             return
         }
@@ -375,29 +373,29 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func loadAndScrollToNewestItems(isAnimated: Bool) {
+    func loadAndScrollToNewestItems(isAnimated: Bool) {
         loadRequestBuilder.loadAndScrollToNewestItems(isAnimated: isAnimated)
         loadIfNecessary()
     }
 
-    public func enqueueReload() {
+    func enqueueReload() {
         loadRequestBuilder.reload()
         loadIfNecessary()
     }
 
-    public func enqueueReload(preferredScrollContinuityAnchorInteractionId: String) {
+    func enqueueReload(preferredScrollContinuityAnchorInteractionId: String) {
         loadRequestBuilder.reload(
             preferredScrollContinuityAnchorInteractionId: preferredScrollContinuityAnchorInteractionId,
         )
         loadIfNecessary()
     }
 
-    public func enqueueReload(scrollAction: CVScrollAction) {
+    func enqueueReload(scrollAction: CVScrollAction) {
         loadRequestBuilder.reload(scrollAction: scrollAction)
         loadIfNecessary()
     }
 
-    public func enqueueReload(
+    func enqueueReload(
         updatedInteractionIds: Set<String>,
         deletedInteractionIds: Set<String>,
     ) {
@@ -410,7 +408,7 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func enqueueLoadAndScrollToInteraction(
+    func enqueueLoadAndScrollToInteraction(
         interactionId: String,
         onScreenPercentage: CGFloat,
         alignment: ScrollAlignment,
@@ -427,7 +425,7 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func enqueueReload(
+    func enqueueReload(
         updatedInteractionIds: Set<String>,
         deletedInteractionIds: Set<String>,
         preferredScrollContinuityAnchorInteractionId: String,
@@ -444,14 +442,14 @@ public class CVLoadCoordinator: NSObject {
         loadIfNecessary()
     }
 
-    public func enqueueReloadWithoutCaches() {
+    func enqueueReloadWithoutCaches() {
         AssertIsOnMainThread()
 
         loadRequestBuilder.reloadWithoutCaches()
         loadIfNecessary()
     }
 
-    public func enqueueReload(
+    func enqueueReload(
         canReuseInteractionModels: Bool,
         canReuseComponentStates: Bool,
     ) {
@@ -466,7 +464,7 @@ public class CVLoadCoordinator: NSObject {
 
     // MARK: - Conversation Style
 
-    public func updateConversationStyle(_ conversationStyle: ConversationStyle) {
+    func updateConversationStyle(_ conversationStyle: ConversationStyle) {
         AssertIsOnMainThread()
 
         self.conversationStyle = conversationStyle
@@ -658,7 +656,7 @@ public class CVLoadCoordinator: NSObject {
 
 extension CVLoadCoordinator: DatabaseChangeDelegate {
 
-    public func databaseChangesDidUpdate(databaseChanges: DatabaseChanges) {
+    func databaseChangesDidUpdate(databaseChanges: DatabaseChanges) {
         guard databaseChanges.threadUniqueIds.contains(threadUniqueId) else {
             return
         }
@@ -668,11 +666,11 @@ extension CVLoadCoordinator: DatabaseChangeDelegate {
         )
     }
 
-    public func databaseChangesDidUpdateExternally() {
+    func databaseChangesDidUpdateExternally() {
         enqueueReloadWithoutCaches()
     }
 
-    public func databaseChangesDidReset() {
+    func databaseChangesDidReset() {
         enqueueReloadWithoutCaches()
     }
 }
@@ -681,15 +679,15 @@ extension CVLoadCoordinator: DatabaseChangeDelegate {
 
 extension CVLoadCoordinator: UICollectionViewDataSource {
 
-    public static let messageSection: Int = 0
+    static let messageSection: Int = 0
 
-    public var renderItems: [CVRenderItem] {
+    var renderItems: [CVRenderItem] {
         AssertIsOnMainThread()
 
         return shouldHideCollectionViewContent ? [] : renderState.items
     }
 
-    public var renderStateId: UInt {
+    var renderStateId: UInt {
         return shouldHideCollectionViewContent ? CVRenderState.renderStateId_unknown : renderState.renderStateId
     }
 
@@ -699,13 +697,13 @@ extension CVLoadCoordinator: UICollectionViewDataSource {
         return renderState.allIndexPaths
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection sectionIdx: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection sectionIdx: Int) -> Int {
         owsAssertDebug(sectionIdx == Self.messageSection)
 
         return renderItems.count
     }
 
-    public func collectionView(
+    func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath,
     ) -> UICollectionViewCell {
@@ -769,7 +767,7 @@ extension CVLoadCoordinator: UICollectionViewDataSource {
         // return cell;
     }
 
-    public func collectionView(
+    func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath,
@@ -796,11 +794,11 @@ extension CVLoadCoordinator: UICollectionViewDataSource {
         return loadMoreView
     }
 
-    public var indexPathOfUnreadIndicator: IndexPath? {
+    var indexPathOfUnreadIndicator: IndexPath? {
         renderState.indexPathOfUnreadIndicator
     }
 
-    public func indexPath(forInteractionUniqueId interactionUniqueId: String) -> IndexPath? {
+    func indexPath(forInteractionUniqueId interactionUniqueId: String) -> IndexPath? {
         renderState.indexPath(forInteractionUniqueId: interactionUniqueId)
     }
 }
@@ -809,7 +807,7 @@ extension CVLoadCoordinator: UICollectionViewDataSource {
 
 extension CVLoadCoordinator: UICollectionViewDelegate {
 
-    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CVCell else {
             owsFailDebug("Unexpected cell type.")
             return
@@ -827,7 +825,7 @@ extension CVLoadCoordinator: UICollectionViewDelegate {
         }
     }
 
-    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CVCell else {
             owsFailDebug("Unexpected cell type.")
             return
@@ -841,16 +839,16 @@ extension CVLoadCoordinator: UICollectionViewDelegate {
 
 extension CVLoadCoordinator: ConversationViewLayoutDelegate {
 
-    public var layoutItems: [ConversationViewLayoutItem] {
+    var layoutItems: [ConversationViewLayoutItem] {
         renderItems
     }
 
-    public var showLoadOlderHeader: Bool {
+    var showLoadOlderHeader: Bool {
         // We need to have at least one item to hang the supplementary view on.
         return canLoadOlderItems && !renderItems.isEmpty
     }
 
-    public var showLoadNewerHeader: Bool {
+    var showLoadNewerHeader: Bool {
         // We need to have at least one item to hang the supplementary view on.
         //
         // We could show both the "load older" and "load newer" items. If so we
@@ -859,15 +857,15 @@ extension CVLoadCoordinator: ConversationViewLayoutDelegate {
         return canLoadNewerItems && renderItems.count >= minItemCount
     }
 
-    public var layoutHeaderHeight: CGFloat {
+    var layoutHeaderHeight: CGFloat {
         showLoadOlderHeader ? LoadMoreMessagesView.fixedHeight : 0
     }
 
-    public var layoutFooterHeight: CGFloat {
+    var layoutFooterHeight: CGFloat {
         showLoadNewerHeader ? LoadMoreMessagesView.fixedHeight : 0
     }
 
-    public var conversationViewController: ConversationViewController? {
+    var conversationViewController: ConversationViewController? {
         guard let delegate = self.delegate else {
             owsFailDebug("Missing delegate.")
             return nil
@@ -879,31 +877,31 @@ extension CVLoadCoordinator: ConversationViewLayoutDelegate {
 // MARK: -
 
 extension CVLoadCoordinator: UIScrollViewDelegate {
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         delegate?.scrollViewDidScroll?(scrollView)
     }
 
-    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         delegate?.scrollViewWillBeginDragging?(scrollView)
     }
 
-    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         delegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
     }
 
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         delegate?.scrollViewDidEndDecelerating?(scrollView)
     }
 
-    public func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
         delegate?.scrollViewShouldScrollToTop?(scrollView) ?? false
     }
 
-    public func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
         delegate?.scrollViewDidScrollToTop?(scrollView)
     }
 
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         delegate?.scrollViewDidEndScrollingAnimation?(scrollView)
     }
 }

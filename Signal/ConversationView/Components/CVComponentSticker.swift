@@ -4,11 +4,11 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentSticker: CVComponentBase, CVComponent {
+class CVComponentSticker: CVComponentBase, CVComponent, CVAccessibilityComponent {
 
-    public var componentKey: CVComponentKey { .sticker }
+    var componentKey: CVComponentKey { .sticker }
 
     private let sticker: CVComponentState.Sticker
     private var stickerMetadata: (any StickerMetadata)? {
@@ -29,14 +29,14 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewSticker()
     }
 
-    public static let stickerSize: CGFloat = 175
+    static let stickerSize: CGFloat = 175
     private static let progressViewSize = CGSize.square(44)
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -177,7 +177,7 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
 
     private static let measurementKey_stackView = "CVComponentSticker.measurementKey_stackView"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let size: CGFloat = ceil(min(maxWidth, Self.stickerSize))
@@ -195,7 +195,7 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -217,19 +217,19 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewSticker: NSObject, CVComponentView {
+    class CVComponentViewSticker: NSObject, CVComponentView {
 
         fileprivate let stackView = ManualStackView(name: "sticker.container")
 
         fileprivate var reusableMediaView: ReusableMediaView?
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             stackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {
+        func setIsCellVisible(_ isCellVisible: Bool) {
             if isCellVisible {
                 if
                     let reusableMediaView,
@@ -247,7 +247,7 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
             }
         }
 
-        public func reset() {
+        func reset() {
             stackView.reset()
 
             if
@@ -259,12 +259,10 @@ public class CVComponentSticker: CVComponentBase, CVComponent {
         }
 
     }
-}
 
-// MARK: -
+    // MARK: - CVAccessibilityComponent
 
-extension CVComponentSticker: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         if let approximateEmoji = stickerMetadata?.firstEmoji {
             return String.nonPluralLocalizedStringWithFormat(
                 OWSLocalizedString(

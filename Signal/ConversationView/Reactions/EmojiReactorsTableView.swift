@@ -6,7 +6,7 @@
 import SignalServiceKit
 import SignalUI
 
-class EmojiReactorsTableView: UITableView {
+class EmojiReactorsTableView: UITableView, UITableViewDataSource {
     struct ReactorItem {
         let address: SignalServiceAddress
         let displayName: String
@@ -42,9 +42,9 @@ class EmojiReactorsTableView: UITableView {
             )
         }
     }
-}
 
-extension EmojiReactorsTableView: UITableViewDataSource {
+    // MARK: - UITableViewDataSource
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return reactorItems.count
     }

@@ -4,9 +4,9 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
+class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView, OWSBubbleViewHost {
 
     private weak var provider: WallpaperBlurProvider?
     private var isPreview = false
@@ -45,7 +45,7 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
         }
     }
 
-    public func applyLayout() {
+    func applyLayout() {
         guard bounds.size.isNonEmpty else { return }
 
         UIView.performWithoutAnimation {
@@ -80,7 +80,7 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
         }
     }
 
-    public func configure(
+    func configure(
         provider: WallpaperBlurProvider?,
         bubbleConfig: BubbleConfiguration?,
     ) {
@@ -95,7 +95,7 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
         updateIfNecessary()
     }
 
-    public func updateIfNecessary() {
+    func updateIfNecessary() {
         guard isPreview == false, isReduceTransparencyMode == false else {
             backgroundColor = Theme.backgroundColor
             imageView.isHidden = true
@@ -149,7 +149,7 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
         state = nil
     }
 
-    public func resetContentAndConfiguration() {
+    func resetContentAndConfiguration() {
         isPreview = false
         provider = nil
         bubbleConfig = nil
@@ -159,13 +159,13 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
     }
 
     @available(iOS, unavailable)
-    override public func reset() {
+    override func reset() {
         fatalError("Not supported.")
     }
 
     // MARK: - CALayerDelegate
 
-    override public func action(for layer: CALayer, forKey event: String) -> CAAction? {
+    override func action(for layer: CALayer, forKey event: String) -> CAAction? {
         // Disable all implicit CALayer animations.
         NSNull()
     }
@@ -177,18 +177,15 @@ public class CVWallpaperBlurView: ManualLayoutViewWithLayer, CVDimmableView {
     var dimsContent = false
 
     var backgroundLayer: CALayer? { imageView.layer }
-}
 
-// MARK: -
+    // MARK: - OWSBubbleViewHost
 
-extension CVWallpaperBlurView: OWSBubbleViewHost {
-
-    public var maskPath: UIBezierPath {
+    var maskPath: UIBezierPath {
         guard let bubbleConfig else {
             return UIBezierPath(rect: bounds)
         }
         return bubbleConfig.bubblePath(for: bounds)
     }
 
-    public var bubbleReferenceView: UIView { self }
+    var bubbleReferenceView: UIView { self }
 }

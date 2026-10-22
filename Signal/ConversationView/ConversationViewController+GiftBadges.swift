@@ -3,28 +3,26 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
-public import SignalServiceKit
-import UIKit
+import SignalServiceKit
 
 extension ConversationViewController {
 
-    public func willWrapGift(_ messageUniqueId: String) -> Bool {
+    func willWrapGift(_ messageUniqueId: String) -> Bool {
         // If a gift is unwrapped at roughly the same we're reloading the
         // conversation for an unrelated reason, there's a chance we'll try to
         // re-wrap a gift that was just unwrapped. This provides an opportunity to
         // override that behavior.
-        return !self.viewState.unwrappedGiftMessageIds.contains(messageUniqueId)
+        !viewState.unwrappedGiftMessageIds.contains(messageUniqueId)
     }
 
-    public func willShakeGift(_ messageUniqueId: String) -> Bool {
+    func willShakeGift(_ messageUniqueId: String) -> Bool {
         let (justInserted, _) = self.viewState.shakenGiftMessageIds.insert(messageUniqueId)
         return justInserted
     }
 
-    public func willUnwrapGift(_ itemViewModel: CVItemViewModelImpl) {
-        self.viewState.unwrappedGiftMessageIds.insert(itemViewModel.interaction.uniqueId)
-        self.markGiftAsOpened(itemViewModel.interaction)
+    func willUnwrapGift(_ itemViewModel: CVItemViewModelImpl) {
+        viewState.unwrappedGiftMessageIds.insert(itemViewModel.interaction.uniqueId)
+        markGiftAsOpened(itemViewModel.interaction)
     }
 
     private func markGiftAsOpened(_ interaction: TSInteraction) {
@@ -43,7 +41,7 @@ extension ConversationViewController {
         }
     }
 
-    public func didTapGiftBadge(_ itemViewModel: CVItemViewModelImpl, profileBadge: ProfileBadge, isExpired: Bool, isRedeemed: Bool) {
+    func didTapGiftBadge(_ itemViewModel: CVItemViewModelImpl, profileBadge: ProfileBadge, isExpired: Bool, isRedeemed: Bool) {
         AssertIsOnMainThread()
 
         let viewControllerToPresent: UIViewController
@@ -70,7 +68,7 @@ extension ConversationViewController {
             return
         }
 
-        self.present(viewControllerToPresent, animated: true)
+        present(viewControllerToPresent, animated: true)
     }
 
     private func incomingGiftSheet(
@@ -104,7 +102,7 @@ extension ConversationViewController {
             }
             return BadgeGiftingAlreadyRedeemedSheet(badge: profileBadge, shortName: shortName)
         }
-        return self.giftRedemptionSheet(incomingMessage: incomingMessage, profileBadge: profileBadge)
+        return giftRedemptionSheet(incomingMessage: incomingMessage, profileBadge: profileBadge)
     }
 
     private func giftRedemptionSheet(incomingMessage: TSIncomingMessage, profileBadge: ProfileBadge) -> UIViewController {
@@ -134,12 +132,11 @@ extension ConversationViewController {
             "DONATION_ON_BEHALF_OF_A_FRIEND_REDEEM_BADGE_LATER",
             comment: "When you receive a badge as a result of a donation from a friend, a screen is shown. This toast is shown when dismissing that screen if you do not redeem the badge.",
         )
-        self.presentToastCVC(text)
+        presentToastCVC(text)
     }
 
-}
+    // MARK: - BadgeIssueSheetDelegate
 
-extension ConversationViewController: BadgeIssueSheetDelegate {
     func badgeIssueSheetActionTapped(_ action: BadgeIssueSheetAction) {
         switch action {
         case .dismiss:
@@ -174,7 +171,7 @@ extension ConversationViewController: BadgeIssueSheetDelegate {
                 DonationSettingsViewController(),
                 donateViewController,
             ]
-            self.presentFormSheet(appSettings, animated: true, completion: nil)
+            presentFormSheet(appSettings, animated: true, completion: nil)
         }
     }
 }

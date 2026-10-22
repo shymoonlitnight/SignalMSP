@@ -4,18 +4,18 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public protocol CVQuotedMessageViewDelegate: AnyObject {
+protocol CVQuotedMessageViewDelegate: AnyObject {
 
     func didTapDownloadQuotedReplyAttachment(_ quotedReply: QuotedReplyModel)
 }
 
 // MARK: -
 
-public class CVQuotedMessageView: ManualStackViewWithLayer {
+class CVQuotedMessageView: ManualStackViewWithLayer {
 
-    public struct State: Equatable {
+    struct State: Equatable {
         let quotedReplyModel: QuotedReplyModel
         let displayableQuotedText: DisplayableText?
         let conversationStyle: ConversationStyle
@@ -520,7 +520,7 @@ public class CVQuotedMessageView: ManualStackViewWithLayer {
         return bubbleView
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         state: State,
         delegate: CVQuotedMessageViewDelegate?,
         componentDelegate: CVComponentDelegate,
@@ -795,7 +795,7 @@ public class CVQuotedMessageView: ManualStackViewWithLayer {
         )
     }
 
-    public func setIsCellVisible(_ isCellVisible: Bool) {
+    func setIsCellVisible(_ isCellVisible: Bool) {
         quotedTextSpoilerConfigBuilder.isViewVisible = isCellVisible
     }
 
@@ -807,7 +807,7 @@ public class CVQuotedMessageView: ManualStackViewWithLayer {
     private static let measurementKey_outerVStack = "CVQuotedMessageView.measurementKey_outerVStack"
     private static let measurementKey_remotelySourcedContentStack = "CVQuotedMessageView.measurementKey_remotelySourcedContentStack"
 
-    public static func measure(
+    static func measure(
         state: State,
         maxWidth: CGFloat,
         measurementBuilder: CVCellMeasurement.Builder,
@@ -986,7 +986,7 @@ public class CVQuotedMessageView: ManualStackViewWithLayer {
         delegate?.didTapDownloadQuotedReplyAttachment(quotedReplyModel)
     }
 
-    override public func reset() {
+    override func reset() {
         super.reset()
 
         self.state = nil

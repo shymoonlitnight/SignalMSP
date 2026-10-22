@@ -9399,7 +9399,6 @@
 				348815C5255346A500D4F4C4 /* CVNode.swift */,
 				D9170EE9290C57BF00CD813A /* CVViewState+Banners.swift */,
 				341D392825472F3B00996E7B /* CVViewState.swift */,
-				E1CFAAA22C9DD2B1003145C3 /* LinkPreviewCallLink.swift */,
 				34A95517271B510400B05242 /* LinkPreviewGroupLink.swift */,
 				346EAA13250199A300E8AB6F /* MemberRequestView.swift */,
 				4CB5F26820F7D060004D1B42 /* MessageActions.swift */,
@@ -9705,6 +9704,7 @@
 			children = (
 				F9C5CABC289453B200548EEE /* HTMLMetadata.swift */,
 				F94261D4289B1B5400460798 /* HTMLMetadataTests.swift */,
+				E1CFAAA22C9DD2B1003145C3 /* LinkPreviewCallLink.swift */,
 				509085BB2C498D3500409B85 /* LinkPreviewFetcher.swift */,
 				5073EACA2C4F3A16001FBB3E /* LinkPreviewFetcherTest.swift */,
 				5003BB3E299DA0F10037159B /* LinkPreviewFetchState.swift */,

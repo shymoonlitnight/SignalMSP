@@ -3,13 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
+class CVComponentArchivedPayment: CVComponentBase, CVComponent {
 
-    public var componentKey: CVComponentKey { .archivedPaymentAttachment }
+    var componentKey: CVComponentKey { .archivedPaymentAttachment }
 
     private let archivedPaymentAttachment: CVComponentState.ArchivedPaymentAttachment
     private let messageStatus: MessageReceiptStatus
@@ -36,11 +35,11 @@ public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewArchivedPayment()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -247,7 +246,7 @@ public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
         )
     }
 
-    public func measure(
+    func measure(
         maxWidth: CGFloat,
         measurementBuilder: CVCellMeasurement.Builder,
     ) -> CGSize {
@@ -317,7 +316,7 @@ public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewArchivedPayment: NSObject, CVComponentView {
+    class CVComponentViewArchivedPayment: NSObject, CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "ArchivedPayment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "ArchivedPayment.vStackView")
@@ -329,15 +328,15 @@ public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
         fileprivate let topLabel = CVLabel()
         fileprivate let noteLabel = CVLabel()
 
-        public var isDedicatedCellView = true
+        var isDedicatedCellView = true
 
-        public var rootView: UIView {
+        var rootView: UIView {
             vStackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             hStackView.reset()
             vStackView.reset()
 
@@ -350,7 +349,7 @@ public class CVComponentArchivedPayment: CVComponentBase, CVComponent {
         }
     }
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -384,7 +383,7 @@ private extension String {
 }
 
 extension CVComponentArchivedPayment: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         return formatPaymentAmount(status: messageStatus).string
     }
 }

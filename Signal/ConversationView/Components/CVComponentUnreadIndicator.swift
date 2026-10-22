@@ -4,23 +4,23 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
+class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
 
-    public var componentKey: CVComponentKey { .unreadIndicator }
+    var componentKey: CVComponentKey { .unreadIndicator }
 
-    public var cellReuseIdentifier: CVCellReuseIdentifier {
+    var cellReuseIdentifier: CVCellReuseIdentifier {
         CVCellReuseIdentifier.unreadIndicator
     }
 
-    public let isDedicatedCell = true
+    let isDedicatedCell = true
 
     override init(itemModel: CVItemModel) {
         super.init(itemModel: itemModel)
     }
 
-    public func configureCellRootComponent(
+    func configureCellRootComponent(
         cellView: UIView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -36,11 +36,11 @@ public class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
         )
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewUnreadIndicator()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -178,7 +178,7 @@ public class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
     private static let measurementKey_outerStack = "CVComponentUnreadIndicator.measurementKey_outerStack"
     private static let measurementKey_innerStack = "CVComponentUnreadIndicator.measurementKey_innerStack"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let availableWidth = max(0, maxWidth - (Self.titleLabelMargins.totalWidth + outerStackConfig.layoutMargins.totalWidth))
@@ -215,7 +215,7 @@ public class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewUnreadIndicator: NSObject, CVComponentView {
+    class CVComponentViewUnreadIndicator: NSObject, CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "unreadIndicator.outerStack")
         fileprivate let innerStack = ManualStackView(name: "unreadIndicator.innerStack")
@@ -228,21 +228,21 @@ public class CVComponentUnreadIndicator: CVComponentBase, CVRootComponent {
         fileprivate let strokeViewLeading = StrokeView()
         fileprivate let strokeViewTrailing = StrokeView()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             outerStack
         }
 
         // MARK: -
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             reset(resetReusableState: false)
         }
 
-        public func reset(resetReusableState: Bool) {
+        func reset(resetReusableState: Bool) {
             owsAssertDebug(isDedicatedCellView)
 
             titleLabel.text = nil

@@ -4,11 +4,11 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentSenderName: CVComponentBase, CVComponent {
+class CVComponentSenderName: CVComponentBase, CVComponent {
 
-    public var componentKey: CVComponentKey { .senderName }
+    var componentKey: CVComponentKey { .senderName }
 
     private let state: CVComponentState.SenderName
     private var senderName: NSAttributedString {
@@ -29,11 +29,11 @@ public class CVComponentSenderName: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewSenderName()
     }
 
-    override public func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
+    override func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
         guard let componentView = componentView as? CVComponentViewSenderName else {
             owsFailDebug("Unexpected componentView.")
             return nil
@@ -48,7 +48,7 @@ public class CVComponentSenderName: CVComponentBase, CVComponent {
         return conversationStyle.bubbleTextColor(message: message)
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -171,7 +171,7 @@ public class CVComponentSenderName: CVComponentBase, CVComponent {
     private static let measurementKey_outerStack = "CVComponentSenderName.measurementKey_outerStack"
     private static let measurementKey_innerStack = "CVComponentSenderName.measurementKey_innerStack"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let maxWidth = maxWidth - (
@@ -219,7 +219,7 @@ public class CVComponentSenderName: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewSenderName: NSObject, CVComponentView {
+    class CVComponentViewSenderName: NSObject, CVComponentView {
 
         fileprivate var label = UILabel()
 
@@ -239,15 +239,15 @@ public class CVComponentSenderName: CVComponentBase, CVComponent {
             return wallpaperBlurView
         }
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             outerStack
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             outerStack.reset()
             innerStack.reset()
 

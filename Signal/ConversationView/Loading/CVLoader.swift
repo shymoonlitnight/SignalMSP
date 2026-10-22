@@ -3,13 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
 import LibSignalClient
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 // This entity performs a single load.
-public class CVLoader: NSObject {
+class CVLoader: NSObject {
     private let threadUniqueId: String
     private let loadRequest: CVLoadRequest
     private let viewStateSnapshot: CVViewStateSnapshot
@@ -286,7 +285,7 @@ public class CVLoader: NSObject {
 
 #if USE_DEBUG_UI
 
-    public static func debugui_buildStandaloneRenderItem(
+    static func debugui_buildStandaloneRenderItem(
         interaction: TSInteraction,
         thread: TSThread,
         containerView: UIView,
@@ -303,7 +302,7 @@ public class CVLoader: NSObject {
 
 #endif
 
-    public static func buildStandaloneRenderItem(
+    static func buildStandaloneRenderItem(
         interaction: TSInteraction,
         thread: TSThread,
         containerView: UIView,
@@ -340,7 +339,7 @@ public class CVLoader: NSObject {
         )
     }
 
-    public static func buildStandaloneRenderItem(
+    static func buildStandaloneRenderItem(
         interaction: TSInteraction,
         thread: TSThread,
         conversationStyle: ConversationStyle,
@@ -418,7 +417,7 @@ public class CVLoader: NSObject {
         )
     }
 
-    public static func buildStandaloneComponentState(
+    static func buildStandaloneComponentState(
         interaction: TSInteraction,
         spoilerState: SpoilerRenderState,
         transaction: DBReadTransaction,

@@ -7,7 +7,7 @@ import LibSignalClient
 import SignalServiceKit
 import SignalUI
 
-public extension ConversationViewController {
+extension ConversationViewController {
 
     var isCurrentCallForThread: Bool {
         switch AppEnvironment.shared.callService.callServiceState.currentCall?.mode {

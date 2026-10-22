@@ -12,7 +12,7 @@ import SignalUI
 extension ConversationViewController {
 
     /// Checks if there are any banners that need to be displayed and shows them as necessary.
-    public func ensureBannerState() {
+    func ensureBannerState() {
         AssertIsOnMainThread()
 
         guard !isInPreviewPlatter else {

@@ -15,7 +15,7 @@ import SignalUI
 //
 // CVItemViewState might be affected by adjacent items, profile changes,
 // the passage of time, etc.
-public struct CVItemViewState: Equatable {
+struct CVItemViewState: Equatable {
     let shouldShowSenderAvatar: Bool
     let accessibilityAuthorName: String?
     let shouldHideFooter: Bool
@@ -35,10 +35,10 @@ public struct CVItemViewState: Equatable {
     let uiMode: ConversationUIMode
     let previousUIMode: ConversationUIMode
 
-    public var isShowingSelectionUI: Bool { uiMode.hasSelectionUI }
-    public var wasShowingSelectionUI: Bool { previousUIMode.hasSelectionUI }
+    var isShowingSelectionUI: Bool { uiMode.hasSelectionUI }
+    var wasShowingSelectionUI: Bool { previousUIMode.hasSelectionUI }
 
-    public class Builder {
+    class Builder {
         var shouldShowSenderAvatar = false
         var accessibilityAuthorName: String?
         var shouldHideFooter = false

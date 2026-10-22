@@ -4,11 +4,11 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentQuotedReply: CVComponentBase, CVComponent {
+class CVComponentQuotedReply: CVComponentBase, CVComponent, CVAccessibilityComponent {
 
-    public var componentKey: CVComponentKey { .quotedReply }
+    var componentKey: CVComponentKey { .quotedReply }
 
     private let quotedReply: CVComponentState.QuotedReply
     private var quotedReplyModel: QuotedReplyModel {
@@ -28,11 +28,11 @@ public class CVComponentQuotedReply: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewQuotedReply()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -63,7 +63,7 @@ public class CVComponentQuotedReply: CVComponentBase, CVComponent {
         )
     }
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         return CVQuotedMessageView.measure(
@@ -75,7 +75,7 @@ public class CVComponentQuotedReply: CVComponentBase, CVComponent {
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -90,29 +90,29 @@ public class CVComponentQuotedReply: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewQuotedReply: NSObject, CVComponentView {
+    class CVComponentViewQuotedReply: NSObject, CVComponentView {
 
         fileprivate let quotedMessageView = CVQuotedMessageView(name: "quotedMessageView")
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             quotedMessageView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {
+        func setIsCellVisible(_ isCellVisible: Bool) {
             quotedMessageView.setIsCellVisible(isCellVisible)
         }
 
-        public func reset() {
+        func reset() {
             quotedMessageView.reset()
         }
 
     }
-}
 
-extension CVComponentQuotedReply: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    // MARK: - CVAccessibilityComponent
+
+    var accessibilityDescription: String {
         let format = OWSLocalizedString(
             "QUOTED_REPLY_ACCESSIBILITY_LABEL_FORMAT",
             comment: "Accessibility label stating the author of the message to which you are replying. Embeds: {{ the author of the message to which you are replying }} {{ original message }}.",
@@ -131,8 +131,6 @@ extension CVComponentQuotedReply: CVAccessibilityComponent {
         }
     }
 }
-
-// MARK: -
 
 private class CVQuotedMessageViewAdapter: CVQuotedMessageViewDelegate {
 

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 
 extension ConversationViewController {
 
@@ -16,7 +16,7 @@ extension ConversationViewController {
     }
 
     /// The index path of the last item in the collection view's visible rect
-    public var firstVisibleIndexPath: IndexPath? {
+    var firstVisibleIndexPath: IndexPath? {
         // For people looking at this in the future, UICollectionView has a very similar looking
         // property: -indexPathsForVisibleItems. Why aren't we using that?
         //
@@ -38,7 +38,7 @@ extension ConversationViewController {
     }
 
     /// The index path of the last item in the collection view's visible rect
-    public var lastVisibleIndexPath: IndexPath? {
+    var lastVisibleIndexPath: IndexPath? {
         // For people looking at this in the future, UICollectionView has a very similar looking
         // property: -indexPathsForVisibleItems. Why aren't we using that?
         //

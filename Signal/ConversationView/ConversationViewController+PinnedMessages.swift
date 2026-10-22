@@ -3,9 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
-public import UIKit
 
 protocol PinnedMessageInteractionManagerDelegate: AnyObject {
 
@@ -24,13 +23,13 @@ protocol PinnedMessageInteractionManagerDelegate: AnyObject {
     func unpinAllMessages()
 }
 
-public struct PinnedMessageBannerData {
+struct PinnedMessageBannerData {
     let authorName: String
     let previewText: NSAttributedString
     let thumbnail: UIImageView?
 }
 
-public extension ConversationViewController {
+extension ConversationViewController {
     private enum PinnedMessageBarSizing {
         static let twoBarHeight = 12.0
         static let threeBarHeight = 8.0
@@ -285,10 +284,10 @@ public extension ConversationViewController {
         ])
         return imageView
     }
-}
 
-extension ConversationViewController: UIContextMenuInteractionDelegate {
-    public func contextMenuInteraction(
+    // MARK: - UIContextMenuInteractionDelegate
+
+    func contextMenuInteraction(
         _ interaction: UIContextMenuInteraction,
         configurationForMenuAtLocation location: CGPoint,
     ) -> UIContextMenuConfiguration? {
@@ -336,9 +335,9 @@ extension ConversationViewController: UIContextMenuInteractionDelegate {
             return UIMenu(children: actions)
         }
     }
-}
 
-extension ConversationViewController: PinnedMessageInteractionManagerDelegate {
+    // MARK: - PinnedMessageInteractionManagerDelegate
+
     func goToMessage(message: TSMessage?) {
         let targetMessage: TSMessage
         if let message {

@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
 
-public enum ScrollAlignment: Int {
+enum ScrollAlignment: Int {
     case top
     case bottom
     case center
@@ -29,15 +29,13 @@ public enum ScrollAlignment: Int {
     }
 }
 
-// MARK: -
-
 // TODO: Do we need to specify the load alignment (top, bottom, center)
 // or that implicit in the value?
-public struct CVScrollAction: Equatable, CustomStringConvertible {
+struct CVScrollAction: Equatable, CustomStringConvertible {
 
     // TODO: Do we need to specify the load alignment (top, bottom, center)
     // or that implicit in the value?
-    public enum Action: Equatable, CustomStringConvertible {
+    enum Action: Equatable, CustomStringConvertible {
         case none
         case scrollTo(interactionId: String, onScreenPercentage: CGFloat, alignment: ScrollAlignment)
         case bottomOfLoadWindow
@@ -46,7 +44,7 @@ public struct CVScrollAction: Equatable, CustomStringConvertible {
 
         // MARK: - CustomStringConvertible
 
-        public var description: String {
+        var description: String {
             switch self {
             case .none:
                 return "none"
@@ -65,18 +63,16 @@ public struct CVScrollAction: Equatable, CustomStringConvertible {
     let action: Action
     let isAnimated: Bool
 
-    public static var none: CVScrollAction {
+    static var none: CVScrollAction {
         CVScrollAction(action: .none, isAnimated: false)
     }
 
     // MARK: - CustomStringConvertible
 
-    public var description: String {
+    var description: String {
         "[scrollAction: \(action), isAnimated: \(isAnimated)]"
     }
 }
-
-// MARK: -
 
 extension ConversationViewController {
 
@@ -487,11 +483,11 @@ extension ConversationViewController {
         scrollToBottomOfConversation(animated: true)
     }
 
-    public func recordInitialScrollState(_ focusMessageId: String?) {
+    func recordInitialScrollState(_ focusMessageId: String?) {
         initialScrollState = CVInitialScrollState(focusMessageId: focusMessageId)
     }
 
-    public func clearInitialScrollState() {
+    func clearInitialScrollState() {
         initialScrollState = nil
     }
 
@@ -540,11 +536,11 @@ extension ConversationViewController {
         safeDistanceFromTop <= tolerancePoints
     }
 
-    public var safeDistanceFromTop: CGFloat {
+    var safeDistanceFromTop: CGFloat {
         collectionView.contentOffset.y - minContentOffsetY
     }
 
-    public var safeDistanceFromBottom: CGFloat {
+    var safeDistanceFromBottom: CGFloat {
         // This is a bit subtle.
         //
         // The _wrong_ way to determine if we're scrolled to the bottom is to
@@ -580,7 +576,7 @@ extension ConversationViewController {
 
     // We use this hook to ensure scroll state continuity.  As the collection
     // view's content size changes, we want to keep the same cells in view.
-    public func targetContentOffset(
+    func targetContentOffset(
         forProposedContentOffset proposedContentOffset: CGPoint,
         lastKnownDistanceFromBottom: CGFloat?,
     ) -> CGPoint {
@@ -717,7 +713,7 @@ extension ConversationViewController {
         var uniqueId: String { interaction.uniqueId }
     }
 
-    public static func lastVisibleInteractionId(for thread: TSThread, tx: DBReadTransaction) -> String? {
+    static func lastVisibleInteractionId(for thread: TSThread, tx: DBReadTransaction) -> String? {
         return lastVisibleInteraction(for: thread, tx: tx)?.uniqueId
     }
 
@@ -725,7 +721,7 @@ extension ConversationViewController {
         return SSKEnvironment.shared.databaseStorageRef.read { tx in Self.lastVisibleInteraction(for: thread, tx: tx) }
     }
 
-    public func focusInitialVoiceoverElement() {
+    func focusInitialVoiceoverElement() {
         let focusIndexPath: IndexPath
         if let _indexPath = indexPathOfUnreadMessagesIndicator {
             focusIndexPath = _indexPath
@@ -749,7 +745,7 @@ extension ConversationViewController {
         }
     }
 
-    public func focusVoiceoverElementAfterScroll() {
+    func focusVoiceoverElementAfterScroll() {
         if
             let scrolledMessageId = viewState.focusedMessageId,
             let scrolledMessageIndexPath = indexPath(forInteractionUniqueId: scrolledMessageId),

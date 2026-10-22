@@ -4,17 +4,17 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
+class CVComponentDateHeader: CVComponentBase, CVRootComponent {
 
-    public var componentKey: CVComponentKey { .dateHeader }
+    var componentKey: CVComponentKey { .dateHeader }
 
-    public var cellReuseIdentifier: CVCellReuseIdentifier {
+    var cellReuseIdentifier: CVCellReuseIdentifier {
         CVCellReuseIdentifier.dateHeader
     }
 
-    public let isDedicatedCell = true
+    let isDedicatedCell = true
 
     struct State: Equatable {
         let text: String
@@ -28,7 +28,7 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func configureCellRootComponent(
+    func configureCellRootComponent(
         cellView: UIView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -44,11 +44,11 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
         )
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewDateHeader()
     }
 
-    override public func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
+    override func wallpaperBlurView(componentView: CVComponentView) -> CVWallpaperBlurView? {
         guard let componentView = componentView as? CVComponentViewDateHeader else {
             owsFailDebug("Unexpected componentView.")
             return nil
@@ -56,7 +56,7 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
         return componentView.plainContentView?.wallpaperBlurView
     }
 
-    override public func apply(
+    override func apply(
         layoutAttributes: CVCollectionViewLayoutAttributes,
         componentView: CVComponentView,
     ) {
@@ -76,7 +76,7 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
         let stickyView: UIView
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -245,7 +245,7 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
     fileprivate static let measurementKey_outerStack = "CVComponentDateHeader.measurementKey_outerStack"
     fileprivate static let measurementKey_innerStack = "CVComponentDateHeader.measurementKey_innerStack"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let availableWidth = max(
@@ -280,7 +280,7 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewDateHeader: NSObject, CVComponentView {
+    class CVComponentViewDateHeader: NSObject, CVComponentView {
 
         fileprivate let outerStack = ManualStackView(name: "dateHeader.outerStackView")
         fileprivate let doubleContentWrapper = ManualLayoutView(name: "dateHeader.doubleContentWrapper")
@@ -313,23 +313,23 @@ public class CVComponentDateHeader: CVComponentBase, CVRootComponent {
         fileprivate var hasWallpaper = false
         fileprivate var isDarkThemeEnabled = false
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
         fileprivate var doubleContentView: DoubleContentView?
 
-        public var rootView: UIView {
+        var rootView: UIView {
             outerStack
         }
 
         // MARK: -
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             reset(resetReusableState: false)
         }
 
-        public func reset(resetReusableState: Bool) {
+        func reset(resetReusableState: Bool) {
             owsAssertDebug(isDedicatedCellView)
 
             plainContentView?.reset(resetReusableState: resetReusableState)

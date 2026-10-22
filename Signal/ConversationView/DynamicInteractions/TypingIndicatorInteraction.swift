@@ -3,22 +3,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 
-public class TypingIndicatorInteraction: TSInteraction {
-    public static let TypingIndicatorId = "TypingIndicator"
+class TypingIndicatorInteraction: TSInteraction {
+    static let TypingIndicatorId = "TypingIndicator"
 
-    override public var isDynamicInteraction: Bool {
+    override var isDynamicInteraction: Bool {
         true
     }
 
-    override public var interactionType: OWSInteractionType {
+    override var interactionType: OWSInteractionType {
         .typingIndicator
     }
 
-    public let address: SignalServiceAddress
+    let address: SignalServiceAddress
 
-    public init(threadUniqueId: String, timestamp: UInt64, address: SignalServiceAddress) {
+    init(threadUniqueId: String, timestamp: UInt64, address: SignalServiceAddress) {
         self.address = address
 
         super.init(
@@ -29,11 +29,11 @@ public class TypingIndicatorInteraction: TSInteraction {
         )
     }
 
-    override public var shouldBeSaved: Bool {
+    override var shouldBeSaved: Bool {
         return false
     }
 
-    override public func anyWillInsert(with transaction: DBWriteTransaction) {
+    override func anyWillInsert(with transaction: DBWriteTransaction) {
         owsFailDebug("The transient interaction should not be saved in the database.")
     }
 }

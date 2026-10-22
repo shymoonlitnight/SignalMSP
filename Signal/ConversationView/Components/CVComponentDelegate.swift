@@ -3,24 +3,23 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
-public import LibSignalClient
-public import SignalServiceKit
-public import SignalUI
+import LibSignalClient
+import SignalServiceKit
+import SignalUI
 
-public enum CVAttachmentTapAction: Int {
+enum CVAttachmentTapAction: Int {
     case handledByDelegate
     case `default`
 }
 
-public protocol AudioMessageViewDelegate: AnyObject {
+protocol AudioMessageViewDelegate: AnyObject {
     func enqueueReloadWithoutCaches()
 
     typealias EndCellAnimation = () -> Void
     func beginCellAnimation(maximumDuration: TimeInterval) -> EndCellAnimation
 }
 
-public protocol CVComponentDelegate: AnyObject, AudioMessageViewDelegate, CVPollVoteDelegate {
+protocol CVComponentDelegate: AnyObject, AudioMessageViewDelegate, CVPollVoteDelegate {
 
     func enqueueReload()
 

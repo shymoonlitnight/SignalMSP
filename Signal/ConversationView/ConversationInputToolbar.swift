@@ -4,7 +4,7 @@
 //
 
 import Photos
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
 
 protocol ConversationInputToolbarDelegate: AnyObject {
@@ -66,7 +66,9 @@ protocol ConversationInputToolbarDelegate: AnyObject {
     func showUnblockConversationUI(completion: ((Bool) -> Void)?)
 }
 
-public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
+class ConversationInputToolbar: UIView, AttachmentKeyboardDelegate, ConversationBottomBar,
+    ConversationTextViewToolbarDelegate, QuotedReplyPreviewDelegate, StickerKeyboardDelegate
+{
 
     private var conversationStyle: ConversationStyle
 
@@ -147,7 +149,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
 
     // MARK: Layout Configuration.
 
-    override public var frame: CGRect {
+    override var frame: CGRect {
         didSet {
             guard oldValue.size.height != frame.size.height else { return }
 
@@ -155,7 +157,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
         }
     }
 
-    override public var bounds: CGRect {
+    override var bounds: CGRect {
         didSet {
             guard abs(oldValue.size.height - bounds.size.height) > 1 else { return }
 
@@ -163,7 +165,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
         }
     }
 
-    override public func willMove(toSuperview newSuperview: UIView?) {
+    override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
 
         // Suggested sticker panel is placed outside of ConversationInputToolbar
@@ -173,7 +175,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
         }
     }
 
-    override public func didMoveToSuperview() {
+    override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
         guard superview != nil else { return }
@@ -206,7 +208,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
         static let maxTextViewHeightIpad: CGFloat = 142
     }
 
-    public enum Style {
+    enum Style {
         @available(iOS 26, *)
         static func glassEffect(isInteractive: Bool = false) -> UIGlassEffect {
             let glassEffect = UIGlassEffect(style: .regular)
@@ -3198,7 +3200,7 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
         ensureButtonVisibility(withAnimation: false, doLayout: false)
     }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
         if #unavailable(iOS 26), let legacyBackgroundView, let legacyBackgroundBlurView {
@@ -3235,11 +3237,8 @@ public class ConversationInputToolbar: UIView, QuotedReplyPreviewDelegate {
     private func textInputViewTapped() {
         clearDesiredKeyboard()
     }
-}
 
-// MARK: Button Actions
-
-extension ConversationInputToolbar {
+    // MARK: - Button Actions
 
     private func cameraButtonPressed() {
         guard let inputToolbarDelegate else {
@@ -3301,9 +3300,8 @@ extension ConversationInputToolbar {
 
         toggleKeyboardType(.system, animated: true)
     }
-}
 
-extension ConversationInputToolbar: ConversationTextViewToolbarDelegate {
+    // MARK: - ConversationTextViewToolbarDelegate
 
     private func updateHeightWithTextView(_ textView: UITextView) {
 
@@ -3360,9 +3358,9 @@ extension ConversationInputToolbar: ConversationTextViewToolbarDelegate {
     }
 
     func textViewDidChangeSelection(_ textView: UITextView) { }
-}
 
-extension ConversationInputToolbar: StickerKeyboardDelegate {
+    // MARK: - StickerKeyboardDelegate
+
     func stickerKeyboard(_: StickerKeyboard, didSelect stickerInfo: StickerInfo) {
         AssertIsOnMainThread()
         inputToolbarDelegate?.sendSticker(stickerInfo)
@@ -3372,9 +3370,8 @@ extension ConversationInputToolbar: StickerKeyboardDelegate {
         AssertIsOnMainThread()
         inputToolbarDelegate?.presentManageStickersView()
     }
-}
 
-extension ConversationInputToolbar: AttachmentKeyboardDelegate {
+    // MARK: - AttachmentKeyboardDelegate
 
     func didSelectRecentPhoto(asset: PHAsset, attachment: PreviewableAttachment, attachmentLimits: OutgoingAttachmentLimits) {
         inputToolbarDelegate?.didSelectRecentPhoto(asset: asset, attachment: attachment, attachmentLimits: attachmentLimits)
@@ -3415,8 +3412,8 @@ extension ConversationInputToolbar: AttachmentKeyboardDelegate {
     var isGroup: Bool {
         inputToolbarDelegate?.isGroup() ?? false
     }
-}
 
-extension ConversationInputToolbar: ConversationBottomBar {
+    // MARK: - ConversationBottomBar
+
     var shouldAttachToKeyboardLayoutGuide: Bool { true }
 }

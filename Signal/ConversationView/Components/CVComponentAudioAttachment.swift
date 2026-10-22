@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public class CVComponentAudioAttachment:
+class CVComponentAudioAttachment:
     CVComponentBase,
     CVComponent,
     CVAudioPlayerListener,
@@ -14,7 +14,7 @@ public class CVComponentAudioAttachment:
     CVAccessibilityComponent
 {
 
-    public var componentKey: CVComponentKey { .audioAttachment }
+    var componentKey: CVComponentKey { .audioAttachment }
 
     private let audioAttachment: AudioAttachment
     private let nextAudioAttachment: AudioAttachment?
@@ -41,11 +41,11 @@ public class CVComponentAudioAttachment:
         }
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewAudioAttachment()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -130,7 +130,7 @@ public class CVComponentAudioAttachment:
     private static let measurementKey_stackView = "CVComponentAudioAttachment.measurementKey_stackView"
     private static let measurementKey_footerSize = "CVComponentAudioAttachment.measurementKey_footerSize"
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         let maxWidth = min(maxWidth, conversationStyle.maxAudioMessageWidth)
@@ -187,7 +187,7 @@ public class CVComponentAudioAttachment:
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -244,7 +244,7 @@ public class CVComponentAudioAttachment:
 
     // MARK: - Scrub Audio With Pan
 
-    override public func findPanHandler(
+    override func findPanHandler(
         sender: UIPanGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -280,7 +280,7 @@ public class CVComponentAudioAttachment:
         )
     }
 
-    override public func startPanGesture(
+    override func startPanGesture(
         sender: UIPanGestureRecognizer,
         panHandler: CVPanHandler,
         componentDelegate: CVComponentDelegate,
@@ -291,7 +291,7 @@ public class CVComponentAudioAttachment:
         AssertIsOnMainThread()
     }
 
-    override public func handlePanGesture(
+    override func handlePanGesture(
         sender: UIPanGestureRecognizer,
         panHandler: CVPanHandler,
         componentDelegate: CVComponentDelegate,
@@ -335,7 +335,7 @@ public class CVComponentAudioAttachment:
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewAudioAttachment: NSObject, CVComponentView {
+    class CVComponentViewAudioAttachment: NSObject, CVComponentView {
 
         fileprivate let stackView = ManualStackView(name: "CVComponentViewAudioAttachment.stackView")
 
@@ -343,15 +343,15 @@ public class CVComponentAudioAttachment:
 
         fileprivate var footerOverlayView: CVComponentView?
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             stackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             stackView.reset()
 
             audioMessageView?.removeFromSuperview()
@@ -376,7 +376,7 @@ public class CVComponentAudioAttachment:
 
     // MARK: - DatabaseChangeDelegate
 
-    public func databaseChangesDidUpdate(databaseChanges: SignalServiceKit.DatabaseChanges) {
+    func databaseChangesDidUpdate(databaseChanges: SignalServiceKit.DatabaseChanges) {
         guard databaseChanges.didUpdate(interaction: self.interaction) else {
             return
         }
@@ -384,17 +384,17 @@ public class CVComponentAudioAttachment:
         checkIfMessageStillExists()
     }
 
-    public func databaseChangesDidUpdateExternally() {
+    func databaseChangesDidUpdateExternally() {
         checkIfMessageStillExists()
     }
 
-    public func databaseChangesDidReset() {
+    func databaseChangesDidReset() {
         checkIfMessageStillExists()
     }
 
     // MARK: - CVAccessibilityComponent
 
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         if
             audioAttachment.isVoiceMessage,
             let durationSeconds = audioAttachment.durationSeconds

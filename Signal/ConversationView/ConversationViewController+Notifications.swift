@@ -7,9 +7,8 @@ import AVFoundation
 import SignalServiceKit
 
 extension ConversationViewController {
-    func addNotificationListeners() {
-        AssertIsOnMainThread()
 
+    func addNotificationListeners() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(blockListDidChange),
@@ -90,9 +89,7 @@ extension ConversationViewController {
     }
 
     @objc
-    private func otherUsersProfileDidChange(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func otherUsersProfileDidChange(_ notification: Notification) {
         guard
             let address = notification.userInfo?[UserProfileNotifications.profileAddressKey] as? SignalServiceAddress,
             address.isValid,
@@ -115,9 +112,7 @@ extension ConversationViewController {
     }
 
     @objc
-    private func profileWhitelistDidChange(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func profileWhitelistDidChange(_ notification: Notification) {
         // If profile whitelist just changed, we may want to hide a profile whitelist offer.
         if
             let address = notification.userInfo?[UserProfileNotifications.profileAddressKey] as? SignalServiceAddress,
@@ -138,84 +133,65 @@ extension ConversationViewController {
     }
 
     @objc
-    private func blockListDidChange(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func blockListDidChange(_ notification: Notification) {
         ensureBannerState()
     }
 
     @objc
-    private func identityStateDidChange(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func identityStateDidChange(_ notification: Notification) {
         enqueueReload()
         ensureBannerState()
     }
 
     @objc
-    private func applicationWillEnterForeground(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func applicationWillEnterForeground(_ notification: Notification) {
         startReadTimer()
         updateCellsVisible()
     }
 
     @objc
-    private func applicationDidEnterBackground(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func applicationDidEnterBackground(_ notification: Notification) {
         updateCellsVisible()
         mediaCache.removeAllObjects()
         cancelReadTimer()
     }
 
     @objc
-    private func applicationWillResignActive(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func applicationWillResignActive(_ notification: Notification) {
         finishRecordingVoiceMessage(sendImmediately: false)
-        self.isUserScrolling = false
-        self.isWaitingForDeceleration = false
+        isUserScrolling = false
+        isWaitingForDeceleration = false
         saveDraft()
         markVisibleMessagesAsRead()
         mediaCache.removeAllObjects()
         cancelReadTimer()
         dismissPresentedViewControllerIfNecessary()
         saveLastVisibleSortIdAndOnScreenPercentage()
-
-        self.dismissKeyboard()
+        dismissKeyboard()
     }
 
     @objc
-    private func applicationDidBecomeActive(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
+    private func applicationDidBecomeActive(_ notification: Notification) {
         startReadTimer()
     }
 
     @objc
     private func audioSessionInterrupted(_ notification: Notification) {
-        AssertIsOnMainThread()
-
         finishRecordingVoiceMessage(sendImmediately: false)
     }
 
     @objc
     private func registrationStateDidChange(_ notification: Notification) {
-        AssertIsOnMainThread()
         ensureBottomViewType()
     }
 
     @objc
     private func appExpiryDidChange(_ notification: Notification) {
-        AssertIsOnMainThread()
         ensureBottomViewType()
     }
 
     @objc
     private func smsVerificationCodeRequested(_ notification: NSNotification) {
-        AssertIsOnMainThread()
-
         let db = DependenciesBridge.shared.db
         let safetyTipsManager = SafetyTipsManager()
         let timestamp: UInt64? = db.read { tx in
@@ -233,13 +209,10 @@ extension ConversationViewController {
             }
         })
     }
-}
 
-// MARK: -
+    // MARK: - CallServiceStateObserver
 
-extension ConversationViewController: CallServiceStateObserver {
     func didUpdateCall(from oldValue: SignalCall?, to newValue: SignalCall?) {
-        AssertIsOnMainThread()
         updateBarButtonItems()
     }
 }

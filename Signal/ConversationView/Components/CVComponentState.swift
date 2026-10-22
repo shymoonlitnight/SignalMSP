@@ -5,10 +5,10 @@
 
 import LibSignalClient
 import MobileCoin
-public import SignalServiceKit
+import SignalServiceKit
 import SignalUI
 
-public enum CVAttachment: Equatable {
+enum CVAttachment: Equatable {
     case stream(ReferencedAttachmentStream, isUploading: Bool, imageMetadata: ImageMetadata?)
     case pointer(ReferencedAttachmentPointer, downloadState: AttachmentDownloadState)
     case backupThumbnail(ReferencedAttachmentBackupThumbnail)
@@ -16,15 +16,15 @@ public enum CVAttachment: Equatable {
     /// Typically happens if we restore from a free-tier backup with old media expired from transit tier.
     case undownloadable(ReferencedAttachment)
 
-    public var contentType: Attachment.ContentType {
+    var contentType: Attachment.ContentType {
         return attachment.attachment.contentType
     }
 
-    public var attachmentID: Attachment.IDType {
+    var attachmentID: Attachment.IDType {
         return attachment.attachment.id
     }
 
-    public var attachment: ReferencedAttachment {
+    var attachment: ReferencedAttachment {
         switch self {
         case .stream(let stream, _, _):
             return stream
@@ -37,7 +37,7 @@ public enum CVAttachment: Equatable {
         }
     }
 
-    public var attachmentStream: AttachmentStream? {
+    var attachmentStream: AttachmentStream? {
         switch self {
         case .stream(let stream, _, _):
             return stream.attachmentStream
@@ -48,7 +48,7 @@ public enum CVAttachment: Equatable {
         }
     }
 
-    public var attachmentPointer: AttachmentPointer? {
+    var attachmentPointer: AttachmentPointer? {
         switch self {
         case .stream, .backupThumbnail:
             return nil
@@ -59,7 +59,7 @@ public enum CVAttachment: Equatable {
         }
     }
 
-    public var attachmentBackupThumbnail: AttachmentBackupThumbnail? {
+    var attachmentBackupThumbnail: AttachmentBackupThumbnail? {
         switch self {
         case .stream, .pointer:
             return nil
@@ -70,7 +70,7 @@ public enum CVAttachment: Equatable {
         }
     }
 
-    public static func from(
+    static func from(
         referencedAttachment: ReferencedAttachment,
         message: TSMessage,
         tx: DBReadTransaction,
@@ -116,7 +116,7 @@ public enum CVAttachment: Equatable {
         }
     }
 
-    public static func ==(lhs: CVAttachment, rhs: CVAttachment) -> Bool {
+    static func ==(lhs: CVAttachment, rhs: CVAttachment) -> Bool {
         switch (lhs, rhs) {
         case (.stream(let lhsStream, let lhsIsUploading, imageMetadata: _), .stream(let rhsStream, let rhsIsUploading, imageMetadata: _)):
             return lhsStream.attachment.id == rhsStream.attachment.id
@@ -150,7 +150,7 @@ public enum CVAttachment: Equatable {
     }
 }
 
-public struct CVComponentState: Equatable {
+struct CVComponentState: Equatable {
     let messageCellType: CVMessageCellType
 
     struct SenderName: Equatable {
@@ -243,7 +243,7 @@ public struct CVComponentState: Equatable {
 
     let genericAttachment: GenericAttachment?
 
-    public struct PaymentAttachment: Equatable {
+    struct PaymentAttachment: Equatable {
         let notification: TSPaymentNotification
         let model: TSPaymentModel?
         let otherUserShortName: String
@@ -253,14 +253,14 @@ public struct CVComponentState: Equatable {
 
     var paymentAttachment: PaymentAttachment?
 
-    public struct ArchivedPaymentAttachment: Equatable {
+    struct ArchivedPaymentAttachment: Equatable {
         let amount: String?
         let fee: String?
         let note: String?
         let otherUserShortName: String
         let archivedPayment: ArchivedPayment?
 
-        public static func ==(lhs: Self, rhs: Self) -> Bool {
+        static func ==(lhs: Self, rhs: Self) -> Bool {
             lhs.amount == rhs.amount
                 && lhs.fee == rhs.fee
                 && lhs.note == rhs.note
@@ -638,7 +638,7 @@ public struct CVComponentState: Equatable {
 
     // MARK: - Equatable
 
-    public static func ==(lhs: CVComponentState, rhs: CVComponentState) -> Bool {
+    static func ==(lhs: CVComponentState, rhs: CVComponentState) -> Bool {
         return lhs.messageCellType == rhs.messageCellType &&
             lhs.senderName == rhs.senderName &&
             lhs.senderAvatar == rhs.senderAvatar &&

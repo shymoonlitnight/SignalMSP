@@ -4,14 +4,14 @@
 //
 
 import SignalServiceKit
-public import SignalUI
-import UIKit
+import SignalUI
 
-public class CVAccessibilityCustomAction: UIAccessibilityCustomAction {
-    public var messageAction: MessageAction?
+class CVAccessibilityCustomAction: UIAccessibilityCustomAction {
+    var messageAction: MessageAction?
 }
 
-extension ConversationViewController: UIGestureRecognizerDelegate {
+extension ConversationViewController {
+
     func configureGestureRecognizersIfNeeded() {
         guard !collectionViewGestureRecongnizersConfigured else { return }
 
@@ -71,7 +71,7 @@ extension ConversationViewController: UIGestureRecognizerDelegate {
 
     // MARK: - UIGestureRecognizerDelegate
 
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard !isShowingSelectionUI else {
             return gestureRecognizer == collectionViewTapGestureRecognizer
         }
@@ -86,12 +86,12 @@ extension ConversationViewController: UIGestureRecognizerDelegate {
         }
     }
 
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if
             #available(iOS 26, *),
             otherGestureRecognizer == navigationController?.interactiveContentPopGestureRecognizer,
             let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer,
-            self.findPanHandler(sender: panGestureRecognizer) == nil
+            findPanHandler(sender: panGestureRecognizer) == nil
         {
             // Allow content pop gesture if there is no pan handler
             return true
@@ -103,7 +103,7 @@ extension ConversationViewController: UIGestureRecognizerDelegate {
         return currentIsLongPressOrTap && otherIsLongPressOrTap
     }
 
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive event: UIEvent) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive event: UIEvent) -> Bool {
         if collectionViewContextMenuSecondaryClickRecognizer == gestureRecognizer {
             return event.buttonMask == .secondary
         }
@@ -133,13 +133,10 @@ extension ConversationViewController: UIGestureRecognizerDelegate {
         }
         return nil
     }
-}
 
-extension ConversationViewController: SingleOrDoubleTapGestureDelegate {
+    // MARK: - SingleOrDoubleTapGestureDelegate
 
-    // MARK: - Tap
-
-    public func handleSingleTap(_ sender: SingleOrDoubleTapGestureRecognizer) -> Bool {
+    func handleSingleTap(_ sender: SingleOrDoubleTapGestureRecognizer) -> Bool {
         // Stop any recording voice memos.
         finishRecordingVoiceMessage(sendImmediately: false)
 
@@ -154,7 +151,7 @@ extension ConversationViewController: SingleOrDoubleTapGestureDelegate {
         return cell.handleTap(sender: sender, componentDelegate: self)
     }
 
-    public func handleDoubleTap(_ sender: SingleOrDoubleTapGestureRecognizer) -> Bool {
+    func handleDoubleTap(_ sender: SingleOrDoubleTapGestureRecognizer) -> Bool {
         guard let cell = findCell(forGesture: sender) else {
             return false
         }
@@ -165,20 +162,16 @@ extension ConversationViewController: SingleOrDoubleTapGestureDelegate {
         return cell.handleDoubleTap(sender: sender, componentDelegate: self)
     }
 
-    public func didEndGesture(_ sender: SingleOrDoubleTapGestureRecognizer, wasHandled: Bool) {
+    func didEndGesture(_ sender: SingleOrDoubleTapGestureRecognizer, wasHandled: Bool) {
         if !wasHandled {
             dismissKeyboard()
         }
     }
-}
-
-extension ConversationViewController {
 
     // MARK: - Long Press
 
     @objc
     func handleLongPressGesture(_ sender: UILongPressGestureRecognizer) {
-
         let resetLongPress = {
             self.longPressHandler = nil
             sender.isEnabled = false
@@ -311,7 +304,7 @@ extension ConversationViewController {
 
 // MARK: -
 
-public struct CVLongPressHandler {
+struct CVLongPressHandler {
     private weak var delegate: CVComponentDelegate?
     let renderItem: CVRenderItem
     let itemViewModel: CVItemViewModelImpl
@@ -441,30 +434,30 @@ public struct CVLongPressHandler {
 
 // MARK: -
 
-public class CVPanHandler {
-    public enum PanType {
+class CVPanHandler {
+    enum PanType {
         case messageSwipeAction
         case scrubAudio
     }
 
-    public let panType: PanType
+    let panType: PanType
 
     private weak var delegate: CVComponentDelegate?
     private let renderItem: CVRenderItem
 
-    public var interactionId: String { renderItem.interactionUniqueId }
+    var interactionId: String { renderItem.interactionUniqueId }
 
     // If the gesture ended now, would we perform a reply?
-    public enum ActiveDirection {
+    enum ActiveDirection {
         case left
         case right
         case none
     }
 
-    public var activeDirection: ActiveDirection = .none
+    var activeDirection: ActiveDirection = .none
     var messageDetailViewController: MessageDetailViewController?
 
-    public var percentDrivenTransition: UIPercentDrivenInteractiveTransition?
+    var percentDrivenTransition: UIPercentDrivenInteractiveTransition?
 
     init(delegate: CVComponentDelegate, panType: PanType, renderItem: CVRenderItem) {
         self.delegate = delegate

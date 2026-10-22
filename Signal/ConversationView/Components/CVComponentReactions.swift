@@ -4,11 +4,11 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibilityComponent {
+class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibilityComponent {
 
-    public var componentKey: CVComponentKey { .reactions }
+    var componentKey: CVComponentKey { .reactions }
 
     private let reactions: CVComponentState.Reactions
     private var reactionState: InteractionReactionState {
@@ -28,11 +28,11 @@ public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibility
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewReactions()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -50,7 +50,7 @@ public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibility
         )
     }
 
-    public func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
+    func measure(maxWidth: CGFloat, measurementBuilder: CVCellMeasurement.Builder) -> CGSize {
         owsAssertDebug(maxWidth > 0)
 
         return CVReactionCountsView.measure(
@@ -61,7 +61,7 @@ public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibility
 
     // MARK: - Events
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -78,7 +78,7 @@ public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibility
 
     // MARK: - Accessibility
 
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         var fullString = ""
         let pills = [viewState.pill1, viewState.pill2, viewState.pill3].compactMap { $0 }
 
@@ -116,19 +116,19 @@ public class CVComponentReactions: CVComponentBase, CVComponent, CVAccessibility
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewReactions: NSObject, CVComponentView {
+    class CVComponentViewReactions: NSObject, CVComponentView {
 
         fileprivate let reactionCountsView = CVReactionCountsView()
 
-        public var isDedicatedCellView = false
+        var isDedicatedCellView = false
 
-        public var rootView: UIView {
+        var rootView: UIView {
             reactionCountsView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             reactionCountsView.reset()
         }
 

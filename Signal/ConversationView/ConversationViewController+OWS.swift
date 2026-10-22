@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 extension ConversationViewController {
 
-    public func renderItem(forIndex index: NSInteger) -> CVRenderItem? {
+    func renderItem(forIndex index: NSInteger) -> CVRenderItem? {
         guard index >= 0, index < renderItems.count else {
             owsFailDebug("Invalid view item index: \(index)")
             return nil
@@ -22,13 +22,13 @@ extension ConversationViewController {
         return loadCoordinator.renderState
     }
 
-    public var renderItems: [CVRenderItem] {
+    var renderItems: [CVRenderItem] {
         AssertIsOnMainThread()
 
         return loadCoordinator.renderItems
     }
 
-    public var allIndexPaths: [IndexPath] {
+    var allIndexPaths: [IndexPath] {
         AssertIsOnMainThread()
 
         return loadCoordinator.allIndexPaths
@@ -51,7 +51,7 @@ extension ConversationViewController {
         }
     }
 
-    public static func canCall(threadViewModel: ThreadViewModel) -> Bool {
+    static func canCall(threadViewModel: ThreadViewModel) -> Bool {
         if threadViewModel.hasPendingMessageRequest {
             return false
         }
@@ -70,7 +70,7 @@ extension ConversationViewController {
     // When performing an interactive dismiss, safe area updates rapidly in quick succession,
     // which causes this method to go haywire, recomputing insets a few times and incorrectly determining
     // that it needs to scroll as a result. To avoid this, apply a debounce to rapid updates.
-    public func updateContentInsetsDebounced() {
+    func updateContentInsetsDebounced() {
         updateContentInsetsEvent.requestNotify()
     }
 
@@ -150,7 +150,7 @@ extension ConversationViewController {
         }
     }
 
-    public func showUnknownThreadWarningAlert() {
+    func showUnknownThreadWarningAlert() {
         // TODO: Finalize this copy.
         let message = (
             thread.isGroupThread
@@ -178,7 +178,7 @@ extension ConversationViewController {
         presentActionSheet(actionSheet)
     }
 
-    public func showDeliveryIssueWarningAlert(from senderAddress: SignalServiceAddress, isKnownThread: Bool) {
+    func showDeliveryIssueWarningAlert(from senderAddress: SignalServiceAddress, isKnownThread: Bool) {
         let senderName = SSKEnvironment.shared.databaseStorageRef.read { transaction in
             SSKEnvironment.shared.contactManagerRef.displayName(for: senderAddress, tx: transaction).resolvedValue()
         }
@@ -218,11 +218,9 @@ extension ConversationViewController {
         )
         presentActionSheet(actionSheet)
     }
-}
 
-// MARK: - ForwardMessageDelegate
+    // MARK: - ForwardMessageDelegate
 
-extension ConversationViewController: ForwardMessageDelegate {
     func forwardMessageFlowDidComplete(
         items: [ForwardMessageItem],
         recipientThreads: [TSThread],
@@ -243,23 +241,19 @@ extension ConversationViewController: ForwardMessageDelegate {
     func forwardMessageFlowDidCancel() {
         self.dismiss(animated: true)
     }
-}
 
-// MARK: - MessageActionsToolbarDelegate
+    // MARK: - MessageActionsToolbarDelegate
 
-extension ConversationViewController: MessageActionsToolbarDelegate {
-    public func messageActionsToolbar(_ messageActionsToolbar: MessageActionsToolbar, executedAction: MessageAction) {
+    func messageActionsToolbar(_ messageActionsToolbar: MessageActionsToolbar, executedAction: MessageAction) {
         executedAction.block(messageActionsToolbar)
     }
 
-    public var messageActionsToolbarSelectedInteractionCount: Int {
+    var messageActionsToolbarSelectedInteractionCount: Int {
         self.selectionState.interactionCount
     }
-}
 
-// MARK: -
+    // MARK: - GroupViewHelperDelegate
 
-extension ConversationViewController: GroupViewHelperDelegate {
     func groupViewHelperDidUpdateGroup() {
         // Do nothing.
     }
@@ -274,11 +268,9 @@ extension ConversationViewController: GroupViewHelperDelegate {
     var fromViewController: UIViewController? {
         return self
     }
-}
 
-// MARK: - UIMode
+    // MARK: - UIMode
 
-extension ConversationViewController {
     func uiModeDidChange(oldValue: ConversationUIMode) {
         if oldValue == .search {
             navigationItem.searchController = nil
@@ -302,9 +294,9 @@ extension ConversationViewController {
         updateBarButtonItems()
         ensureBottomViewType()
     }
-}
 
-extension ConversationViewController: MediaPresentationContextProvider {
+    // MARK: - MediaPresentationContextProvider
+
     func mediaPresentationContext(item: Media, in coordinateSpace: UICoordinateSpace) -> MediaPresentationContext? {
         guard case let .gallery(galleryItem) = item else {
             owsFailDebug("Unexpected media type")
@@ -422,11 +414,9 @@ extension ConversationViewController: MediaPresentationContextProvider {
             },
         )
     }
-}
 
-// MARK: -
+    // MARK: -
 
-public extension ConversationViewController {
     func showGroupLinkPromotionActionSheet() {
         guard
             let groupThread = thread as? TSGroupThread,
@@ -461,30 +451,22 @@ public extension ConversationViewController {
         alert.addAction(OWSActionSheets.okayAction)
         presentActionSheet(alert)
     }
-}
 
-// MARK: -
-
-extension ConversationViewController: MessageDetailViewDelegate {
+    // MARK: - MessageDetailViewDelegate
 
     func detailViewMessageWasDeleted(_ messageDetailViewController: MessageDetailViewController) {
         Logger.info("")
 
         navigationController?.popToViewController(self, animated: true)
     }
-}
 
-// MARK: - MessageEditHistoryViewDelegate
+    // MARK: - MessageEditHistoryViewDelegate
 
-extension ConversationViewController: MessageEditHistoryViewDelegate {
     func editHistoryMessageWasDeleted() {
         self.dismiss(animated: true)
     }
-}
 
-// MARK: -
-
-extension ConversationViewController: LongTextViewDelegate {
+    // MARK: - LongTextViewDelegate
 
     func longTextViewMessageWasDeleted(_ longTextViewController: LongTextViewController) {
         Logger.info("")
@@ -515,12 +497,10 @@ extension ConversationViewController: LongTextViewDelegate {
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
-}
 
-// MARK: -
+    // MARK: - SendPaymentViewDelegate
 
-extension ConversationViewController: SendPaymentViewDelegate {
-    public func didSendPayment(success: Bool) {
+    func didSendPayment(success: Bool) {
 
         func paymentSettingsNavigationController() -> OWSNavigationController {
             let paymentSettingsView = PaymentsSettingsViewController(mode: .standalone)

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
+import SignalServiceKit
 
 // The outcome of a CVC load is an update that describes how to
 // transition from the last render state to the new render state.
@@ -44,11 +44,9 @@ struct CVUpdate {
     var loadType: CVLoadType { loadRequest.loadType }
 
     typealias Item = BatchUpdate<CVRenderItem>.Item
-}
 
-// MARK: -
+    // MARK: -
 
-extension CVUpdate {
     typealias ItemId = String
 
     // TODO: Eliminate.
@@ -220,7 +218,7 @@ extension CVUpdate {
 // MARK: -
 
 extension CVRenderItem: BatchUpdateValue {
-    public var batchUpdateId: String {
+    var batchUpdateId: String {
         interactionUniqueId
     }
 }

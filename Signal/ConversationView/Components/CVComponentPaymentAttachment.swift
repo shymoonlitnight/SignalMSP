@@ -7,13 +7,12 @@
 //  Copyright (c) 2022 Open Whisper Systems. All rights reserved.
 //
 
-import Foundation
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
+class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
 
-    public var componentKey: CVComponentKey { .paymentAttachment }
+    var componentKey: CVComponentKey { .paymentAttachment }
 
     private let paymentAttachment: CVComponentState.PaymentAttachment
     private let paymentModel: TSPaymentModel?
@@ -49,11 +48,11 @@ public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
         super.init(itemModel: itemModel)
     }
 
-    public func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
+    func buildComponentView(componentDelegate: CVComponentDelegate) -> CVComponentView {
         CVComponentViewPaymentAttachment()
     }
 
-    public func configureForRendering(
+    func configureForRendering(
         componentView componentViewParam: CVComponentView,
         cellMeasurement: CVCellMeasurement,
         componentDelegate: CVComponentDelegate,
@@ -269,7 +268,7 @@ public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
         )
     }
 
-    public func measure(
+    func measure(
         maxWidth: CGFloat,
         measurementBuilder: CVCellMeasurement.Builder,
     ) -> CGSize {
@@ -339,7 +338,7 @@ public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
 
     // Used for rendering some portion of an Conversation View item.
     // It could be the entire item or some part thereof.
-    public class CVComponentViewPaymentAttachment: NSObject, CVComponentView {
+    class CVComponentViewPaymentAttachment: NSObject, CVComponentView {
 
         fileprivate let hStackView = ManualStackView(name: "PaymentAttachment.hStackView")
         fileprivate let vStackView = ManualStackView(name: "PaymentAttachment.vStackView")
@@ -351,15 +350,15 @@ public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
         fileprivate let topLabel = CVLabel()
         fileprivate let noteLabel = CVLabel()
 
-        public var isDedicatedCellView = true
+        var isDedicatedCellView = true
 
-        public var rootView: UIView {
+        var rootView: UIView {
             vStackView
         }
 
-        public func setIsCellVisible(_ isCellVisible: Bool) {}
+        func setIsCellVisible(_ isCellVisible: Bool) {}
 
-        public func reset() {
+        func reset() {
             hStackView.reset()
             vStackView.reset()
 
@@ -372,7 +371,7 @@ public class CVComponentPaymentAttachment: CVComponentBase, CVComponent {
         }
     }
 
-    override public func handleTap(
+    override func handleTap(
         sender: UIGestureRecognizer,
         componentDelegate: CVComponentDelegate,
         componentView: CVComponentView,
@@ -396,7 +395,7 @@ private extension String {
 }
 
 extension CVComponentPaymentAttachment: CVAccessibilityComponent {
-    public var accessibilityDescription: String {
+    var accessibilityDescription: String {
         return formatPaymentAmount(status: messageStatus).string
     }
 }

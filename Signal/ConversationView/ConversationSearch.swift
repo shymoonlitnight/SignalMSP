@@ -3,13 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
-public import UIKit
+import SignalServiceKit
+import SignalUI
 
-public import SignalServiceKit
-public import SignalUI
-
-public protocol ConversationSearchControllerDelegate: UISearchControllerDelegate {
+protocol ConversationSearchControllerDelegate: UISearchControllerDelegate {
 
     func conversationSearchController(
         _ conversationSearchController: ConversationSearchController,
@@ -22,26 +19,24 @@ public protocol ConversationSearchControllerDelegate: UISearchControllerDelegate
     )
 }
 
-// MARK: -
+class ConversationSearchController: NSObject, UISearchControllerDelegate, UISearchResultsUpdating, SearchResultsBarDelegate {
 
-public class ConversationSearchController: NSObject {
+    static let kMinimumSearchTextLength: UInt = 2
 
-    public static let kMinimumSearchTextLength: UInt = 2
+    let uiSearchController = UISearchController(searchResultsController: nil)
 
-    public let uiSearchController = UISearchController(searchResultsController: nil)
-
-    public weak var delegate: ConversationSearchControllerDelegate?
+    weak var delegate: ConversationSearchControllerDelegate?
 
     let thread: TSThread
 
-    public let resultsBar: SearchResultsBar = SearchResultsBar(frame: .zero)
+    let resultsBar: SearchResultsBar = SearchResultsBar(frame: .zero)
 
     private var lastSearchText: String?
     private var currentSearchTask: Task<Void, Never>?
 
     // MARK: Initializer
 
-    public init(thread: TSThread) {
+    init(thread: TSThread) {
         self.thread = thread
         super.init()
 
@@ -56,24 +51,20 @@ public class ConversationSearchController: NSObject {
     var searchBar: UISearchBar {
         return uiSearchController.searchBar
     }
-}
 
-extension ConversationSearchController: UISearchControllerDelegate {
-    public func didPresentSearchController(_ searchController: UISearchController) {
+    // MARK: - UISearchControllerDelegate
+
+    func didPresentSearchController(_ searchController: UISearchController) {
         delegate?.didPresentSearchController?(searchController)
     }
 
-    public func didDismissSearchController(_ searchController: UISearchController) {
+    func didDismissSearchController(_ searchController: UISearchController) {
         delegate?.didDismissSearchController?(searchController)
     }
-}
 
-extension ConversationSearchController: UISearchResultsUpdating {
-    var dbSearcher: FullTextSearcher {
-        return FullTextSearcher.shared
-    }
+    // MARK: - UISearchResultsUpdating
 
-    public func updateSearchResults(for searchController: UISearchController) {
+    func updateSearchResults(for searchController: UISearchController) {
         let searchText = FullTextSearchIndexer.normalizeText((searchController.searchBar.text ?? "").stripped)
 
         guard searchText.count >= ConversationSearchController.kMinimumSearchTextLength else {
@@ -118,6 +109,7 @@ extension ConversationSearchController: UISearchResultsUpdating {
         isGroupThread: Bool,
     ) async throws(CancellationError) -> ConversationScreenSearchResultSet {
         let databaseStorage = SSKEnvironment.shared.databaseStorageRef
+        let dbSearcher = FullTextSearcher.shared
         return try databaseStorage.read { tx throws(CancellationError) in
             return try dbSearcher.searchWithinConversation(
                 threadUniqueId: threadUniqueId,
@@ -127,9 +119,9 @@ extension ConversationSearchController: UISearchResultsUpdating {
             )
         }
     }
-}
 
-extension ConversationSearchController: SearchResultsBarDelegate {
+    // MARK: - SearchResultsBarDelegate
+
     func searchResultsBar(
         _ searchResultsBar: SearchResultsBar,
         setCurrentIndex currentIndex: Int,
@@ -152,7 +144,7 @@ protocol SearchResultsBarDelegate: AnyObject {
     )
 }
 
-public class SearchResultsBar: UIView {
+class SearchResultsBar: UIView, ConversationBottomBar {
 
     weak var resultsBarDelegate: SearchResultsBarDelegate?
 
@@ -344,8 +336,8 @@ public class SearchResultsBar: UIView {
             showLessRecentButton.isEnabled = false
         }
     }
-}
 
-extension SearchResultsBar: ConversationBottomBar {
+    // MARK: - ConversationBottomBar
+
     var shouldAttachToKeyboardLayoutGuide: Bool { true }
 }

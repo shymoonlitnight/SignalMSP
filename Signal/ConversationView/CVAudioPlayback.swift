@@ -3,18 +3,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import Foundation
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 /// Identifies playback of one attachment on one message. The same attachment
 /// can belong to multiple messages, such as a forwarded voice note, and each
 /// is played back independently.
-public struct CVAudioPlaybackID: Hashable {
-    public let attachmentID: Attachment.IDType
-    public let interactionID: String
+struct CVAudioPlaybackID: Hashable {
+    let attachmentID: Attachment.IDType
+    let interactionID: String
 
-    public init(audioAttachment: AudioAttachment) {
+    init(audioAttachment: AudioAttachment) {
         self.attachmentID = audioAttachment.attachment.id
         self.interactionID = audioAttachment.owningMessage.uniqueId
     }
@@ -42,7 +41,7 @@ protocol CVAudioPlayerListener {
 //     * The cell is scrolled offscreen and unloaded.
 //     * etc.
 // * Ensure thread safety.
-public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelegate {
+class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelegate {
     // The currently playing audio, if any.
     private var _audioPlayback: CVAudioPlayback?
     private var audioPlayback: CVAudioPlayback? {
@@ -87,14 +86,14 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
     //
     // Note that the source of truth for playback rate is the ThreadAssociatedData db table,
     // but we keep this in-memory cache around for autoplay purposes.
-    public typealias ThreadId = String
+    typealias ThreadId = String
     private var playbackRateCache = LRUCache<ThreadId, Float>(maxSize: 512)
 
     // If nil, autoplay is enabled. Otherwise, this closure returns whether to play the next audio attachement. It's
     // called when the current attachment finishes playing.
     var shouldAutoplayNextAudioAttachment: (() -> Bool)?
 
-    public func audioPlaybackState(playbackID: CVAudioPlaybackID) -> AudioPlaybackState {
+    func audioPlaybackState(playbackID: CVAudioPlaybackID) -> AudioPlaybackState {
         AssertIsOnMainThread()
 
         guard let audioPlayback, audioPlayback.playbackID == playbackID else {
@@ -149,7 +148,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         return audioPlayback
     }
 
-    public func togglePlayState(forAudioAttachment audioAttachment: AudioAttachment) {
+    func togglePlayState(forAudioAttachment audioAttachment: AudioAttachment) {
         AssertIsOnMainThread()
 
         guard let audioPlayback = ensurePlayback(for: audioAttachment) else {
@@ -166,7 +165,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         audioPlayback.togglePlayState()
     }
 
-    public var audioPlaybackState: AudioPlaybackState = .stopped
+    var audioPlaybackState: AudioPlaybackState = .stopped
     private var soundPlayer: AudioPlayer?
     private var soundComplete: (() -> Void)?
     private func playStandardSound(_ sound: StandardSound, completion: (() -> Void)? = nil) {
@@ -183,7 +182,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         soundComplete = completion
     }
 
-    public func autoplayNextAudioAttachmentIfNeeded(_ audioAttachment: AudioAttachment?) {
+    func autoplayNextAudioAttachmentIfNeeded(_ audioAttachment: AudioAttachment?) {
         AssertIsOnMainThread()
 
         guard shouldAutoplayNextAudioAttachment?() ?? true else {
@@ -222,7 +221,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         }
     }
 
-    public func setPlaybackProgress(_ progress: TimeInterval, playbackID: CVAudioPlaybackID) {
+    func setPlaybackProgress(_ progress: TimeInterval, playbackID: CVAudioPlaybackID) {
         AssertIsOnMainThread()
 
         progressCache[playbackID] = progress
@@ -231,7 +230,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         }
     }
 
-    public func playbackProgress(playbackID: CVAudioPlaybackID) -> TimeInterval {
+    func playbackProgress(playbackID: CVAudioPlaybackID) -> TimeInterval {
         AssertIsOnMainThread()
 
         return progressCache[playbackID] ?? 0
@@ -245,13 +244,13 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
     ///
     /// Intended as a fallback for audio for which we are otherwise missing
     /// audio details.
-    public func playbackDuration(
+    func playbackDuration(
         playbackID: CVAudioPlaybackID,
     ) -> TimeInterval? {
         return durationCache[playbackID]
     }
 
-    public func setPlaybackRate(
+    func setPlaybackRate(
         _ rate: Float,
         forThreadUniqueId threadId: ThreadId,
     ) {
@@ -268,7 +267,7 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
         }
     }
 
-    public func stopAll() {
+    func stopAll() {
         guard let audioPlayback = self.audioPlayback else {
             return
         }
@@ -278,9 +277,9 @@ public class CVAudioPlayer: NSObject, AudioPlayerDelegate, CVAudioPlaybackDelega
 
     // MARK: - AudioPlayerDelegate
 
-    public func setAudioProgress(_ progress: TimeInterval, duration: TimeInterval, playbackRate: Float) {}
+    func setAudioProgress(_ progress: TimeInterval, duration: TimeInterval, playbackRate: Float) {}
 
-    public func audioPlayerDidFinish() {
+    func audioPlayerDidFinish() {
         DispatchMainThreadSafe { [weak self] in
             self?.soundPlayer?.stop()
             self?.soundPlayer = nil

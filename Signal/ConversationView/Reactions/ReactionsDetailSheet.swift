@@ -6,7 +6,7 @@
 import SignalServiceKit
 import SignalUI
 
-class ReactionsDetailSheet: InteractiveSheetViewController {
+class ReactionsDetailSheet: InteractiveSheetViewController, UIScrollViewDelegate {
     let messageId: String
 
     private var reactionState: InteractionReactionState
@@ -356,11 +356,9 @@ class ReactionsDetailSheet: InteractiveSheetViewController {
 
         isScrollingChange = false
     }
-}
 
-// MARK: -
+    // MARK: - UIScrollViewDelegate
 
-extension ReactionsDetailSheet: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         checkForPageChange()
     }

@@ -3,16 +3,16 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
-public enum ConversationUIMode: UInt {
+enum ConversationUIMode: UInt {
     case normal
     case search
     case selection
 
     // These two modes are used to select interactions.
-    public var hasSelectionUI: Bool {
+    var hasSelectionUI: Bool {
         switch self {
         case .normal, .search:
             return false
@@ -22,7 +22,7 @@ public enum ConversationUIMode: UInt {
     }
 }
 
-public enum ConversationViewAction {
+enum ConversationViewAction {
     case none
     case compose
     case voiceCall
@@ -32,18 +32,29 @@ public enum ConversationViewAction {
     case updateDraft
 }
 
-// MARK: -
-
-public final class ConversationViewController: OWSViewController {
+final class ConversationViewController: OWSViewController, OWSNavigationChildController,
+    UIAdaptivePresentationControllerDelegate, UIContextMenuInteractionDelegate, UIDocumentPickerDelegate,
+    UINavigationControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate,
+    AttachmentApprovalViewControllerDelegate, AttachmentApprovalViewControllerDataSource, BadgeIssueSheetDelegate,
+    BodyRangesTextViewDelegate, CallServiceStateObserver, ContactPickerDelegate, ContactShareViewControllerDelegate,
+    ContactSharingPickerDelegate, ContactsViewHelperObserver, ContextMenuInteractionDelegate, ConversationCollectionViewDelegate,
+    ConversationHeaderViewDelegate, ConversationInputTextViewDelegate, ConversationInputToolbarDelegate,
+    ConversationSearchControllerDelegate, ConversationSettingsViewDelegate, CVLoadCoordinatorDelegate, CVSelectionStateDelegate,
+    CVViewStateDelegate, ForwardMessageDelegate, GroupViewHelperDelegate, LocationPickerDelegate, LongTextViewDelegate,
+    MediaPresentationContextProvider, MemberLabelViewControllerPresenter, MessageActionsToolbarDelegate, MessageDetailViewDelegate,
+    MessageEditHistoryViewDelegate, MessageRequestDelegate, NameCollisionResolutionDelegate, PinnedMessageInteractionManagerDelegate,
+    PollDetailsViewControllerDelegate, PollSendDelegate, SendMediaNavDataSource, SendMediaNavDelegate, SendPaymentViewDelegate,
+    SingleOrDoubleTapGestureDelegate, StickerPickerSheetDelegate
+{
 
     let context: ViewControllerContext
 
-    public let viewState: CVViewState
-    public let loadCoordinator: CVLoadCoordinator
-    public let layout: ConversationViewLayout
-    public let collectionView: ConversationCollectionView
-    public let searchController: ConversationSearchController
-    public var pinnedMessageIndex: Int
+    let viewState: CVViewState
+    let loadCoordinator: CVLoadCoordinator
+    let layout: ConversationViewLayout
+    let collectionView: ConversationCollectionView
+    let searchController: ConversationSearchController
+    var pinnedMessageIndex: Int
     var memberLabelCoordinator: MemberLabelCoordinator?
     var sendStickerFlow: SendStickerFlow?
 
@@ -65,7 +76,7 @@ public final class ConversationViewController: OWSViewController {
 
     // MARK: -
 
-    public static func load(
+    static func load(
         threadViewModel: ThreadViewModel,
         action: ConversationViewAction,
         focusMessageId: String?,
@@ -216,7 +227,7 @@ public final class ConversationViewController: OWSViewController {
 
     // MARK: - View Lifecycle
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         AssertIsOnMainThread()
 
         // We won't have a navigation controller if we're presented in a preview
@@ -301,11 +312,11 @@ public final class ConversationViewController: OWSViewController {
         self.updateConversationStyle()
     }
 
-    override public var canBecomeFirstResponder: Bool {
+    override var canBecomeFirstResponder: Bool {
         return true
     }
 
-    override public func becomeFirstResponder() -> Bool {
+    override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
 
         guard hasViewWillAppearEverBegun else {
@@ -332,11 +343,11 @@ public final class ConversationViewController: OWSViewController {
         return result
     }
 
-    override public var textInputContextIdentifier: String? {
+    override var textInputContextIdentifier: String? {
         thread.uniqueId
     }
 
-    public func dismissPresentedViewControllerIfNecessary() {
+    func dismissPresentedViewControllerIfNecessary() {
         guard let presentedViewController = self.presentedViewController else {
             return
         }
@@ -347,7 +358,7 @@ public final class ConversationViewController: OWSViewController {
         }
     }
 
-    override public func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         self.viewWillAppearDidBegin()
 
         super.viewWillAppear(animated)
@@ -381,7 +392,7 @@ public final class ConversationViewController: OWSViewController {
 
     private var groupAndProfileRefresherTask: Task<Void, any Error>?
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         self.viewDidAppearDidBegin()
 
         super.viewDidAppear(animated)
@@ -470,7 +481,7 @@ public final class ConversationViewController: OWSViewController {
     // but, as is the case with the "pan left for message details view" gesture,
     // this can be canceled. As such, we shouldn't tear down anything expensive
     // until `viewDidDisappear`.
-    override public func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         self.isViewCompletelyAppeared = false
@@ -484,7 +495,7 @@ public final class ConversationViewController: OWSViewController {
         self.groupAndProfileRefresherTask = nil
     }
 
-    override public func viewDidDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
         self.userHasScrolled = false
@@ -507,7 +518,7 @@ public final class ConversationViewController: OWSViewController {
         self.scrollingAnimationCompletionTimer = nil
     }
 
-    override public func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
         // Title view sometimes disappears when orientation changes.
@@ -532,7 +543,7 @@ public final class ConversationViewController: OWSViewController {
         updateContentInsets()
     }
 
-    override public var shouldAutorotate: Bool {
+    override var shouldAutorotate: Bool {
         // Don't allow orientation changes while recording voice messages.
         if viewState.inProgressVoiceMessage?.isRecording == true {
             return false
@@ -541,7 +552,7 @@ public final class ConversationViewController: OWSViewController {
         return super.shouldAutorotate
     }
 
-    override public func contentSizeCategoryDidChange() {
+    override func contentSizeCategoryDidChange() {
         super.contentSizeCategoryDidChange()
 
         Logger.info("didChangePreferredContentSize")
@@ -549,7 +560,7 @@ public final class ConversationViewController: OWSViewController {
         resetForSizeOrOrientationChange()
     }
 
-    override public func themeDidChange() {
+    override func themeDidChange() {
         super.themeDidChange()
 
         applyTheme()
@@ -625,7 +636,7 @@ public final class ConversationViewController: OWSViewController {
 
     // MARK: - Orientation
 
-    override public func viewWillTransition(
+    override func viewWillTransition(
         to size: CGSize,
         with coordinator: UIViewControllerTransitionCoordinator,
     ) {
@@ -650,7 +661,7 @@ public final class ConversationViewController: OWSViewController {
         )
     }
 
-    override public func viewSafeAreaInsetsDidChange() {
+    override func viewSafeAreaInsetsDidChange() {
         AssertIsOnMainThread()
 
         super.viewSafeAreaInsetsDidChange()
@@ -675,18 +686,10 @@ public final class ConversationViewController: OWSViewController {
         viewSafeAreaInsetsDidChangeForLoad()
         updateConversationStyle()
     }
-}
 
-// MARK: -
+    // MARK: - ContactsViewHelperObserver
 
-// TODO: Is this necessary?
-extension ConversationViewController: UINavigationControllerDelegate {
-}
-
-// MARK: -
-
-extension ConversationViewController: ContactsViewHelperObserver {
-    public func contactsViewHelperDidUpdateContacts() {
+    func contactsViewHelperDidUpdateContacts() {
         AssertIsOnMainThread()
 
         loadCoordinator.enqueueReload(canReuseInteractionModels: true, canReuseComponentStates: false)

@@ -4,7 +4,6 @@
 //
 
 import CoreServices
-import Foundation
 import SignalServiceKit
 import SignalUI
 import UniformTypeIdentifiers

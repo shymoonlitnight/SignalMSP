@@ -4,7 +4,6 @@
 //
 
 import AVFoundation
-import Foundation
 import SignalServiceKit
 import SignalUI
 

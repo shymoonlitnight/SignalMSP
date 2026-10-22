@@ -3,19 +3,18 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-import UIKit
+import SignalServiceKit
 
-public class ContextMenuReactionBarAccessory: ContextMenuTargetedPreviewAccessory, MessageReactionPickerDelegate {
-    public let thread: TSThread
-    public let itemViewModel: CVItemViewModelImpl?
-    public var didSelectReactionHandler: ((TSMessage, String, Bool) -> Void)? // = {(message: TSMessage, reaction: String, isRemoving: Bool) -> Void in }
+class ContextMenuReactionBarAccessory: ContextMenuTargetedPreviewAccessory, MessageReactionPickerDelegate {
+    let thread: TSThread
+    let itemViewModel: CVItemViewModelImpl?
+    var didSelectReactionHandler: ((TSMessage, String, Bool) -> Void)? // = {(message: TSMessage, reaction: String, isRemoving: Bool) -> Void in }
 
     private var reactionPicker: MessageReactionPicker
     private var highlightHoverGestureRecognizer: UIGestureRecognizer?
     private var highlightClickGestureRecognizer: UIGestureRecognizer?
 
-    public init(
+    init(
         thread: TSThread,
         itemViewModel: CVItemViewModelImpl?,
     ) {
