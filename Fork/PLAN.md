@@ -29,10 +29,10 @@ Known risks:
   left-behind check with the branches from `stack_branches()`; update the self-test.
   **Verify:** `Fork/release.py self-test` passes;
   `Fork/release.py --no-clean --no-archive --no-upload` rebases all branches.
-- [ ] **CP0.3 Sample config.** Add the `SIGNAL_*` settings, commented out, to
+- [x] **CP0.3 Sample config.** Add the `SIGNAL_*` settings, commented out, to
   `Config/User.xcconfig.sample` (on `personal`).
   **Verify:** a fresh copy builds with upstream defaults; filled in, it signs with your team.
-- [ ] **CP0.4 `app-intents` builds alone.**
+- [x] **CP0.4 `app-intents` builds alone.**
   **Verify:** on `app-intents`,
   `xcodebuild -workspace Signal.xcworkspace -scheme Signal -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build`
   succeeds. Repeat after every later phase.
