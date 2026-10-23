@@ -30,21 +30,23 @@ To do:
 - [x] Move `CallMuteShortcutsTest` into its own file
       (`Signal/test/Calls/CallMuteShortcutsTest.swift`).
 - [ ] Create `mute-triggers` on top of `app-intents`; rebase `personal` onto it.
-- [ ] Turn on `rebase.updateRefs` and `rerere.enabled`. Update the build
-      script to do one `git rebase --update-refs upstream/main` instead of
-      per-branch rebases.
+- [x] Release script rebases the whole stack with one
+      `git rebase --update-refs upstream/main` (with rerere), keeping each commit.
 - [ ] Keep fork-only code in its own folder (e.g. `Signal/ForkExtras/`) to
       minimize upstream conflicts. Group new pbxproj entries and keep them few.
 - [ ] Optional: a `FORK_EXPERIMENTS` compile flag around `mute-triggers`
       code, so `personal` can also build an upstream-only flavor.
-- [ ] Commit the build script (signing, TestFlight upload) to `personal`.
+- [x] Commit the build script to `personal` (`Fork/release.py`). Once
+      `app-intents` / `mute-triggers` exist, it picks them up automatically
+      (any local branch between upstream and `personal`), but its check for
+      commits left behind only looks at `main`; extend it to the new branches.
 
 ## Personal build polish
 
 - [x] Wire up `SIGNAL_APP_NAME` (`CFBundleDisplayName` in `Signal-Info.plist`).
 - [ ] Add `Config/User.xcconfig.sample` entries for the new settings, or a
       separate personal sample file.
-- [ ] TestFlight config and upload.
+- [x] TestFlight upload and What to Test notes (`Fork/release.py`).
 
 ## `app-intents` (upstreamable)
 
@@ -101,7 +103,8 @@ with CallKit, so upstream is unlikely to accept them.
    Control Center control and call-screen key commands.
 2. Create `mute-triggers`: add the trigger infrastructure, then volume
    double-tap, then play/pause, then head gesture.
-3. Rebase `personal` onto `mute-triggers` and update the build script.
+3. Rebase `personal` onto `mute-triggers`; check `Fork/release.py` still
+   finds the whole stack.
 
 ## Test plan
 

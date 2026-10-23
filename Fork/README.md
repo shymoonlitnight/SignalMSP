@@ -25,21 +25,22 @@ The planned layout splits this further into `app-intents` / `mute-triggers` /
 
 ### Updating from upstream
 
-```sh
-git fetch upstream
-git checkout main && git rebase upstream/main
-git checkout personal && git rebase main
-```
-
-Once the stacked layout exists, a single rebase from `personal` moves every branch:
+`Fork/release.py` does this as its first step (see
+[Releasing to TestFlight](#4-releasing-to-testflight)); skip the build with
+`Fork/release.py --no-clean --no-archive --no-upload`. By hand, one rebase
+from `personal` moves every branch below it:
 
 ```sh
-git config rebase.updateRefs true   # Git 2.38+
 git config rerere.enabled true      # reuse earlier conflict resolutions
 git checkout personal
 git fetch upstream
-git rebase --update-refs upstream/main
+git rebase --update-refs upstream/main   # Git 2.38+; also moves main
+git push --force-with-lease origin main personal
+make dependencies
 ```
+
+Each fork commit is kept as is. Don't squash them; `main`'s commits are
+meant to be sent upstream separately.
 
 ### Keeping the layers clean
 
@@ -109,6 +110,31 @@ Tips:
 Choose the `Signal` scheme, your device, then Build & Run. Upstream's known
 issue still applies: APNs push only works with Signal's production signing,
 so notifications and incoming-call pushes are unreliable on personal builds.
+
+### 4. Releasing to TestFlight
+
+`Fork/release.py` updates from upstream, archives, uploads to App Store
+Connect, and sets the TestFlight "What to Test" notes. It needs only Python
+3.10+, git, Xcode and openssl (and uses `xcbeautify` if installed).
+
+```sh
+export ASC_KEY_ID=... ASC_ISSUER_ID=... ASC_KEY_PATH=~/path/AuthKey_XXXX.p8
+Fork/release.py asc-check           # key works, app record exists
+Fork/release.py                     # update, clean, archive, upload, notes
+Fork/release.py --no-update         # build what's checked in now
+Fork/release.py notes 8.34 5 --show # print a build's What to Test text
+Fork/release.py self-test           # offline tests of the script
+Fork/release.py --help
+```
+
+Before the first upload, create the app record for
+`$(SIGNAL_BUNDLEID_PREFIX).signal` in App Store Connect (Apps → + → New App).
+Build numbers are one past App Store Connect's latest for the version. Each
+upload is tagged `testflight/<version>-<build>` locally, which marks where
+the next build's "upstream changes since" notes start.
+
+term's `term dev signal_release`, `testflight_notes` and `asc_check` run this
+script from the `personal` branch, with the API key from term's secrets.
 
 ## Differences from upstream on `personal`
 
