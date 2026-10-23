@@ -50,7 +50,7 @@ Known risks:
   `CallMuteController.toggle()`.
   **Verify:** simulator with hardware keyboard: Space toggles mute. Device:
   page-turner pedal toggles mute. Typing elsewhere is unaffected.
-- [ ] **CP1.3a Control Center test (go/no-go).** Minimal widget extension with a
+- [x] **CP1.3a Control Center test (go/no-go).** Minimal widget extension with a
   `ControlWidgetToggle` that runs the intent in the app process.
   **Verify:** iOS 18 device: control appears and mutes during a call. If messy,
   move the control to `mute-triggers`.
