@@ -125,6 +125,16 @@ def get_swift_package_license_text(checkout_path):
     return license_paths[0].read_text(encoding="utf8")
 
 
+def get_swift_package_name(checkout_path):
+    output = subprocess.run(
+        ["swift", "package", "dump-package", "--package-path", checkout_path],
+        capture_output=True,
+        encoding="utf8",
+        check=True,
+    ).stdout
+    return json.loads(output)["name"]
+
+
 def get_swift_package_specifiers():
     with open(PACKAGE_RESOLVED_PATH, "r", encoding="utf8") as file:
         pins = json.load(file)["pins"]
@@ -150,7 +160,7 @@ def get_swift_package_specifiers():
             specifiers.append(
                 {
                     "Type": "PSGroupSpecifier",
-                    "Title": dependency["packageRef"]["name"],
+                    "Title": get_swift_package_name(checkout_path),
                     "FooterText": get_swift_package_license_text(checkout_path),
                 }
             )
