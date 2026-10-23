@@ -188,6 +188,20 @@ ID check as warnings instead of asserting (`RegistrationIdMismatchManager.swift`
 It lives on `regid-warnings` so it can go upstream as its own PR, and is
 carried on `mute-triggers` until then.
 
+## Hands-free mute triggers (on `mute-triggers`)
+
+Fork-only code in `Signal/ForkExtras/`. Each trigger has an on/off switch,
+off by default, in the iOS Settings app: **Settings → Apps → SignalMSP →
+Call Mute Triggers**. Changes apply from the next call.
+
+- **Media Remote Track Skip:** next/previous track toggles mute during a
+  call. On the BT13 handlebar remote, a slow click (about half a second) on
+  − or + sends track skip, and works with the phone locked. Don't use
+  play/pause: during a call iOS turns it into "end call".
+
+All triggers go through `CallMuteController` with a 0.3 s debounce. Logs
+start with `MuteTriggers:` in Signal's debug log.
+
 ## Background
 
 - Signal uses CallKit by default (off in China). AirPods stem press already
