@@ -78,7 +78,7 @@ struct CallMuteShortcutsProvider: AppShortcutsProvider {
                 "Toggle mute in \(.applicationName)",
             ],
             shortTitle: "Toggle Mute",
-            systemImageName: "mic.slash"
+            systemImageName: "mic.slash",
         )
         AppShortcut(
             intent: SetMicrophoneMuteIntent(),
@@ -87,7 +87,7 @@ struct CallMuteShortcutsProvider: AppShortcutsProvider {
                 "Set mute in \(.applicationName)",
             ],
             shortTitle: "Set Mute",
-            systemImageName: "mic.slash"
+            systemImageName: "mic.slash",
         )
         AppShortcut(
             intent: GetMicrophoneMuteStateIntent(),
@@ -96,7 +96,7 @@ struct CallMuteShortcutsProvider: AppShortcutsProvider {
                 "Get mute state in \(.applicationName)",
             ],
             shortTitle: "Get Mute State",
-            systemImageName: "mic"
+            systemImageName: "mic",
         )
         AppShortcut(
             intent: GetActiveCallStateIntent(),
@@ -105,7 +105,7 @@ struct CallMuteShortcutsProvider: AppShortcutsProvider {
                 "Get active call in \(.applicationName)",
             ],
             shortTitle: "Get Active Call",
-            systemImageName: "phone"
+            systemImageName: "phone",
         )
     }
 }
