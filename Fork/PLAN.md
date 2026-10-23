@@ -39,7 +39,7 @@ Known risks:
 
 ## Phase 1: `app-intents` (upstreamable)
 
-- [ ] **CP1.1 Shared toggle.** Move the mute logic out of
+- [x] **CP1.1 Shared toggle.** Move the mute logic out of
   `CallMuteShortcuts.swift` into `Signal/Calls/CallMuteController.swift`
   (`toggle()`, `setMuted(_:)`, `isMuted`, haptic feedback). Intents become thin wrappers.
   **Verify:** `CallMuteShortcutsTest` and new `CallMuteControllerTest` pass. On
