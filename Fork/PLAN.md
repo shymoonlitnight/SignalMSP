@@ -64,10 +64,17 @@ Known risks:
 ## Phase 2: `mute-triggers` (fork-only)
 
 - [x] **CP2.0 Play/pause test (~30 min).** Throwaway `MPRemoteCommandCenter`
-  handler; press BT13 play/pause during a call.
-  **Result (2026-10-23): no-go.** The first press ended the call; Signal's
-  handler never fired. iOS routes media play/pause to CallKit's end-call
-  during a call. CP2.3 is dropped.
+  handler; press BT13 play/pause during a call. Code kept as tag
+  `spike/cp2.0-play-pause`.
+  **Result (2026-10-23):**
+  - Play/pause: **no-go**. The first press ended the call; Signal's handler
+    never fired (iOS routes it to CallKit's end call).
+  - BT13 slow click (~0.5 s) on −: arrives as **previous track** and toggled
+    mute with the call screen open, backgrounded, and locked. Call stayed up.
+    (+ presumably sends next track; not yet tested.)
+  - Volume changes: seen with the call screen open; quick double clicks
+    produced nothing when backgrounded or locked. A held button repeats
+    volume steps about every 0.1 s.
 - [ ] **CP2.1 Trigger infrastructure.** `Signal/ForkExtras/`: `MuteTriggerSource`
   (`start()`/`stop()`), `MuteTriggerCoordinator` driven by
   `CallServiceStateObserver` (one registration line in Signal code), ~300 ms
@@ -75,12 +82,19 @@ Known risks:
   Optional `FORK_EXPERIMENTS` flag.
   **Verify:** unit tests for debounce and start/stop; device logs show sources
   start/stop with calls and nothing runs without a call.
-- [ ] **CP2.2 Volume double-tap.** KVO on `outputVolume`, double press within
-  ~400 ms toggles mute, volume restored via `MPVolumeView`.
-  **Verify:** works foreground/background/locked; volume ends where it started;
-  single presses still change volume.
-- [ ] ~~**CP2.3 Play/pause**~~ Dropped: CP2.0 showed play/pause ends the call.
-  **Verify:** BT13 toggles mute and never ends the call, in all three states.
+- [ ] **CP2.2 Track-skip trigger (BT13 primary).** During a call,
+  `nextTrack`/`previousTrack` remote commands toggle mute (BT13 slow click on
+  + or −). Setting default off; stops at call end and clears Now Playing.
+  **Verify:** slow click on − and + toggles mute with the call screen open,
+  backgrounded, and locked; call stays up; after the call, music apps'
+  track skip works normally again.
+- [ ] **CP2.3 Volume double-tap (optional, unlocked only).** KVO on
+  `outputVolume`; exactly two steps within ~400 ms, then quiet, toggles mute
+  and restores the volume. A held button (a fast run of steps) must not
+  trigger. Only worth it if wanted on top of key commands and Control Center.
+  **Verify:** double press toggles with the call screen open; holding a
+  button only changes volume; volume ends where it started.
+- [ ] ~~**Play/pause**~~ Dropped: CP2.0 showed play/pause ends the call.
 - [ ] **CP2.4 AirPods head gesture.** `CMHeadphoneMotionManager`, sideways tilt
   held ~0.5 s or double tilt; `NSMotionUsageDescription`.
   **Verify:** works backgrounded/locked; 5 minutes of normal conversation

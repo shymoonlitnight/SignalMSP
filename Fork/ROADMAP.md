@@ -77,15 +77,19 @@ with CallKit, so upstream is unlikely to accept them.
   setting (default off). Toggles are debounced so two sources firing
   together don't double-toggle. Use one hook at call start/end, not edits
   spread across Signal files.
-- **Volume double-tap.** Observe `AVAudioSession.outputVolume` (KVO) during a
-  call. A quick double press (e.g. "−" twice, or "−" then "+", within about
-  400 ms) toggles mute, then restores the previous volume (may need the
-  `MPVolumeView` slider trick). Should work backgrounded or locked, because the
-  call's audio session is active. Most reliable option for the BT13 remote.
-- **Play/pause remote command.** `MPRemoteCommandCenter.togglePlayPauseCommand`
-  during a call. Target hardware: **BT13 handlebar media remote** (+,
-  play/pause, −), which sends media keys, not keyboard keys.
-  ⚠️ CallKit may intercept play/pause and **end the call**, so test this first.
+- **Track-skip remote command (BT13 primary).** `MPRemoteCommandCenter`
+  `nextTrackCommand` / `previousTrackCommand` during a call. Target hardware:
+  **BT13 handlebar media remote** (+, play/pause, −), which sends media keys,
+  not keyboard keys. A slow click (~0.5 s) on − arrives as previous track and
+  toggled mute with the call screen open, backgrounded, and locked (tested
+  2026-10-23, see PLAN.md CP2.0).
+- **Volume double-tap (optional).** Observe `AVAudioSession.outputVolume` (KVO)
+  during a call; exactly two steps within ~400 ms toggles mute and restores
+  the volume. In testing, double clicks only registered with the call screen
+  open, not backgrounded or locked, so it adds little over key commands.
+  A held button repeats volume steps about every 0.1 s; that must not trigger.
+- ~~**Play/pause remote command.**~~ Ruled out: during a call, play/pause
+  ends the call before Signal sees it (tested 2026-10-23).
 - **AirPods head gesture.** `CMHeadphoneMotionManager` (AirPods Pro, Max,
   3rd/4th gen). Apple's built-in nod/shake isn't exposed as an API.
   - Avoid nod and shake, since people do both constantly in conversation. Use a
@@ -101,8 +105,8 @@ with CallKit, so upstream is unlikely to accept them.
 
 1. On `app-intents`: confirm or extract the shared toggle, then add the
    Control Center control and call-screen key commands.
-2. Create `mute-triggers`: add the trigger infrastructure, then volume
-   double-tap, then play/pause, then head gesture.
+2. Create `mute-triggers`: add the trigger infrastructure, then track-skip,
+   then (optionally) volume double-tap, then head gesture.
 3. Rebase `personal` onto `mute-triggers`; check `Fork/release.py` still
    finds the whole stack.
 
