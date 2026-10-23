@@ -94,6 +94,7 @@
 		63DC4567307EC00A00119464 /* blurhash in Frameworks */ = {isa = PBXBuildFile; productRef = 63DC4566307EC00A00119464 /* blurhash */; };
 		760D93AB27A0E28600F351AC /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 760D93AA27A0E28600F351AC /* CoreServices.framework */; };
 		76C87F19181EFCE600C4ACAB /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76C87F18181EFCE600C4ACAB /* MediaPlayer.framework */; };
+		875BC2A4BAB96EB33EEC4A68 /* SignalControls.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B74007983BB1DAB4B389F993 /* SignalControls.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9C3FA005C549319E4E8E089C /* SignalRingRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 220E4B3E3CC1B4F59371045A /* SignalRingRTC */; };
 		A10FDF79184FB4BB007FF963 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76C87F18181EFCE600C4ACAB /* MediaPlayer.framework */; };
 		A11CD70D17FA230600A2D1B1 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11CD70C17FA230600A2D1B1 /* QuartzCore.framework */; };
@@ -134,6 +135,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		07F7AABD66BF6C3906341123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D221A080169C9E5E00537ABF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1EE16EEC02F0FA754AA3C70F;
+			remoteInfo = SignalControls;
+		};
 		342FFE8D27245851000AC89F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D221A080169C9E5E00537ABF /* Project object */;
@@ -243,6 +251,7 @@
 			files = (
 				342FFE8F27245851000AC89F /* SignalNSE.appex in Embed Foundation Extensions */,
 				453518721FC635DD00210559 /* SignalShareExtension.appex in Embed Foundation Extensions */,
+				875BC2A4BAB96EB33EEC4A68 /* SignalControls.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +298,7 @@
 		B69CD25019773E79005CE69A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		B6B226961BE4B7D200860F4D /* ContactsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ContactsUI.framework; path = System/Library/Frameworks/ContactsUI.framework; sourceTree = SDKROOT; };
 		B6FE7EB61ADD62FA00A6D22F /* PushKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PushKit.framework; path = System/Library/Frameworks/PushKit.framework; sourceTree = SDKROOT; };
+		B74007983BB1DAB4B389F993 /* SignalControls.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SignalControls.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B96FEE2E2CDC297500836191 /* User.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = User.xcconfig; sourceTree = "<group>"; };
 		B9EB5ABC1884C002007CBB57 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		C109A8792FDC90630065225E /* WiFiAware.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WiFiAware.framework; path = System/Library/Frameworks/WiFiAware.framework; sourceTree = SDKROOT; };
@@ -468,6 +478,21 @@
 			);
 			target = 342FFE8727245850000AC89F /* SignalNSE */;
 		};
+		78A68E62D4C360FE4203B0CE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1EE16EEC02F0FA754AA3C70F /* SignalControls */;
+		};
+		78A68E63D4C360FE4203B0CE /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CallMuteControlIntent.swift,
+				CallMuteControlState.swift,
+			);
+			target = D221A088169C9E5E00537ABF /* Signal */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -479,6 +504,7 @@
 		636DF458309B8C5D00001B36 /* SignalShareExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (636DF462309B8C5E00001B36 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SignalShareExtension; sourceTree = "<group>"; };
 		636DF46C309B8C6E00001B36 /* SignalNSE */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (636DF474309B8C6F00001B36 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SignalNSE; sourceTree = "<group>"; };
 		63BE98463098ECA900F23D7A /* SignalServiceKitTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {"Fixtures/test-png.png" = compiled; }; explicitFolders = (); path = SignalServiceKitTests; sourceTree = "<group>"; };
+		78A68E61D4C360FE4203B0CE /* SignalControls */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (78A68E62D4C360FE4203B0CE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 78A68E63D4C360FE4203B0CE /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SignalControls; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -545,6 +571,13 @@
 				63DC455A307E7DBB00119464 /* SDWebImageWebPCoder in Frameworks */,
 				ED0DCCF3A307EB06A9352222 /* SignalRingRTC in Frameworks */,
 				631CB52A307EDAAE00EA5851 /* SwiftProtobuf in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A9DBD6EEBFADD84655333081 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,6 +719,7 @@
 				05EA61412CC9437300B16D4E /* Config */,
 				D221A08C169C9E5E00537ABF /* Frameworks */,
 				D221A08A169C9E5E00537ABF /* Products */,
+				78A68E61D4C360FE4203B0CE /* SignalControls */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -702,6 +736,7 @@
 				D221A0AA169C9E5F00537ABF /* SignalTests.xctest */,
 				34A954A8271A471200B05242 /* SignalUI.framework */,
 				34A954B1271A471300B05242 /* SignalUITests.xctest */,
+				B74007983BB1DAB4B389F993 /* SignalControls.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -768,6 +803,26 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1EE16EEC02F0FA754AA3C70F /* SignalControls */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 67E3AD9623F5D204FAB4EB7B /* Build configuration list for PBXNativeTarget "SignalControls" */;
+			buildPhases = (
+				1249F122DDAFFD63E87FFF70 /* Sources */,
+				A9DBD6EEBFADD84655333081 /* Frameworks */,
+				99163C1BC853F25140782943 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				78A68E61D4C360FE4203B0CE /* SignalControls */,
+			);
+			name = SignalControls;
+			productName = SignalControls;
+			productReference = B74007983BB1DAB4B389F993 /* SignalControls.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		342FFE8727245850000AC89F /* SignalNSE */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 342FFE9027245852000AC89F /* Build configuration list for PBXNativeTarget "SignalNSE" */;
@@ -893,6 +948,7 @@
 				34A954BC271A471300B05242 /* PBXTargetDependency */,
 				342FFE8E27245851000AC89F /* PBXTargetDependency */,
 				F9C5C8A9289451B900548EEE /* PBXTargetDependency */,
+				518DC5642443BAD5754FE38C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				636DBFAB309BB43900001B36 /* Signal */,
@@ -1007,6 +1063,9 @@
 				LastUpgradeCheck = 2600;
 				ORGANIZATIONNAME = "Open Whisper Systems";
 				TargetAttributes = {
+					1EE16EEC02F0FA754AA3C70F = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					342FFE8727245850000AC89F = {
 						CreatedOnToolsVersion = 13.0;
 					};
@@ -1171,6 +1230,7 @@
 				34A954B0271A471300B05242 /* SignalUITests */,
 				F9C5C896289451B900548EEE /* SignalServiceKit */,
 				F9C5C89D289451B900548EEE /* SignalServiceKitTests */,
+				1EE16EEC02F0FA754AA3C70F /* SignalControls */,
 			);
 		};
 /* End PBXProject section */
@@ -1198,6 +1258,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		453518661FC635DD00210559 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99163C1BC853F25140782943 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1253,6 +1320,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1249F122DDAFFD63E87FFF70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		342FFE8427245850000AC89F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1342,6 +1416,11 @@
 			target = 453518671FC635DD00210559 /* SignalShareExtension */;
 			targetProxy = 453518701FC635DD00210559 /* PBXContainerItemProxy */;
 		};
+		518DC5642443BAD5754FE38C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1EE16EEC02F0FA754AA3C70F /* SignalControls */;
+			targetProxy = 07F7AABD66BF6C3906341123 /* PBXContainerItemProxy */;
+		};
 		725465682BA03FF800EABFD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = F9C5C896289451B900548EEE /* SignalServiceKit */;
@@ -1385,6 +1464,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		081323E036A792584E8F8042 /* App Store Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = SignalControls/SignalControls.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = SignalControls/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SIGNAL_BUNDLEID_PREFIX).signal.SignalControls";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SIGNAL_CONTROLS_EXTENSION";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "App Store Release";
+		};
 		342FFE9127245852000AC89F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2373,6 +2476,52 @@
 			};
 			name = "Testable Release";
 		};
+		50B21E1C91CDAEC9D79BE85A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = SignalControls/SignalControls.entitlements;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				INFOPLIST_FILE = SignalControls/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SIGNAL_BUNDLEID_PREFIX).signal.SignalControls";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SIGNAL_CONTROLS_EXTENSION";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		58F41514284AA3858753298A /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = SignalControls/SignalControls.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = SignalControls/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SIGNAL_BUNDLEID_PREFIX).signal.SignalControls";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SIGNAL_CONTROLS_EXTENSION";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Profiling;
+		};
 		88238EA724EAD2FD00F28079 /* Profiling */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 05EA61432CC943D200B16D4E /* Project-Release.xcconfig */;
@@ -2624,6 +2773,30 @@
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Profiling;
+		};
+		AD590E486A774540268C3C7C /* Testable Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = SignalControls/SignalControls.entitlements;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = SignalControls/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(SIGNAL_BUNDLEID_PREFIX).signal.SignalControls";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SIGNAL_CONTROLS_EXTENSION";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Testable Release";
 		};
 		D221A0BA169C9E5F00537ABF /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3433,6 +3606,17 @@
 				453518751FC635DD00210559 /* App Store Release */,
 				88238EAA24EAD2FD00F28079 /* Profiling */,
 				4C10B17D23176CEB0099396B /* Testable Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "App Store Release";
+		};
+		67E3AD9623F5D204FAB4EB7B /* Build configuration list for PBXNativeTarget "SignalControls" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				50B21E1C91CDAEC9D79BE85A /* Debug */,
+				081323E036A792584E8F8042 /* App Store Release */,
+				58F41514284AA3858753298A /* Profiling */,
+				AD590E486A774540268C3C7C /* Testable Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "App Store Release";

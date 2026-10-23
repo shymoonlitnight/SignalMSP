@@ -9,6 +9,7 @@ INFO_PLIST_PATHS = [
     "Signal/Signal-Info.plist",
     "SignalShareExtension/Info.plist",
     "SignalNSE/Info.plist",
+    "SignalControls/Info.plist",
 ]
 
 
