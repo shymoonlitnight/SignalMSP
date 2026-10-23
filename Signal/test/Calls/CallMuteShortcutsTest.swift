@@ -23,9 +23,4 @@ final class CallMuteShortcutsTest: XCTestCase {
         XCTAssertTrue(GetActiveCallStateIntent.isDiscoverable)
     }
 
-    func testCallMuteShortcutErrorDescriptions() {
-        XCTAssertEqual(CallMuteShortcutError.noActiveCall.errorDescription, "No active call.")
-        XCTAssertEqual(CallMuteShortcutError.callEnded.errorDescription, "The call has already ended.")
-        XCTAssertEqual(CallMuteShortcutError.unableToChangeMuteState.errorDescription, "Unable to change microphone mute state right now.")
-    }
 }

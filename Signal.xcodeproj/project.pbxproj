@@ -3515,6 +3515,7 @@
 		D9E43C1C2CC194140001536E /* CallLinkUpdateMessageSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BCE2CC194140001536E /* CallLinkUpdateMessageSender.swift */; };
 		D9E43C1D2CC194140001536E /* CallRecordLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BCF2CC194140001536E /* CallRecordLoader.swift */; };
 		D9E43C1E2CC194140001536E /* CallService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BD02CC194140001536E /* CallService.swift */; };
+		2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69B57E84352F6DC6513FD42 /* CallMuteController.swift */; };
 		D9E43C1F2CC194140001536E /* CallServiceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BD12CC194140001536E /* CallServiceState.swift */; };
 		D9E43C202CC194140001536E /* CallStarter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BD22CC194140001536E /* CallStarter.swift */; };
 		D9E43C212CC194140001536E /* CallStrings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43BD32CC194140001536E /* CallStrings.swift */; };
@@ -3732,6 +3733,7 @@
 		F0FB6B20269E625A00AC2A41 /* ContextMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB6B1F269E625A00AC2A41 /* ContextMenuController.swift */; };
 		F5C80FA22BE3F29F0028F76D /* RTCIceServerFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */; };
 		621A193684356B985167DBCA /* CallMuteShortcutsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */; };
+		DDD64F2C79097B57093E190E /* CallMuteControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */; };
 		F900F2DD27F25AB400431E09 /* DonationReceiptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F900F2DC27F25AB300431E09 /* DonationReceiptViewController.swift */; };
 		F903C29B28EC7AE60035B42B /* RegistrationIdGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F903C29A28EC7AE60035B42B /* RegistrationIdGeneratorTest.swift */; };
 		F905DFEB29A534F200BAD034 /* RegistrationPhoneNumberDiscoverabilityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F905DFEA29A534F200BAD034 /* RegistrationPhoneNumberDiscoverabilityViewController.swift */; };
@@ -4950,6 +4952,7 @@
 		34D913491F62D4A500722898 /* SignalAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalAttachment.swift; sourceTree = "<group>"; };
 		34D99CE3217509C1000AFB39 /* AppEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		DE7D18EC34ABC1F9D8409DFC /* CallMuteShortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallMuteShortcuts.swift; sourceTree = "<group>"; };
+		B69B57E84352F6DC6513FD42 /* CallMuteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteController.swift; sourceTree = "<group>"; };
 		34DE9C012565752F0080E4AF /* MessageLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageLoader.swift; sourceTree = "<group>"; };
 		34E20D4B24256563002C011E /* ConversationHeaderBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationHeaderBuilder.swift; sourceTree = "<group>"; };
 		34E20D4D2425672A002C011E /* ConversationSettingsViewController+Contents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationSettingsViewController+Contents.swift"; sourceTree = "<group>"; };
@@ -8225,6 +8228,7 @@
 		F588CA982FA088B700693838 /* CallingAssetsFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallingAssetsFetcher.swift; sourceTree = "<group>"; };
 		F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTCIceServerFetcherTest.swift; sourceTree = "<group>"; };
 		DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteShortcutsTest.swift; sourceTree = "<group>"; };
+		8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteControllerTest.swift; sourceTree = "<group>"; };
 		F70CAD4E12CCE311EC60A2C9 /* Pods-SignalServiceKitTests.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalServiceKitTests.profiling.xcconfig"; path = "Target Support Files/Pods-SignalServiceKitTests/Pods-SignalServiceKitTests.profiling.xcconfig"; sourceTree = "<group>"; };
 		F900F2DC27F25AB300431E09 /* DonationReceiptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationReceiptViewController.swift; sourceTree = "<group>"; };
 		F903C29A28EC7AE60035B42B /* RegistrationIdGeneratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationIdGeneratorTest.swift; sourceTree = "<group>"; };
@@ -10243,6 +10247,7 @@
 				E16B440D2BBF242C00D2583E /* ReactionsModelTest.swift */,
 				F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */,
 				DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */,
+				8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */,
 			);
 			path = Calls;
 			sourceTree = "<group>";
@@ -14828,6 +14833,7 @@
 				D9E43BC42CC194140001536E /* AudioSession+WebRTC.swift */,
 				D9E43BC52CC194140001536E /* AudioSource.swift */,
 				D9E43BC62CC194140001536E /* CallAudioService.swift */,
+				B69B57E84352F6DC6513FD42 /* CallMuteController.swift */,
 				F588CA982FA088B700693838 /* CallingAssetsFetcher.swift */,
 				D9E43BC72CC194140001536E /* CallKitCallManager.swift */,
 				D9E43BC82CC194140001536E /* CallKitIdStore.swift */,
@@ -18998,6 +19004,7 @@
 				B924DFA82EE7C63400B88147 /* CallQualitySurveyRatingViewController.swift in Sources */,
 				D9E43C1D2CC194140001536E /* CallRecordLoader.swift in Sources */,
 				D9E43C1E2CC194140001536E /* CallService.swift in Sources */,
+				2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */,
 				D9E43C1F2CC194140001536E /* CallServiceState.swift in Sources */,
 				D9E43BF72CC194140001536E /* CallsListViewController+Strings.swift in Sources */,
 				D9E43BF82CC194140001536E /* CallsListViewController+ViewModelLoader.swift in Sources */,
@@ -19762,6 +19769,7 @@
 				040507152F8063AB0078B769 /* RemoteReleaseNotesFetchingManagerTests.swift in Sources */,
 				F5C80FA22BE3F29F0028F76D /* RTCIceServerFetcherTest.swift in Sources */,
 				621A193684356B985167DBCA /* CallMuteShortcutsTest.swift in Sources */,
+				DDD64F2C79097B57093E190E /* CallMuteControllerTest.swift in Sources */,
 				F963164B291AE06C00218FB7 /* ScrubbingLogFormatterTest.swift in Sources */,
 				505C2ED92997422D00C23FB2 /* SelfSignedIdentityTest.swift in Sources */,
 				1704690A25D4C326000793D8 /* SignalAttachmentTest.swift in Sources */,
