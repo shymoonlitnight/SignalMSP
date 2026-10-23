@@ -75,14 +75,14 @@ Known risks:
   - Volume changes: seen with the call screen open; quick double clicks
     produced nothing when backgrounded or locked. A held button repeats
     volume steps about every 0.1 s.
-- [ ] **CP2.1 Trigger infrastructure.** `Signal/ForkExtras/`: `MuteTriggerSource`
+- [x] **CP2.1 Trigger infrastructure.** `Signal/ForkExtras/`: `MuteTriggerSource`
   (`start()`/`stop()`), `MuteTriggerCoordinator` driven by
   `CallServiceStateObserver` (one registration line in Signal code), ~300 ms
   debounce, per-source setting (default off) in a small settings screen.
   Optional `FORK_EXPERIMENTS` flag.
   **Verify:** unit tests for debounce and start/stop; device logs show sources
   start/stop with calls and nothing runs without a call.
-- [ ] **CP2.2 Track-skip trigger (BT13 primary).** During a call,
+- [x] **CP2.2 Track-skip trigger (BT13 primary).** During a call,
   `nextTrack`/`previousTrack` remote commands toggle mute (BT13 slow click on
   + or −). Setting default off; stops at call end and clears Now Playing.
   **Verify:** slow click on − and + toggles mute with the call screen open,
