@@ -58,7 +58,7 @@ Known risks:
   defaults; `ControlCenter.shared.reloadControls` on every mute change.
   **Verify:** control state always matches the call screen (including muting
   from the call UI); works from Lock Screen and Action Button; errors with no call.
-- [ ] **CP1.4 PR-ready.**
+- [x] **CP1.4 PR-ready.**
   **Verify:** CP0.4 passes; diff has no personal config or notes; tests pass.
 
 ## Phase 2: `mute-triggers` (fork-only)
