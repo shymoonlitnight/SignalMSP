@@ -94,6 +94,8 @@
 	<string>Signal needs access to your location in order to share your current location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Signal needs access to your microphone to make and receive phone calls and record voice messages.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Signal uses your headphones' head movement to mute calls when you turn on the AirPods head tilt trigger.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Signal will save photos to your library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
