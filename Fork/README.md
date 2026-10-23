@@ -7,7 +7,8 @@ The goal is muting without touching the screen, e.g. outdoors wearing gloves.
 This folder exists only on the `personal` branch. Upstream's own docs
 (`BUILDING.md`, `CONTRIBUTING.md`) still apply; this file covers what's different.
 
-See [ROADMAP.md](ROADMAP.md) for planned work.
+See [ROADMAP.md](ROADMAP.md) for planned work and [PLAN.md](PLAN.md) for the
+implementation checkpoints.
 
 ## Branches
 
