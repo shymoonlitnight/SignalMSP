@@ -20,6 +20,7 @@ enum CVCBottomViewType: Equatable {
     case notRegistered
     case notLinked
     case groupEnded
+    case notMemberOfGroup
     case releaseNotes
 }
 
@@ -117,7 +118,7 @@ extension ConversationViewController {
                 return .blockingLegacyGroup
             }
             if userLeftGroup {
-                return .none
+                return .notMemberOfGroup
             }
             if isBlockedFromSendingByAnnouncementOnlyGroup {
                 return .announcementOnlyGroup
@@ -218,6 +219,16 @@ extension ConversationViewController {
             )
             requestView = groupEndedView
             bottomView = groupEndedView
+        case .notMemberOfGroup:
+            let notMemberView = BlockingErrorBottomPanelView(
+                text: NSAttributedString(string: OWSLocalizedString(
+                    "GROUP_NOT_MEMBER_BOTTOM_PANEL_LABEL",
+                    comment: "Bottom bar label for group chats the local user is not a member of",
+                )),
+                onTap: {},
+            )
+            requestView = notMemberView
+            bottomView = notMemberView
         case .releaseNotes:
             let releaseNotesView = BlockingErrorBottomPanelView(
                 text: NSAttributedString(string: OWSLocalizedString("RELEASE_NOTES_BOTTOM_BAR_LABEL", comment: "Bottom bar label for the release notes thread")),

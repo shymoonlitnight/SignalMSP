@@ -30,6 +30,11 @@ struct ConversationHeaderBuilder {
         static let noBackground = Options(rawValue: 1 << 6)
     }
 
+    enum StatusPill {
+        case groupEnded
+        case notGroupMember
+    }
+
     static func buildHeader(
         for thread: TSThread,
         sizeClass: ConversationAvatarView.Configuration.SizeClass,
@@ -93,18 +98,23 @@ struct ConversationHeaderBuilder {
         transaction: DBReadTransaction,
     ) -> UIView {
 
-        var isTerminated = false
-        if let groupModelV2 = groupThread.groupModel as? TSGroupModelV2 {
-            if groupModelV2.isTerminated {
-                isTerminated = true
-            }
+        let statusPill: StatusPill?
+        if
+            let groupModelV2 = groupThread.groupModel as? TSGroupModelV2,
+            groupModelV2.isTerminated
+        {
+            statusPill = .groupEnded
+        } else if !groupThread.groupModel.groupMembership.isLocalUserFullMember {
+            statusPill = .notGroupMember
+        } else {
+            statusPill = nil
         }
 
         var builder = ConversationHeaderBuilder(
             delegate: delegate,
             sizeClass: sizeClass,
             options: options,
-            isTerminatedGroup: isTerminated,
+            statusPill: statusPill,
             transaction: transaction,
         )
 
@@ -177,7 +187,7 @@ struct ConversationHeaderBuilder {
             delegate: delegate,
             sizeClass: sizeClass,
             options: options,
-            isTerminatedGroup: false,
+            statusPill: nil,
             transaction: transaction,
         )
 
@@ -244,7 +254,7 @@ struct ConversationHeaderBuilder {
             delegate: delegate,
             sizeClass: sizeClass,
             options: options,
-            isTerminatedGroup: false,
+            statusPill: nil,
             transaction: transaction,
         )
 
@@ -256,7 +266,7 @@ struct ConversationHeaderBuilder {
         delegate: ConversationHeaderDelegate,
         sizeClass: ConversationAvatarView.Configuration.SizeClass,
         options: Options,
-        isTerminatedGroup: Bool,
+        statusPill: StatusPill?,
         transaction: DBReadTransaction,
     ) {
 
@@ -265,10 +275,10 @@ struct ConversationHeaderBuilder {
         self.options = options
         self.transaction = transaction
 
-        addFirstSubviews(isTerminatedGroup: isTerminatedGroup, transaction: transaction)
+        addFirstSubviews(statusPill: statusPill, transaction: transaction)
     }
 
-    mutating func addFirstSubviews(isTerminatedGroup: Bool, transaction: DBReadTransaction) {
+    mutating func addFirstSubviews(statusPill: StatusPill?, transaction: DBReadTransaction) {
         let avatarView = buildAvatarView(transaction: transaction)
 
         let avatarWrapper = UIView.container()
@@ -279,8 +289,8 @@ struct ConversationHeaderBuilder {
         subviews.append(UIView.spacer(withHeight: 8))
         subviews.append(buildThreadNameLabel())
 
-        if isTerminatedGroup {
-            subviews.append(buildGroupTerminatedBanner())
+        if let statusPill {
+            subviews.append(buildStatusPill(statusPill))
             subviews.append(UIView.spacer(withHeight: 8))
         }
     }
@@ -493,7 +503,7 @@ struct ConversationHeaderBuilder {
         hasSubtitleLabel = true
     }
 
-    func buildGroupTerminatedBanner() -> UIView {
+    func buildStatusPill(_ statusPill: StatusPill) -> UIView {
         let banner = UIView()
         let textStackView = UIStackView()
         textStackView.axis = .horizontal
@@ -507,11 +517,23 @@ struct ConversationHeaderBuilder {
         textLabel.font = .dynamicTypeSubheadlineClamped
         textLabel.textColor = UIColor.Signal.label
         textLabel.numberOfLines = 0
-        iconLabel.attributedText = SignalSymbol.groupXInline.attributedString(for: .subheadline, clamped: true)
-        textLabel.text = OWSLocalizedString(
-            "END_GROUP_BANNER_LABEL",
-            comment: "Label for a banner in group settings indicating that the group has been ended",
-        )
+
+        let symbol: SignalSymbol
+        switch statusPill {
+        case .groupEnded:
+            symbol = .groupXInline
+            textLabel.text = OWSLocalizedString(
+                "END_GROUP_BANNER_LABEL",
+                comment: "Label for a banner in group settings indicating that the group has been ended",
+            )
+        case .notGroupMember:
+            symbol = .groupWide
+            textLabel.text = OWSLocalizedString(
+                "GROUP_SETTINGS_NOT_MEMBER_BANNER_LABEL",
+                comment: "Label for a banner in group settings shown when the local user is not a member of the group",
+            )
+        }
+        iconLabel.attributedText = symbol.attributedString(for: .subheadline, clamped: true)
 
         textStackView.addArrangedSubview(iconLabel)
         textStackView.addArrangedSubview(textLabel)
