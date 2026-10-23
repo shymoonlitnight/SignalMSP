@@ -203,6 +203,7 @@
 		1704690C25D4C92B000793D8 /* test-jpg-rotated.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 1704690B25D4C92B000793D8 /* test-jpg-rotated.jpg */; };
 		17E6049028A17BD300127680 /* ZkGroupIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E6048F28A17BD200127680 /* ZkGroupIntegrationTest.swift */; };
 		17EC850C29133CDB00319C82 /* CancelledGroupRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC850B29133CDB00319C82 /* CancelledGroupRing.swift */; };
+		1C59E8F316CDDADC9A935231 /* HeadTiltDetectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B971850DB9402A07FE13931 /* HeadTiltDetectorTest.swift */; };
 		259D4DF2486F14DB112B3999 /* Pods_SignalServiceKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91DA2BE463493965F5BC71C0 /* Pods_SignalServiceKitTests.framework */; };
 		2B5914CF7BCE3017430CFD84 /* Pods_SignalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BADD293DAFC82BF3274F0F6 /* Pods_SignalTests.framework */; };
 		2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69B57E84352F6DC6513FD42 /* CallMuteController.swift */; };
@@ -974,6 +975,7 @@
 		55BD355C2F16DAC0008E989C /* input_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 5531BE0E2F15B97F002AF66F /* input_video.mp4 */; };
 		5AA002E62CA24566002D1CC2 /* SessionStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA002E52CA2455F002D1CC2 /* SessionStoreTest.swift */; };
 		5F0FCB3F9BC04E7EB4B5A9DA /* ContactSharingRowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */; };
+		60069902EFD0187E9A58A3B9 /* ForkLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04D348266563E214505C3582 /* ForkLog.swift */; };
 		60A528721491163AA6A92F68 /* CallMuteControlIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D53476109F65A6BC605F1A9 /* CallMuteControlIntent.swift */; };
 		61475E7AED76A77DD11F9968 /* RegistrationSignalLoginDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE4F92E120FC707A4CBFF39 /* RegistrationSignalLoginDetailsViewController.swift */; };
 		616577F953D77424E32C7438 /* Pods_SignalUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 675486AB8F0612FF2C717BAE /* Pods_SignalUI.framework */; };
@@ -2080,6 +2082,7 @@
 		C1FE1F612C80CDC30031860B /* AttachmentBackupThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FE1F602C80CDC30031860B /* AttachmentBackupThumbnail.swift */; };
 		C26296B4BDCEDADBDA01DDD2 /* Pods_SignalServiceKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 948B2FC201146EF3BA459226 /* Pods_SignalServiceKit.framework */; };
 		CBCD7499B0A64FE64EAC82E4 /* LowDiskSpaceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A780A90C5DDC028939E97635 /* LowDiskSpaceManager.swift */; };
+		CC1E6094352E0FF609F3D334 /* HeadTiltMuteTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E1F928D7A032885A3A7283 /* HeadTiltMuteTrigger.swift */; };
 		CD00DF277C60D21E1D55B5CA /* AciContactShareNameStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D205E8F7C927C969E2B7D84 /* AciContactShareNameStore.swift */; };
 		CFD1772548A404427980429A /* CallMuteControlState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3287A73FAAA871DBE4EE9A9 /* CallMuteControlState.swift */; };
 		D202868116DBE0E7009068E9 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AEACDB16C426DA00C364C0 /* CFNetwork.framework */; };
@@ -4530,6 +4533,7 @@
 		04BBBE932E26F00000E914B1 /* InactivePrimaryDeviceStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InactivePrimaryDeviceStoreTest.swift; sourceTree = "<group>"; };
 		04BC94D12E061D7500446C52 /* BackupArchiveAttachmentByteCounter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchiveAttachmentByteCounter.swift; sourceTree = "<group>"; };
 		04CF4FCD2E7245FC009D6669 /* PollDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollDetailsViewController.swift; sourceTree = "<group>"; };
+		04D348266563E214505C3582 /* ForkLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ForkLog.swift; sourceTree = "<group>"; };
 		04E66D3E2DFC81BC0059DBAC /* RecoveryKeyReminderMegaphone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoveryKeyReminderMegaphone.swift; sourceTree = "<group>"; };
 		04E66D412DFF3A3E0059DBAC /* BackupRecoveryKeyReminderCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRecoveryKeyReminderCoordinator.swift; sourceTree = "<group>"; };
 		04E66D432E00AB3A0059DBAC /* BackupSettingsStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSettingsStoreTests.swift; sourceTree = "<group>"; };
@@ -4613,6 +4617,7 @@
 		25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSharingRowCell.swift; sourceTree = "<group>"; };
 		299F6904BB7E4C0E2463A169 /* Pods-SignalNSE.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalNSE.app store release.xcconfig"; path = "Target Support Files/Pods-SignalNSE/Pods-SignalNSE.app store release.xcconfig"; sourceTree = "<group>"; };
 		2B0685730953D09782B1F911 /* Pods-SignalShareExtension.profiling.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.profiling.xcconfig"; path = "Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.profiling.xcconfig"; sourceTree = "<group>"; };
+		2B971850DB9402A07FE13931 /* HeadTiltDetectorTest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HeadTiltDetectorTest.swift; sourceTree = "<group>"; };
 		2C1CB05FE7FDA3C1F0138D7F /* Pods-SignalServiceKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalServiceKitTests.debug.xcconfig"; path = "Target Support Files/Pods-SignalServiceKitTests/Pods-SignalServiceKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2D205E8F7C927C969E2B7D84 /* AciContactShareNameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciContactShareNameStore.swift; sourceTree = "<group>"; };
 		2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteKeyCommands.swift; sourceTree = "<group>"; };
@@ -6570,6 +6575,7 @@
 		C1FE1F602C80CDC30031860B /* AttachmentBackupThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentBackupThumbnail.swift; sourceTree = "<group>"; };
 		C597942EF64D456BBE9782A2 /* Pods-SignalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalTests.debug.xcconfig"; path = "Target Support Files/Pods-SignalTests/Pods-SignalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C8BFEE3A2A61BCF021172044 /* TrackSkipMuteTrigger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TrackSkipMuteTrigger.swift; sourceTree = "<group>"; };
+		D1E1F928D7A032885A3A7283 /* HeadTiltMuteTrigger.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HeadTiltMuteTrigger.swift; sourceTree = "<group>"; };
 		D2179CFB16BB0B3A0006F3AB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		D2179CFD16BB0B480006F3AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D221A089169C9E5E00537ABF /* Signal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Signal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9136,6 +9142,8 @@
 		2D7826A9AF599F451FFBB3D4 /* ForkExtras */ = {
 			isa = PBXGroup;
 			children = (
+				04D348266563E214505C3582 /* ForkLog.swift */,
+				D1E1F928D7A032885A3A7283 /* HeadTiltMuteTrigger.swift */,
 				43967BDE423F761B1B7E2C68 /* MuteTriggers.swift */,
 				C8BFEE3A2A61BCF021172044 /* TrackSkipMuteTrigger.swift */,
 			);
@@ -10119,6 +10127,7 @@
 		4C71281770F225B73D622B38 /* ForkExtras */ = {
 			isa = PBXGroup;
 			children = (
+				2B971850DB9402A07FE13931 /* HeadTiltDetectorTest.swift */,
 				F6C0BDB67B52FBC04D3D2DA9 /* MuteTriggerCoordinatorTest.swift */,
 			);
 			name = ForkExtras;
@@ -19394,6 +19403,7 @@
 				326DF2612739F4D90017B789 /* FeaturedBadgeViewController.swift in Sources */,
 				344A761124B366F4009D69A5 /* FlagsViewController.swift in Sources */,
 				D9E43BFC2CC194140001536E /* FlipCameraTooltip.swift in Sources */,
+				60069902EFD0187E9A58A3B9 /* ForkLog.swift in Sources */,
 				88EFF4F825AD1F0D000FAFBA /* ForwardMessageViewController.swift in Sources */,
 				50A76F582AF5765000FCF02D /* FullTextSearchOptimizer.swift in Sources */,
 				327CF66825ACE7DD00DA0A6F /* GetStartedBannerViewController.swift in Sources */,
@@ -19430,6 +19440,7 @@
 				D9E43C292CC194140001536E /* GroupThreadCall.swift in Sources */,
 				347B83F724367EC10019A52C /* GroupViewHelper+MemberActionSheet.swift in Sources */,
 				347B83F92436820C0019A52C /* GroupViewHelper.swift in Sources */,
+				CC1E6094352E0FF609F3D334 /* HeadTiltMuteTrigger.swift in Sources */,
 				32ECD08824BFBF8000EDDED0 /* HelpViewController.swift in Sources */,
 				661396AB28BD53EF00E0C4DF /* HiddenStoryHeaderCell.swift in Sources */,
 				8852572C27DD40870032073C /* HomeTabBarController.swift in Sources */,
@@ -19864,6 +19875,7 @@
 				345AE2B62317048300DB6225 /* GRDBFinderTest.swift in Sources */,
 				3499998222EF1E2100654932 /* GRDBFullTextSearcherTest.swift in Sources */,
 				632BFEC030752A2E005399C0 /* GroupViewHelperTests.swift in Sources */,
+				1C59E8F316CDDADC9A935231 /* HeadTiltDetectorTest.swift in Sources */,
 				34BBC861220E883300857249 /* ImageEditorModelTest.swift in Sources */,
 				34BBC862220E883300857249 /* ImageEditorTest.swift in Sources */,
 				D970460A2E81D5C00034C05D /* InfoMessageGroupUpdateMigratorTest.swift in Sources */,

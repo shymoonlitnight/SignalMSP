@@ -92,6 +92,8 @@
 	<string>Signal uses the local network to allow you to directly transfer your account to a new phone. It will not be used unless you explicitly choose to initiate a transfer to a new device.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Signal needs access to your location in order to share your current location.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Signal uses your headphones' head movement to mute calls when you turn on the AirPods head tilt trigger.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Signal needs access to your microphone to make and receive phone calls and record voice messages.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
