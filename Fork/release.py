@@ -50,7 +50,8 @@ from datetime import datetime
 from pathlib import Path
 
 repo_default = Path(__file__).resolve().parent.parent
-info_plists = ('Signal/Signal-Info.plist', 'SignalShareExtension/Info.plist', 'SignalNSE/Info.plist')
+info_plists = ('Signal/Signal-Info.plist', 'SignalShareExtension/Info.plist', 'SignalNSE/Info.plist',
+               'SignalControls/Info.plist')
 configuration = 'App Store Release'
 archives_dir = Path.home() / 'Library/Developer/Xcode/Archives'
 
