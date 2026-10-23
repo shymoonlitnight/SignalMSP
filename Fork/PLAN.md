@@ -54,7 +54,7 @@ Known risks:
   `ControlWidgetToggle` that runs the intent in the app process.
   **Verify:** iOS 18 device: control appears and mutes during a call. If messy,
   move the control to `mute-triggers`.
-- [ ] **CP1.3b Control Center control.** Shared mute state via App Group
+- [x] **CP1.3b Control Center control.** Shared mute state via App Group
   defaults; `ControlCenter.shared.reloadControls` on every mute change.
   **Verify:** control state always matches the call screen (including muting
   from the call UI); works from Lock Screen and Action Button; errors with no call.
