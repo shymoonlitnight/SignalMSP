@@ -9,7 +9,7 @@ Update SignalMSP from upstream Signal-iOS, then build and upload it to TestFligh
     Fork/release.py self-test          offline tests of the local pieces
 
 Steps of a release:
-1. update: fetch upstream, rebase the branch stack (e.g. main and personal) onto
+1. update: fetch upstream, rebase the branch stack (app-intents, mute-triggers, personal) onto
    upstream/main in one `git rebase --update-refs`, keeping each fork commit,
    force-push the stack to origin, then `make dependencies`
 2. clean: drop the build stamp from the info plists, xcodebuild clean
@@ -397,6 +397,19 @@ def stack_branches(repo, branch, upstream='upstream/main'):
     return stack
 
 
+def left_behind_branches(repo, branch, upstream='upstream/main'):
+    '''local branches that share fork commits with `branch` but have commits it lacks.
+    --update-refs wouldn't carry those commits along, so they'd be left behind.'''
+    left = []
+    for bb in git_lines(repo, 'for-each-ref', '--format=%(refname:short)', 'refs/heads'):
+        if bb == branch or is_ancestor(repo, bb, branch) or is_ancestor(repo, bb, upstream):
+            continue
+        base = git_try(repo, 'merge-base', bb, branch)
+        if base.returncode == 0 and not is_ancestor(repo, base.stdout.decode().strip(), upstream):
+            left.append(bb)
+    return left
+
+
 def update(repo, branch, yes=False, make: str | None = 'dependencies'):
     '''rebase `branch` and the branches below it onto upstream/main, push them, and make dependencies'''
     upstream = 'upstream/main'
@@ -411,12 +424,10 @@ def update(repo, branch, yes=False, make: str | None = 'dependencies'):
     run('git', '-C', repo, 'fetch', 'upstream')
     run('git', '-C', repo, 'fetch', 'origin')
 
-    # anything committed on main that personal doesn't have yet would be left behind
-    for bb in ('main',):
-        if git_try(repo, 'rev-parse', '--verify', '--quiet', bb).returncode == 0 \
-                and not is_ancestor(repo, bb, branch):
-            raise Stop(f"'{bb}' has commits that '{branch}' doesn't",
-                       f'rebase {branch} onto {bb} first (git rebase {bb} {branch}), then re-run')
+    # anything committed on a lower branch that personal doesn't have yet would be left behind
+    for bb in left_behind_branches(repo, branch, upstream):
+        raise Stop(f"'{bb}' has commits that '{branch}' doesn't",
+                   f'rebase {branch} onto it first (git rebase --update-refs {bb} {branch}), then re-run')
 
     stack = stack_branches(repo, branch, upstream)
     behind = int(git(repo, 'rev-list', '--count', f'{branch}..{upstream}'))
@@ -730,7 +741,8 @@ def _test_repo(tmp):
 
 
 def _test_update(tmp):
-    '''the stack (main below personal) rebases onto upstream in one go, keeping each commit, and gets pushed'''
+    '''the stack (app-intents, mute-triggers, personal) rebases onto upstream in one go,
+    keeping each commit, and gets pushed'''
     upstream, origin, repo = tmp / 'upstream', tmp / 'origin.git', tmp / 'fork'
     _init_repo(upstream)
     _commit(upstream, 'Initial', **{'README.md': 'signal\n'})
@@ -742,33 +754,42 @@ def _test_update(tmp):
     git(repo, 'remote', 'add', 'upstream', str(upstream))
     git(repo, 'fetch', '-q', 'upstream')
 
+    # a side branch for a separate upstream PR isn't part of the stack
+    git(repo, 'checkout', '-q', '-b', 'regid-warnings')
     _commit(repo, 'Log failures as warnings', **{'a.txt': 'a\n'})
+    git(repo, 'checkout', '-q', '-b', 'app-intents', 'main')
     _commit(repo, 'Add call mute shortcuts', **{'b.txt': 'b\n'})
+    git(repo, 'checkout', '-q', '-b', 'mute-triggers')
+    _commit(repo, 'Log failures as warnings', **{'a.txt': 'a\n'})
     git(repo, 'checkout', '-q', '-b', 'personal')
     _commit(repo, 'Personal signing', **{'c.txt': 'c\n'})
-    git(repo, 'push', '-q', 'origin', 'main', 'personal')
+    git(repo, 'push', '-q', 'origin', 'app-intents', 'mute-triggers', 'personal')
 
-    assert stack_branches(repo, 'personal') == ['main']
+    assert stack_branches(repo, 'personal') == ['app-intents', 'mute-triggers']
+    assert left_behind_branches(repo, 'personal') == []
 
     _commit(upstream, 'Upstream change', **{'d.txt': 'd\n'})
     update(repo, 'personal', yes=True, make=None)
 
-    assert is_ancestor(repo, 'upstream/main', 'main') and is_ancestor(repo, 'main', 'personal')
-    assert git_lines(repo, 'log', '--format=%s', 'upstream/main..main') == [
-        'Add call mute shortcuts', 'Log failures as warnings'], 'main\'s commits should stay separate'
-    assert git_lines(repo, 'log', '--format=%s', 'main..personal') == ['Personal signing']
-    for bb in ('main', 'personal'):
+    assert is_ancestor(repo, 'upstream/main', 'app-intents')
+    assert is_ancestor(repo, 'app-intents', 'mute-triggers') and is_ancestor(repo, 'mute-triggers', 'personal')
+    assert git_lines(repo, 'log', '--format=%s', 'upstream/main..app-intents') == ['Add call mute shortcuts']
+    assert git_lines(repo, 'log', '--format=%s', 'app-intents..mute-triggers') == ['Log failures as warnings']
+    assert git_lines(repo, 'log', '--format=%s', 'mute-triggers..personal') == ['Personal signing']
+    for bb in ('app-intents', 'mute-triggers', 'personal'):
         assert git(repo, 'rev-parse', bb) == git(origin, 'rev-parse', bb), f'{bb} not pushed'
+    assert not is_ancestor(repo, 'upstream/main', 'regid-warnings'), 'side branches are left alone'
 
-    # a commit on main that personal lacks stops the update
-    git(repo, 'checkout', '-q', 'main')
+    # a commit on a lower branch that personal lacks stops the update
+    git(repo, 'checkout', '-q', 'app-intents')
     _commit(repo, 'Forgot to rebase personal')
     git(repo, 'checkout', '-q', 'personal')
+    assert left_behind_branches(repo, 'personal') == ['app-intents']
     try:
         update(repo, 'personal', yes=True, make=None)
         raise AssertionError('expected Stop')
     except Stop as e:
-        assert "'main' has commits" in str(e), e
+        assert "'app-intents' has commits" in str(e), e
 
 
 def _test_archive_info(tmp):

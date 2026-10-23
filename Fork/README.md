@@ -15,14 +15,17 @@ implementation checkpoints.
 | Branch | Contents |
 |---|---|
 | `upstream/main` | Signal's code. Never commit here; just `git fetch upstream`. |
-| `main` | Upstream plus the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`). Meant to stay upstreamable. |
-| `personal` | `main` plus personal build config: xcconfig defaults, icon, entitlements, and these notes. This is what gets built. |
+| `app-intents` | Upstream plus the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`). Meant to stay upstreamable. |
+| `mute-triggers` | `app-intents` plus fork-only mute triggers (and, for now, the registration ID fix). Never sent upstream. |
+| `personal` | `mute-triggers` plus personal build config: xcconfig defaults, icon, entitlements, and these notes. This is what gets built, and is the fork's default branch on GitHub. |
+| `regid-warnings` | Side branch: upstream plus the registration ID fix only, for its own upstream PR. Not part of the stack. |
+
+The old `main` branch was retired on 2026-10-23; `app-intents` replaced it.
 
 Remotes: `origin` is the fork (`shymoonlitnight/SignalMSP`), `upstream` is
 `signalapp/Signal-iOS`.
 
-The planned layout splits this further into `app-intents` / `mute-triggers` /
-`personal`; see [ROADMAP.md](ROADMAP.md#branch-restructure).
+See [ROADMAP.md](ROADMAP.md#branch-restructure) for what goes on each layer.
 
 ### Updating from upstream
 
@@ -35,21 +38,21 @@ from `personal` moves every branch below it:
 git config rerere.enabled true      # reuse earlier conflict resolutions
 git checkout personal
 git fetch upstream
-git rebase --update-refs upstream/main   # Git 2.38+; also moves main
-git push --force-with-lease origin main personal
+git rebase --update-refs upstream/main   # Git 2.38+; also moves app-intents and mute-triggers
+git push --force-with-lease origin app-intents mute-triggers personal
 make dependencies
 ```
 
-Each fork commit is kept as is. Don't squash them; `main`'s commits are
+Each fork commit is kept as is. Don't squash them; `app-intents`' commits are
 meant to be sent upstream separately.
 
 ### Keeping the layers clean
 
-- Upstreamable work is committed on `main` (later `app-intents`), never on
-  `personal`. If you happen to be on `personal`, use `git commit --fixup` and
+- Upstreamable work is committed on `app-intents`, fork-only triggers on
+  `mute-triggers`, never on `personal`. If you happen to be on `personal`, use `git commit --fixup` and
   rebase, or check out the lower branch to commit.
 - Lower branches must never depend on higher ones. Every so often, check out
-  `main` and build it on its own.
+  `app-intents` and build it on its own.
 - Put personal config in `Config/User.xcconfig`, not `project.pbxproj`.
   pbxproj conflicts are painful.
 
@@ -169,7 +172,7 @@ and app icon".
   may not ring when the app is not running. Outgoing calls and the mute
   shortcuts aren't affected.
 
-## Call mute App Intents (on `main`)
+## Call mute App Intents (on `app-intents`)
 
 `Signal/Shortcuts/CallMuteShortcuts.swift` adds four App Intents (iOS 17+):
 **Toggle Microphone Mute**, **Set Microphone Mute**, **Get Microphone Mute
@@ -180,9 +183,10 @@ Full Keyboard Access commands, AssistiveTouch, or Switch Control.
 
 Tests are in `Signal/test/Calls/CallMuteShortcutsTest.swift`.
 
-`main` also has a separate, unrelated commit that logs network failures
-during the registration ID check as warnings instead of asserting
-(`RegistrationIdMismatchManager.swift`). It can go upstream as its own PR.
+A separate, unrelated commit logs network failures during the registration
+ID check as warnings instead of asserting (`RegistrationIdMismatchManager.swift`).
+It lives on `regid-warnings` so it can go upstream as its own PR, and is
+carried on `mute-triggers` until then.
 
 ## Background
 

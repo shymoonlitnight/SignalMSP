@@ -22,14 +22,14 @@ upstream/main  →  app-intents  →  mute-triggers  →  personal
 | `personal` | Signing/team/bundle ID, icon, entitlements, TestFlight config, build script, these docs | Top of stack; what gets built. |
 
 To do:
-- [ ] Create `app-intents` from the current `main` intent commit. Keep `main`
-      tracking upstream, or retire it.
+- [x] Create `app-intents` from the current `main` intent commit. `main` is
+      retired (2026-10-23).
 - [x] Split the unrelated `RegistrationIdMismatchManager` change out of the
       App Intents commit into its own commit. Keep it out of `app-intents`
       (separate PR branch if it goes upstream).
 - [x] Move `CallMuteShortcutsTest` into its own file
       (`Signal/test/Calls/CallMuteShortcutsTest.swift`).
-- [ ] Create `mute-triggers` on top of `app-intents`; rebase `personal` onto it.
+- [x] Create `mute-triggers` on top of `app-intents`; rebase `personal` onto it.
 - [x] Release script rebases the whole stack with one
       `git rebase --update-refs upstream/main` (with rerere), keeping each commit.
 - [ ] Keep fork-only code in its own folder (e.g. `Signal/ForkExtras/`) to
@@ -38,8 +38,8 @@ To do:
       code, so `personal` can also build an upstream-only flavor.
 - [x] Commit the build script to `personal` (`Fork/release.py`). Once
       `app-intents` / `mute-triggers` exist, it picks them up automatically
-      (any local branch between upstream and `personal`), but its check for
-      commits left behind only looks at `main`; extend it to the new branches.
+      (any local branch between upstream and `personal`), and stops if any
+      branch sharing fork commits with `personal` has commits it lacks.
 
 ## Personal build polish
 
