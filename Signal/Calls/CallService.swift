@@ -80,6 +80,9 @@ final class CallService: CallServiceStateObserver, CallServiceStateDelegate {
 
     let earlyRingNextIncomingCall = AtomicBool(false, lock: .init())
 
+    /// Keeps the Control Center mute toggle in step with the current call.
+    private let callMuteControlUpdater = CallMuteControlUpdater()
+
     let callServiceSettingsStore: CallServiceSettingsStore
     let callServiceState: CallServiceState
     var notificationObservers: [any NSObjectProtocol] = []
@@ -147,6 +150,7 @@ final class CallService: CallServiceStateObserver, CallServiceStateDelegate {
         self.callManager.delegate = self
         self.callServiceState.delegate = self
         self.callServiceState.addObserver(self)
+        self.callServiceState.addObserver(self.callMuteControlUpdater, syncStateImmediately: true)
 
         notificationObservers.append(NotificationCenter.default.addObserver(forName: .OWSApplicationDidEnterBackground, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.didEnterBackground() }
