@@ -408,7 +408,7 @@ final class CallService: CallServiceStateObserver, CallServiceStateDelegate {
         }
     }
 
-    private func updateIsLocalAudioMutedWithMicrophonePermission(call: SignalCall, isLocalAudioMuted: Bool) {
+    func updateIsLocalAudioMutedWithMicrophonePermission(call: SignalCall, isLocalAudioMuted: Bool) {
         owsPrecondition(call === callServiceState.currentCall)
 
         switch call.mode {
