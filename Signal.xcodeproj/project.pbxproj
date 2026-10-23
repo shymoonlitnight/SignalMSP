@@ -3457,6 +3457,7 @@
 		D9E43AF62CC193D70001536E /* BackupSubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43AF32CC193D70001536E /* BackupSubscriptionManager.swift */; };
 		D9E43BE22CC194140001536E /* CallButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43B932CC194140001536E /* CallButton.swift */; };
 		D9E43BE32CC194140001536E /* CallControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43B942CC194140001536E /* CallControls.swift */; };
+		D6571D64ADC493D62564F933 /* CallMuteKeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */; };
 		D9E43BE42CC194140001536E /* CallControlsConfirmationToast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43B952CC194140001536E /* CallControlsConfirmationToast.swift */; };
 		D9E43BE52CC194140001536E /* CallControlsOverflowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43B962CC194140001536E /* CallControlsOverflowView.swift */; };
 		D9E43BE62CC194140001536E /* CallDrawerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E43B972CC194140001536E /* CallDrawerSheet.swift */; };
@@ -7949,6 +7950,7 @@
 		D9E43AF32CC193D70001536E /* BackupSubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupSubscriptionManager.swift; sourceTree = "<group>"; };
 		D9E43B932CC194140001536E /* CallButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallButton.swift; sourceTree = "<group>"; };
 		D9E43B942CC194140001536E /* CallControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallControls.swift; sourceTree = "<group>"; };
+		2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteKeyCommands.swift; sourceTree = "<group>"; };
 		D9E43B952CC194140001536E /* CallControlsConfirmationToast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallControlsConfirmationToast.swift; sourceTree = "<group>"; };
 		D9E43B962CC194140001536E /* CallControlsOverflowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallControlsOverflowView.swift; sourceTree = "<group>"; };
 		D9E43B972CC194140001536E /* CallDrawerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallDrawerSheet.swift; sourceTree = "<group>"; };
@@ -14775,6 +14777,7 @@
 				B924DFA42EE7C35E00B88147 /* Survey */,
 				D9E43B932CC194140001536E /* CallButton.swift */,
 				D9E43B942CC194140001536E /* CallControls.swift */,
+				2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */,
 				D9E43B952CC194140001536E /* CallControlsConfirmationToast.swift */,
 				D9E43B962CC194140001536E /* CallControlsOverflowView.swift */,
 				D9E43B972CC194140001536E /* CallDrawerSheet.swift */,
@@ -18969,6 +18972,7 @@
 				D9E43C142CC194140001536E /* CallAudioService.swift in Sources */,
 				D9E43BE22CC194140001536E /* CallButton.swift in Sources */,
 				D9E43BE32CC194140001536E /* CallControls.swift in Sources */,
+				D6571D64ADC493D62564F933 /* CallMuteKeyCommands.swift in Sources */,
 				D9E43BE42CC194140001536E /* CallControlsConfirmationToast.swift in Sources */,
 				D9E43BE52CC194140001536E /* CallControlsOverflowView.swift in Sources */,
 				D9E43BE62CC194140001536E /* CallDrawerSheet.swift in Sources */,

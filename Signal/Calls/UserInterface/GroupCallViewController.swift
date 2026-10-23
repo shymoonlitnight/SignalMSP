@@ -644,6 +644,22 @@ final class GroupCallViewController: UIViewController {
             // If we're not active yet, this will be handled by the `didBecomeActive` callback.
             resolveSafetyNumberMismatch()
         }
+
+        // Receive hardware key commands.
+        becomeFirstResponder()
+    }
+
+    // MARK: - Key commands
+
+    override var canBecomeFirstResponder: Bool { true }
+
+    override var keyCommands: [UIKeyCommand]? {
+        (super.keyCommands ?? []) + CallMuteKeyCommands.make(action: #selector(didPressToggleMuteKey))
+    }
+
+    @objc
+    private func didPressToggleMuteKey() {
+        CallMuteKeyCommands.toggleMute()
     }
 
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -1525,6 +1541,7 @@ extension GroupCallViewController: CallViewControllerWindowReference {
         isCallMinimized = false
 
         showCallControlsIfHidden()
+        becomeFirstResponder()
 
         animateReturnFromPip(pipSnapshot: pipSnapshot, pipFrame: pipWindow.frame, splitViewSnapshot: splitViewSnapshot)
     }
