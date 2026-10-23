@@ -692,6 +692,18 @@ public class OWSURLSession: OWSURLSessionProtocol {
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping URLAuthenticationChallengeCompletion,
     ) {
+        Self.validateServerTrust(
+            challenge: challenge,
+            securityPolicy: endpoint.securityPolicy,
+            completionHandler: completionHandler,
+        )
+    }
+
+    public static func validateServerTrust(
+        challenge: URLAuthenticationChallenge,
+        securityPolicy: HttpSecurityPolicy,
+        completionHandler: @escaping URLAuthenticationChallengeCompletion,
+    ) {
         var disposition: URLSession.AuthChallengeDisposition = .performDefaultHandling
         var credential: URLCredential?
 
@@ -699,7 +711,7 @@ public class OWSURLSession: OWSURLSessionProtocol {
             challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
             let serverTrust = challenge.protectionSpace.serverTrust
         {
-            if endpoint.securityPolicy.evaluate(serverTrust: serverTrust, domain: challenge.protectionSpace.host) {
+            if securityPolicy.evaluate(serverTrust: serverTrust, domain: challenge.protectionSpace.host) {
                 credential = URLCredential(trust: serverTrust)
                 disposition = .useCredential
             } else {

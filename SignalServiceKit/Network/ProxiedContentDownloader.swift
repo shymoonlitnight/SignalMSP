@@ -916,6 +916,19 @@ open class ProxiedContentDownloader: NSObject, URLSessionTaskDelegate, URLSessio
         segmentRequestDidSucceed(assetRequest: assetRequest, assetSegment: assetSegment)
     }
 
+    public func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void,
+    ) {
+        OWSURLSession.validateServerTrust(
+            challenge: challenge,
+            securityPolicy: HttpSecurityPolicy.systemDefault,
+            completionHandler: completionHandler,
+        )
+    }
+
     weak var delegate: ProxiedContentDownloaderDelegate?
     public func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
         guard let delegate else {
