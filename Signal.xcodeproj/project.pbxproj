@@ -977,6 +977,7 @@
 		5F0FCB3F9BC04E7EB4B5A9DA /* ContactSharingRowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */; };
 		61475E7AED76A77DD11F9968 /* RegistrationSignalLoginDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE4F92E120FC707A4CBFF39 /* RegistrationSignalLoginDetailsViewController.swift */; };
 		616577F953D77424E32C7438 /* Pods_SignalUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 675486AB8F0612FF2C717BAE /* Pods_SignalUI.framework */; };
+		621A193684356B985167DBCA /* CallMuteShortcutsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */; };
 		631759F830921F6000C98C98 /* LibSignalFfi in Frameworks */ = {isa = PBXBuildFile; productRef = 631759F730921F6000C98C98 /* LibSignalFfi */; };
 		631759FB30921FA700C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 631759FA30921FA700C98C98 /* LibSignalClient */; };
 		631759FD30921FBA00C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 631759FC30921FBA00C98C98 /* LibSignalClient */; };
@@ -3772,6 +3773,7 @@
 		F0B872B8269D079B00D26481 /* ContextMenuConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B872B7269D079B00D26481 /* ContextMenuConfiguration.swift */; };
 		F0EE4DB626A7AC18001DE4ED /* ContextMenuReactionBarAccessory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0EE4DB526A7AC18001DE4ED /* ContextMenuReactionBarAccessory.swift */; };
 		F0FB6B20269E625A00AC2A41 /* ContextMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FB6B1F269E625A00AC2A41 /* ContextMenuController.swift */; };
+		F2DDB6F103084AE9B885E6B8 /* CallMuteShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE7D18EC34ABC1F9D8409DFC /* CallMuteShortcuts.swift */; };
 		F5C80FA22BE3F29F0028F76D /* RTCIceServerFetcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */; };
 		F900F2DD27F25AB400431E09 /* DonationReceiptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F900F2DC27F25AB300431E09 /* DonationReceiptViewController.swift */; };
 		F903C29B28EC7AE60035B42B /* RegistrationIdGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F903C29A28EC7AE60035B42B /* RegistrationIdGeneratorTest.swift */; };
@@ -8103,6 +8105,8 @@
 		D9FF515B2F03A2A10011982F /* DBUInt64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBUInt64.swift; sourceTree = "<group>"; };
 		D9FF515D2F03A6CD0011982F /* DBUInt64Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DBUInt64Test.swift; sourceTree = "<group>"; };
 		DA1FF7C99B8F2DF3BAF0DC9F /* ContactSharingPickerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSharingPickerDelegate.swift; sourceTree = "<group>"; };
+		DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteShortcutsTest.swift; sourceTree = "<group>"; };
+		DE7D18EC34ABC1F9D8409DFC /* CallMuteShortcuts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallMuteShortcuts.swift; sourceTree = "<group>"; };
 		E1447D8E2CCACFFA004D8FA2 /* BackupArchiveCallLinkRecipientArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchiveCallLinkRecipientArchiver.swift; sourceTree = "<group>"; };
 		E14EDF6D2A71AFDF00F0FD7C /* RecipientContextMenuHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipientContextMenuHelper.swift; sourceTree = "<group>"; };
 		E15066C22CED498600F6F9AF /* RegistrationQuickRestoreQRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationQuickRestoreQRCodeViewController.swift; sourceTree = "<group>"; };
@@ -10304,6 +10308,7 @@
 			isa = PBXGroup;
 			children = (
 				8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */,
+				DA67ADD469796A94CCCB9FBB /* CallMuteShortcutsTest.swift */,
 				E1D827D82BDC1F6B0022C1AF /* ReactionBurstManagerTests.swift */,
 				E16B440D2BBF242C00D2583E /* ReactionsModelTest.swift */,
 				F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */,
@@ -11778,6 +11783,14 @@
 			path = views;
 			sourceTree = "<group>";
 		};
+		797FA7E8BFE3C7EC67ADFD6C /* Shortcuts */ = {
+			isa = PBXGroup;
+			children = (
+				DE7D18EC34ABC1F9D8409DFC /* CallMuteShortcuts.swift */,
+			);
+			path = Shortcuts;
+			sourceTree = "<group>";
+		};
 		8809CE8822F93C0D00D38867 /* Attachment Keyboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -12735,6 +12748,7 @@
 				6600F38C29918A5100B1EDB7 /* Registration */,
 				D9F5D68A304A56C3007F46D6 /* Screenshots */,
 				50BF51062BB201AE00C2C309 /* Sharing */,
+				797FA7E8BFE3C7EC67ADFD6C /* Shortcuts */,
 				34074F54203D0722004596AE /* Sounds */,
 				50EF82482F8EDB5C000EE0DD /* Spam */,
 				76EB03C118170B33006006FC /* src */,
@@ -19052,6 +19066,7 @@
 				D9E43BF42CC194140001536E /* CallMemberView.swift in Sources */,
 				D9E43BF52CC194140001536E /* CallMemberWaitingAndErrorView.swift in Sources */,
 				2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */,
+				F2DDB6F103084AE9B885E6B8 /* CallMuteShortcuts.swift in Sources */,
 				B965716E2F0DC91900690CE9 /* CallQualitySurvey.swift in Sources */,
 				B985D29A2EE7E58700E3BF5F /* CallQualitySurveyCustomIssueViewController.swift in Sources */,
 				B924DFAC2EE7C8E000B88147 /* CallQualitySurveyDebugLogViewController.swift in Sources */,
@@ -19774,6 +19789,7 @@
 				D9317FD32A4BAC8300075A92 /* BitmapsImagePixelMergingTest.swift in Sources */,
 				D9317FD82A4BC4FC00075A92 /* BitmapsRectTest.swift in Sources */,
 				DDD64F2C79097B57093E190E /* CallMuteControllerTest.swift in Sources */,
+				621A193684356B985167DBCA /* CallMuteShortcutsTest.swift in Sources */,
 				D93108152B34B6BE006A034E /* CallRecordLoaderTest.swift in Sources */,
 				D9F02BE72B96556C00E872C2 /* CallsListViewController+ViewModelLoaderTest.swift in Sources */,
 				48BD1EA140B397C56029EE17 /* ContactShareViewHelperTests.swift in Sources */,
