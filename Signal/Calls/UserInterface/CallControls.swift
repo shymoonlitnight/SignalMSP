@@ -705,6 +705,12 @@ extension CallControlsViewModel {
         callService.callUIAdapter.setIsMuted(call: call, isMuted: shouldMute)
         confirmationToastManager.toastInducingCallControlChangeDidOccur(state: .mute(isOn: shouldMute))
         didOverrideDefaultMuteState = true
+        switch call.mode {
+        case .groupThread(let groupCall as GroupCall), .callLink(let groupCall as GroupCall):
+            groupCall.didOverrideDefaultMuteState = true
+        case .individual:
+            break
+        }
         refreshView?()
     }
 

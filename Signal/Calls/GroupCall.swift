@@ -91,9 +91,15 @@ class GroupCall: SignalRingRTC.GroupCallDelegate {
         }
     }
 
+    /// Set once the user chooses a mute state themselves (the mute button or
+    /// a Shortcut), so the lobby's automatic mute for large calls doesn't
+    /// override their choice.
+    var didOverrideDefaultMuteState = false
+
     func shouldMuteAutomatically() -> Bool {
         return
-            ringRtcCall.localDeviceState.joinState == .notJoined
+            !didOverrideDefaultMuteState
+                && ringRtcCall.localDeviceState.joinState == .notJoined
                 && (ringRtcCall.peekInfo?.deviceCountExcludingPendingDevices ?? 0) >= Constants.autoMuteThreshold
 
     }
