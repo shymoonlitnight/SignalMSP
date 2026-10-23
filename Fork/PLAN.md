@@ -17,7 +17,7 @@ Known risks:
 
 ## Phase 0: Branch restructure
 
-- [ ] **CP0.1 Create the stack.** `app-intents` = `upstream/main` + the intent
+- [x] **CP0.1 Create the stack.** `app-intents` = `upstream/main` + the intent
   commit. `regid-warnings` = `upstream/main` + the registration ID fix.
   `mute-triggers` = `app-intents` + the registration ID fix. `personal` rebased
   onto `mute-triggers`. `main` retired (locally first; on GitHub after the
@@ -25,7 +25,7 @@ Known risks:
   **Verify:** `git log --oneline --graph upstream/main..personal` shows
   `app-intents` → `mute-triggers` → `personal`;
   `git log --oneline upstream/main..app-intents` shows one commit.
-- [ ] **CP0.2 `release.py` knows the stack.** Replace the hard-coded `main`
+- [x] **CP0.2 `release.py` knows the stack.** Replace the hard-coded `main`
   left-behind check with the branches from `stack_branches()`; update the self-test.
   **Verify:** `Fork/release.py self-test` passes;
   `Fork/release.py --no-clean --no-archive --no-upload` rebases all branches.
