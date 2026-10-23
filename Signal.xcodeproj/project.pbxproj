@@ -207,6 +207,7 @@
 		17EC850C29133CDB00319C82 /* CancelledGroupRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EC850B29133CDB00319C82 /* CancelledGroupRing.swift */; };
 		259D4DF2486F14DB112B3999 /* Pods_SignalServiceKitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91DA2BE463493965F5BC71C0 /* Pods_SignalServiceKitTests.framework */; };
 		2B5914CF7BCE3017430CFD84 /* Pods_SignalTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BADD293DAFC82BF3274F0F6 /* Pods_SignalTests.framework */; };
+		2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69B57E84352F6DC6513FD42 /* CallMuteController.swift */; };
 		3236FCC42592B67B006D33B9 /* NameCollisionReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3236FCC32592B67B006D33B9 /* NameCollisionReviewCell.swift */; };
 		326DF2612739F4D90017B789 /* FeaturedBadgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326DF2602739F4D90017B789 /* FeaturedBadgeViewController.swift */; };
 		327CF66825ACE7DD00DA0A6F /* GetStartedBannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327CF66725ACE7DC00DA0A6F /* GetStartedBannerViewController.swift */; };
@@ -3612,6 +3613,7 @@
 		D9FC1C912C6FE5A50023AB87 /* BackupArchiveTSMessageEditHistoryArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FC1C902C6FE5A50023AB87 /* BackupArchiveTSMessageEditHistoryArchiver.swift */; };
 		D9FF515C2F03A2B40011982F /* DBUInt64.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF515B2F03A2A10011982F /* DBUInt64.swift */; };
 		D9FF515E2F03A6D30011982F /* DBUInt64Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF515D2F03A6CD0011982F /* DBUInt64Test.swift */; };
+		DDD64F2C79097B57093E190E /* CallMuteControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */; };
 		E0F3FAC8EA6929CE788DCD6E /* AciContactShareName.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71510D89BF76955AB33D606 /* AciContactShareName.swift */; };
 		E1368CBE18A1C36B00109378 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9EB5ABC1884C002007CBB57 /* MessageUI.framework */; };
 		E1447D8F2CCACFFD004D8FA2 /* BackupArchiveCallLinkRecipientArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1447D8E2CCACFFA004D8FA2 /* BackupArchiveCallLinkRecipientArchiver.swift */; };
@@ -6306,6 +6308,7 @@
 		88FE237D249C22080041670F /* ConversationViewController+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationViewController+Scroll.swift"; sourceTree = "<group>"; };
 		89BA19AB4B8B1BC811E53717 /* Pods-SignalServiceKit.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalServiceKit.testable release.xcconfig"; path = "Target Support Files/Pods-SignalServiceKit/Pods-SignalServiceKit.testable release.xcconfig"; sourceTree = "<group>"; };
 		8F23C21CD526C1F69ED4D55F /* ContactSharingPickerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactSharingPickerViewModel.swift; sourceTree = "<group>"; };
+		8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteControllerTest.swift; sourceTree = "<group>"; };
 		91DA2BE463493965F5BC71C0 /* Pods_SignalServiceKitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalServiceKitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9354BFE890B6D894C3B321E1 /* AciContactShareNameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciContactShareNameManager.swift; sourceTree = "<group>"; };
 		948B2FC201146EF3BA459226 /* Pods_SignalServiceKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalServiceKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6340,6 +6343,7 @@
 		B68CB7DD1AA5471A0065AC3F /* pt_PT */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_PT; path = translations/pt_PT.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B68CB7E01AA548420065AC3F /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = translations/ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B68CB7E61AA548870065AC3F /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = translations/zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B69B57E84352F6DC6513FD42 /* CallMuteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteController.swift; sourceTree = "<group>"; };
 		B69C2D1A1AA5447600A640C2 /* ca */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ca; path = translations/ca.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B69C2D1B1AA5448300A640C2 /* cs */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cs; path = translations/cs.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B69CD25019773E79005CE69A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -10299,6 +10303,7 @@
 		50552C2F2BAC079000815474 /* Calls */ = {
 			isa = PBXGroup;
 			children = (
+				8FACF024E577B957BDC15C9E /* CallMuteControllerTest.swift */,
 				E1D827D82BDC1F6B0022C1AF /* ReactionBurstManagerTests.swift */,
 				E16B440D2BBF242C00D2583E /* ReactionsModelTest.swift */,
 				F5C80FA12BE3F29F0028F76D /* RTCIceServerFetcherTest.swift */,
@@ -14896,6 +14901,7 @@
 				D9E43BCC2CC194140001536E /* CallLinkManager.swift */,
 				D9E43BCD2CC194140001536E /* CallLinkStateUpdater.swift */,
 				D9E43BCE2CC194140001536E /* CallLinkUpdateMessageSender.swift */,
+				B69B57E84352F6DC6513FD42 /* CallMuteController.swift */,
 				B965716C2F0CAA3600690CE9 /* CallQualitySurvey.swift */,
 				D9E43BCF2CC194140001536E /* CallRecordLoader.swift */,
 				D9E43BD02CC194140001536E /* CallService.swift */,
@@ -19045,6 +19051,7 @@
 				D9E43BF32CC194140001536E /* CallMemberVideoView.swift in Sources */,
 				D9E43BF42CC194140001536E /* CallMemberView.swift in Sources */,
 				D9E43BF52CC194140001536E /* CallMemberWaitingAndErrorView.swift in Sources */,
+				2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */,
 				B965716E2F0DC91900690CE9 /* CallQualitySurvey.swift in Sources */,
 				B985D29A2EE7E58700E3BF5F /* CallQualitySurveyCustomIssueViewController.swift in Sources */,
 				B924DFAC2EE7C8E000B88147 /* CallQualitySurveyDebugLogViewController.swift in Sources */,
@@ -19766,6 +19773,7 @@
 				D99ABC742A3D0BE10034CD3B /* BitmapsImageParsingTest.swift in Sources */,
 				D9317FD32A4BAC8300075A92 /* BitmapsImagePixelMergingTest.swift in Sources */,
 				D9317FD82A4BC4FC00075A92 /* BitmapsRectTest.swift in Sources */,
+				DDD64F2C79097B57093E190E /* CallMuteControllerTest.swift in Sources */,
 				D93108152B34B6BE006A034E /* CallRecordLoaderTest.swift in Sources */,
 				D9F02BE72B96556C00E872C2 /* CallsListViewController+ViewModelLoaderTest.swift in Sources */,
 				48BD1EA140B397C56029EE17 /* ContactShareViewHelperTests.swift in Sources */,
