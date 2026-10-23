@@ -331,9 +331,16 @@ extension ForwardMessageViewController {
     }
 
     private func send(item: ForwardMessageItem, toOutgoingMessageRecipientThreads outgoingMessageRecipientThreads: [TSThread]) async throws {
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
         if let stickerMetadata = item.stickerMetadata {
             let stickerInfo = stickerMetadata.stickerInfo
-            if StickerManager.isStickerInstalled(stickerInfo: stickerInfo) {
+            let isStickerInstalled = db.read { tx in
+                stickerManager.isStickerInstalled(stickerInfo: stickerInfo, transaction: tx)
+            }
+
+            if isStickerInstalled {
                 await enqueueMessageViaThreadUtil(toRecipientThreads: outgoingMessageRecipientThreads) { recipientThread in
                     self.send(installedSticker: stickerInfo, thread: recipientThread)
                 }

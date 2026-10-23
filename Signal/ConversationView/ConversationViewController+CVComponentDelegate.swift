@@ -718,11 +718,13 @@ extension ConversationViewController: CVComponentDelegate {
         AssertIsOnMainThread()
 
         let db = DependenciesBridge.shared.db
+        let stickerManager = DependenciesBridge.shared.stickerManager
 
         // TODO: [KC] add "Favorites" action once implemented
         let stickerDetailsSheet = StickerDetailSheet(
             db: db,
             stickerMetadata: stickerMetadata,
+            stickerManager: stickerManager,
             actions: [
                 StickerDetailSheet.Action(
                     icon: .buttonForward,
@@ -733,7 +735,7 @@ extension ConversationViewController: CVComponentDelegate {
                     handler: { [weak self] in
                         guard let self else { return }
 
-                        self.sendStickerFlow = SendStickerFlow(stickerMetadata: stickerMetadata, db: db)
+                        self.sendStickerFlow = SendStickerFlow(stickerMetadata: stickerMetadata, stickerManager: stickerManager, db: db)
                         self.sendStickerFlow?.present(from: self)
                     },
                 ),

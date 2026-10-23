@@ -116,7 +116,9 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
 
     // MARK: Properties
 
+    private let stickerManager: StickerManager
     private let stickerPackInfo: StickerPackInfo
+    private let db: DB
 
     fileprivate var stickerPack: StickerPackRecord? {
         didSet {
@@ -129,8 +131,10 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
         }
     }
 
-    public init(stickerPackInfo: StickerPackInfo) {
+    public init(stickerPackInfo: StickerPackInfo, stickerManager: StickerManager, db: DB) {
         self.stickerPackInfo = stickerPackInfo
+        self.stickerManager = stickerManager
+        self.db = db
 
         super.init()
 
@@ -151,8 +155,8 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
     }
 
     func ensureState() {
-        SSKEnvironment.shared.databaseStorageRef.read { readTx in
-            let stateTuple = Self.fetchInstalledState(for: self.stickerPackInfo, readTx: readTx)
+        db.read { readTx in
+            let stateTuple = self.fetchInstalledState(for: self.stickerPackInfo, readTx: readTx)
 
             guard let stickerPack = stateTuple.stickerPack, stickerPack.isInstalled else {
                 self.stickerPack = nil
@@ -171,8 +175,8 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
 
     func ensureStateAsync(completion: (() -> Void)? = nil) {
         DispatchQueue.sharedUserInitiated.async {
-            let stateTuple = SSKEnvironment.shared.databaseStorageRef.read { readTx in
-                return Self.fetchInstalledState(for: self.stickerPackInfo, readTx: readTx)
+            let stateTuple = self.db.read { readTx in
+                return self.fetchInstalledState(for: self.stickerPackInfo, readTx: readTx)
             }
 
             DispatchQueue.main.async {
@@ -194,7 +198,7 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
         }
     }
 
-    private static func fetchInstalledState(for stickerPackInfo: StickerPackInfo, readTx: DBReadTransaction) -> (
+    private func fetchInstalledState(for stickerPackInfo: StickerPackInfo, readTx: DBReadTransaction) -> (
         stickerPack: StickerPackRecord?,
         installedCoverInfo: StickerInfo?,
         installedStickers: [StickerInfo],
@@ -202,7 +206,7 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
 
         // Update Sticker Pack.
         guard
-            let stickerPack = StickerManager.fetchStickerPack(
+            let stickerPack = stickerManager.fetchStickerPack(
                 stickerPackInfo: stickerPackInfo,
                 transaction: readTx,
             )
@@ -217,12 +221,12 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
         // Update Stickers.
 
         let coverInfo: StickerInfo?
-        if StickerManager.isStickerInstalled(stickerInfo: stickerPack.coverInfo, transaction: readTx) {
+        if stickerManager.isStickerInstalled(stickerInfo: stickerPack.coverInfo, transaction: readTx) {
             coverInfo = stickerPack.coverInfo
         } else {
             coverInfo = nil
         }
-        let stickerInfos = StickerManager.installedStickers(
+        let stickerInfos = stickerManager.installedStickers(
             forStickerPack: stickerPack,
             verifyExists: false,
             transaction: readTx,
@@ -236,7 +240,7 @@ public class InstalledStickerPackDataSource: BaseStickerPackDataSource {
             return
         }
         // Download any missing stickers.
-        _ = StickerManager.ensureDownloadsAsync(forStickerPack: stickerPack)
+        _ = stickerManager.ensureDownloadsAsync(forStickerPack: stickerPack)
     }
 
     // MARK: Events
@@ -294,7 +298,9 @@ extension InstalledStickerPackDataSource: StickerPackDataSource {
 
         // This logic is perf-sensitive and on the main thread;
         // don't bother checking that the sticker data resides on disk.
-        return StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo)
+        return db.read { tx in
+            stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+        }
     }
 }
 
@@ -331,15 +337,25 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
 
     // This should only be accessed on the main thread.
     private var stickerMetadataMap = [String: any StickerMetadata]()
+    private let stickerManager: StickerManager
+    private let db: DB
 
     public init(
         stickerPackInfo: StickerPackInfo,
         shouldDownloadAllStickers: Bool,
+        stickerManager: StickerManager,
+        db: DB,
     ) {
         self.stickerPackInfo = stickerPackInfo
         self.shouldDownloadAllStickers = shouldDownloadAllStickers
+        self.stickerManager = stickerManager
+        self.db = db
 
-        self.installedDataSource = InstalledStickerPackDataSource(stickerPackInfo: stickerPackInfo)
+        self.installedDataSource = InstalledStickerPackDataSource(
+            stickerPackInfo: stickerPackInfo,
+            stickerManager: stickerManager,
+            db: db,
+        )
 
         super.init()
 
@@ -403,7 +419,7 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
         }
         downloadKeySet.insert(key)
 
-        StickerManager.tryToDownloadStickerPack(stickerPackInfo: stickerPackInfo)
+        stickerManager.tryToDownloadStickerPack(stickerPackInfo: stickerPackInfo)
             .done(on: DispatchQueue.main) { [weak self] stickerPack in
                 guard let self else {
                     return
@@ -455,7 +471,7 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
 
         // This sticker is not downloaded; try to download now.
         firstly(on: DispatchQueue.global()) {
-            StickerManager.tryToDownloadSticker(stickerInfo: stickerInfo)
+            self.stickerManager.tryToDownloadSticker(stickerInfo: stickerInfo)
         }.done(on: DispatchQueue.main) { [weak self] stickerData in
             guard let self else {
                 return
@@ -581,7 +597,11 @@ extension TransientStickerPackDataSource: StickerPackDataSource {
             return stickerMetadata
         }
 
-        guard let stickerMetadata = StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo) else {
+        guard
+            let stickerMetadata = db.read(block: { tx in
+                stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+            })
+        else {
             return nil
         }
         stickerMetadataMap[key] = stickerMetadata
@@ -601,8 +621,13 @@ extension TransientStickerPackDataSource: StickerPackDataSourceDelegate {
 
 // Supplies sticker pack data for recently used stickers.
 public class RecentStickerPackDataSource: BaseStickerPackDataSource {
+    private let stickerManager: StickerManager
+    private let db: DB
 
-    override public init() {
+    public init(stickerManager: StickerManager, db: DB) {
+        self.stickerManager = stickerManager
+        self.db = db
+
         super.init()
 
         NotificationCenter.default.addObserver(
@@ -616,7 +641,9 @@ public class RecentStickerPackDataSource: BaseStickerPackDataSource {
     }
 
     private func ensureState() {
-        stickerInfos = StickerManager.recentStickers()
+        db.read { tx in
+            stickerInfos = stickerManager.recentStickers(transaction: tx)
+        }
     }
 
     // MARK: Events
@@ -668,7 +695,9 @@ extension RecentStickerPackDataSource: StickerPackDataSource {
 
         // This logic is perf-sensitive and on the main thread;
         // don't bother checking that the sticker data resides on disk.
-        return StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo)
+        return db.read { tx in
+            stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+        }
     }
 }
 

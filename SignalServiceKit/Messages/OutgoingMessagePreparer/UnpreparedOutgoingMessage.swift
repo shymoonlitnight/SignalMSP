@@ -336,7 +336,7 @@ public class UnpreparedOutgoingMessage {
             )
             Logger.info("Created sticker attachment \(attachmentID) for outgoing message \(message.message.timestamp)")
 
-            StickerManager.stickerWasSent(
+            DependenciesBridge.shared.stickerManager.stickerWasSent(
                 validatedMessageSticker.sticker.info,
                 transaction: tx,
             )

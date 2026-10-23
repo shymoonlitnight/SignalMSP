@@ -49,7 +49,7 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
         reachabilityManager: SSKReachabilityManager,
         remoteConfigProvider: any RemoteConfigProvider,
         signalService: OWSSignalServiceProtocol,
-        stickerManager: Shims.StickerManager,
+        stickerManager: StickerManager,
         storyStore: any StoryStore,
         threadStore: ThreadStore,
         tsAccountManager: TSAccountManager,
@@ -604,7 +604,7 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
         private let downloadabilityChecker: DownloadabilityChecker
         private let downloadQueue: DownloadQueue
         private let remoteConfigProvider: any RemoteConfigProvider
-        private let stickerManager: Shims.StickerManager
+        private let stickerManager: StickerManager
         let store: Store
         private let tsAccountManager: TSAccountManager
 
@@ -622,7 +622,7 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
             downloadQueue: DownloadQueue,
             downloadabilityChecker: DownloadabilityChecker,
             remoteConfigProvider: any RemoteConfigProvider,
-            stickerManager: Shims.StickerManager,
+            stickerManager: StickerManager,
             tsAccountManager: TSAccountManager,
         ) {
             self.accountKeyStore = accountKeyStore
@@ -1269,7 +1269,7 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
                 return self.stickerManager.fetchInstalledSticker(
                     packId: stickerMetadata.stickerPackId,
                     stickerId: stickerMetadata.stickerId,
-                    tx: tx,
+                    transaction: tx,
                 )
             }
 
@@ -1931,11 +1931,11 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
     private class Decrypter {
 
         private let attachmentValidator: AttachmentContentValidator
-        private let stickerManager: Shims.StickerManager
+        private let stickerManager: StickerManager
 
         init(
             attachmentValidator: AttachmentContentValidator,
-            stickerManager: Shims.StickerManager,
+            stickerManager: StickerManager,
         ) {
             self.attachmentValidator = attachmentValidator
             self.stickerManager = stickerManager
@@ -2632,34 +2632,5 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
                 db.touch(storyMessage: storyMessage, tx: tx)
             }
         }
-    }
-}
-
-extension AttachmentDownloadManagerImpl {
-    public enum Shims {
-        public typealias StickerManager = _AttachmentDownloadManagerImpl_StickerManagerShim
-    }
-
-    public enum Wrappers {
-        public typealias StickerManager = _AttachmentDownloadManagerImpl_StickerManagerWrapper
-    }
-}
-
-public protocol _AttachmentDownloadManagerImpl_StickerManagerShim {
-
-    func fetchInstalledSticker(packId: Data, stickerId: UInt32, tx: DBReadTransaction) -> InstalledStickerRecord?
-
-    func stickerDataUrl(forInstalledSticker: InstalledStickerRecord, verifyExists: Bool) -> URL?
-}
-
-public class _AttachmentDownloadManagerImpl_StickerManagerWrapper: _AttachmentDownloadManagerImpl_StickerManagerShim {
-    public init() {}
-
-    public func fetchInstalledSticker(packId: Data, stickerId: UInt32, tx: DBReadTransaction) -> InstalledStickerRecord? {
-        return StickerManager.fetchInstalledSticker(packId: packId, stickerId: stickerId, transaction: tx)
-    }
-
-    public func stickerDataUrl(forInstalledSticker: InstalledStickerRecord, verifyExists: Bool) -> URL? {
-        return StickerManager.stickerDataUrl(forInstalledSticker: forInstalledSticker, verifyExists: verifyExists)
     }
 }

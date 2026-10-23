@@ -2336,6 +2336,9 @@ class ConversationInputToolbar: UIView, AttachmentKeyboardDelegate, Conversation
     }
 
     private func updateSuggestedStickers(animated: Bool) {
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
         // Skip this until we are in the view hierarchy.
         guard superview != nil else { return }
 
@@ -2345,8 +2348,8 @@ class ConversationInputToolbar: UIView, AttachmentKeyboardDelegate, Conversation
 
         let suggestedStickers: [StickerInfo]
         if let suggestedStickerEmoji {
-            suggestedStickers = SSKEnvironment.shared.databaseStorageRef.read { tx in
-                return StickerManager.suggestedStickers(for: suggestedStickerEmoji, tx: tx).map { $0.info }
+            suggestedStickers = db.read { tx in
+                return stickerManager.suggestedStickers(for: suggestedStickerEmoji, tx: tx).map { $0.info }
             }
         } else {
             suggestedStickers = []
@@ -3282,11 +3285,14 @@ class ConversationInputToolbar: UIView, AttachmentKeyboardDelegate, Conversation
     }
 
     private func stickerButtonPressed() {
+        let db = DependenciesBridge.shared.db
+        let stickerManager = DependenciesBridge.shared.stickerManager
+
         ImpactHapticFeedback.impactOccurred(style: .light)
 
         var hasInstalledStickerPacks: Bool = false
-        SSKEnvironment.shared.databaseStorageRef.read { transaction in
-            hasInstalledStickerPacks = !StickerManager.installedStickerPacks(transaction: transaction).isEmpty
+        db.read { transaction in
+            hasInstalledStickerPacks = !stickerManager.installedStickerPacks(transaction: transaction).isEmpty
         }
         guard hasInstalledStickerPacks else {
             inputToolbarDelegate?.presentManageStickersView()

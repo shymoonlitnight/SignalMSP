@@ -19,15 +19,18 @@ class StickerDetailSheet: OWSTableSheetViewController {
 
     private let db: DB
     private let stickerMetadata: any StickerMetadata
+    private let stickerManager: StickerManager
     private let actions: [Action]
 
     init(
         db: DB,
         stickerMetadata: any StickerMetadata,
+        stickerManager: StickerManager,
         actions: [Action],
     ) {
         self.db = db
         self.stickerMetadata = stickerMetadata
+        self.stickerManager = stickerManager
         self.actions = actions
         super.init()
     }
@@ -77,7 +80,7 @@ class StickerDetailSheet: OWSTableSheetViewController {
         if
             let packRecord = db.read(
                 block: { tx in
-                    StickerManager.fetchStickerPack(
+                    stickerManager.fetchStickerPack(
                         stickerPackInfo: stickerMetadata.packInfo,
                         transaction: tx,
                     )

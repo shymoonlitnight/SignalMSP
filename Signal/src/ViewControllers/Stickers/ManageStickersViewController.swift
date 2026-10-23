@@ -54,6 +54,23 @@ public class ManageStickersViewController: OWSTableViewController2 {
 
     typealias DatedStickerPackInfo = StickerManager.DatedStickerPackInfo
 
+    let stickerManager: StickerManager
+    let db: DB
+
+    override convenience init() {
+        self.init(
+            stickerManager: DependenciesBridge.shared.stickerManager,
+            db: DependenciesBridge.shared.db,
+        )
+    }
+
+    init(stickerManager: StickerManager, db: DB) {
+        self.stickerManager = stickerManager
+        self.db = db
+
+        super.init()
+    }
+
     // MARK: - View Lifecycle
 
     override public func loadView() {
@@ -78,8 +95,7 @@ public class ManageStickersViewController: OWSTableViewController2 {
 
         updateState()
 
-        let stickerManager = SSKEnvironment.shared.stickerManagerRef
-        stickerManager.downloadPendingSickerPacks()
+        stickerManager.downloadPendingStickerPacks()
     }
 
     private var pendingModalVC: ModalActivityIndicatorViewController?
@@ -144,13 +160,13 @@ public class ManageStickersViewController: OWSTableViewController2 {
         var installedStickerPacks = [StickerPackRecord]()
         var availableBuiltInStickerPacks = [StickerPackRecord]()
         var availableKnownStickerPacksFromMessages = [DatedStickerPackInfo]()
-        SSKEnvironment.shared.databaseStorageRef.read { transaction in
-            let allPacks = StickerManager.allStickerPacks(transaction: transaction)
+        db.read { transaction in
+            let allPacks = stickerManager.allStickerPacks(transaction: transaction)
             let allPackInfos = allPacks.map { $0.info }
 
             // Only show packs with installed covers.
             let packsWithCovers = allPacks.filter {
-                StickerManager.isStickerInstalled(stickerInfo: $0.coverInfo, transaction: transaction)
+                stickerManager.isStickerInstalled(stickerInfo: $0.coverInfo, transaction: transaction)
             }
             // Sort sticker packs by "date saved, descending" so that we feature
             // packs that the user has just learned about.
@@ -158,7 +174,7 @@ public class ManageStickersViewController: OWSTableViewController2 {
             availableBuiltInStickerPacks = packsWithCovers.filter {
                 !$0.isInstalled && StickerManager.isDefaultStickerPack(packId: $0.info.packId)
             }
-            let knownStickerPackFromMessages = StickerManager.knownStickerPacksFromMessages(transaction: transaction)
+            let knownStickerPackFromMessages = stickerManager.knownStickerPacksFromMessages(transaction: transaction)
             availableKnownStickerPacksFromMessages = knownStickerPackFromMessages.filter { !allPackInfos.contains($0.info) }
         }
 
@@ -166,7 +182,11 @@ public class ManageStickersViewController: OWSTableViewController2 {
             if let source = oldInstalledSources[info] {
                 return source
             }
-            let source = InstalledStickerPackDataSource(stickerPackInfo: info)
+            let source = InstalledStickerPackDataSource(
+                stickerPackInfo: info,
+                stickerManager: self.stickerManager,
+                db: self.db,
+            )
             source.add(delegate: self)
             return source
         }
@@ -178,6 +198,8 @@ public class ManageStickersViewController: OWSTableViewController2 {
             let source = TransientStickerPackDataSource(
                 stickerPackInfo: info,
                 shouldDownloadAllStickers: false,
+                stickerManager: self.stickerManager,
+                db: self.db,
             )
             source.add(delegate: self)
             return source
@@ -274,7 +296,7 @@ public class ManageStickersViewController: OWSTableViewController2 {
                 continue
             }
             // Hide sticker packs whose download failed permanently.
-            let isFailed = StickerManager.isStickerPackMissing(stickerPackInfo: info)
+            let isFailed = stickerManager.isStickerPackMissing(stickerPackInfo: info)
             if isFailed {
                 failedKnownStickerPackSources.append(source)
             } else {
@@ -531,8 +553,8 @@ public class ManageStickersViewController: OWSTableViewController2 {
 
         // This will be dismissed once we receive a sticker pack update notification from StickerManager
         pendingModalVC = modalVC
-        SSKEnvironment.shared.databaseStorageRef.asyncWrite { transaction in
-            StickerManager.installStickerPack(
+        db.asyncWrite { transaction in
+            self.stickerManager.installStickerPack(
                 stickerPack: stickerPack,
                 wasLocallyInitiated: true,
                 transaction: transaction,

@@ -21,12 +21,26 @@ class LinkPreviewFetcherTest: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        let db = InMemoryDB()
+        let dateProvider = { Date() }
+        let appReadiness = AppReadinessMock()
+
         self.linkPreviewFetcher = LinkPreviewFetcherImpl(
             authCredentialManager: MockAuthCrededentialManager(),
-            db: InMemoryDB(),
+            db: db,
             groupsV2: MockGroupsV2(),
             linkPreviewSettingStore: LinkPreviewSettingStore.mock(),
             tsAccountManager: MockTSAccountManager(),
+            stickerManager: StickerManager(
+                appReadiness: appReadiness,
+                dateProvider: dateProvider,
+                attachmentStore: AttachmentStore(),
+                attachmentDownloadStore: AttachmentDownloadStore(dateProvider: dateProvider),
+                tsAccountManager: MockTSAccountManager(),
+                messageSenderJobQueue: MessageSenderJobQueue(appReadiness: appReadiness),
+                interactionStore: InteractionStoreImpl(),
+                db: db,
+            ),
         )
     }
 

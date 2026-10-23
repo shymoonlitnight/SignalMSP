@@ -34,7 +34,7 @@ class InternalDiskUsageViewController: OWSTableViewController2 {
         let dbShmSize = SSKEnvironment.shared.databaseStorageRef.databaseSHMFileSize
         let attachmentSize = folderSizeRecursive(of: AttachmentStream.attachmentsDirectory())
         let emojiCacheSize = folderSizeRecursive(of: Emoji.cacheUrl)
-        let stickerCacheSize = folderSizeRecursive(of: StickerManager.cacheDirUrl())
+        let stickerCacheSize = folderSizeRecursive(of: DependenciesBridge.shared.stickerManager.cacheDirUrl())
         let avatarCacheSize =
             (folderSizeRecursive(of: AvatarBuilder.avatarCacheDirectory) ?? 0)
                 + (folderSizeRecursive(ofPath: OWSUserProfile.sharedDataProfileAvatarsDirPath) ?? 0)

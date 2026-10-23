@@ -10,22 +10,33 @@ import UIKit
 @testable import SignalServiceKit
 
 @MainActor
-@Suite(.serialized, .disabled("Enable once StickerManager is refactored to take a sticker cache URL"))
-struct StickerInstallFlowTest {
+final class StickerInstallFlowTest {
     private let db = InMemoryDB()
     private let stickerManager: StickerManager
+    private let tempDirPath: String
 
     init() {
-        // Needed because StickerManager.cacheDirUrl() uses CurrentAppContext,
-        // we want to make sure each test has its own sticker dir.
-        SetCurrentAppContext(TestAppContext(), isRunningTests: true)
+        let dateProvider = { Date() }
+        let appReadiness = AppReadinessMock()
+
+        self.tempDirPath = OWSFileSystem.temporaryFilePath(isAvailableWhileDeviceLocked: false).appendingPathComponent("StickerInstallFlowTest")
+        OWSFileSystem.ensureDirectoryExists(tempDirPath)
+
         self.stickerManager = StickerManager(
-            appReadiness: AppReadinessMock(),
-            dateProvider: { Date() },
+            appReadiness: appReadiness,
+            dateProvider: dateProvider,
             attachmentStore: AttachmentStore(),
-            attachmentDownloadStore: AttachmentDownloadStore(dateProvider: { Date() }),
+            attachmentDownloadStore: AttachmentDownloadStore(dateProvider: dateProvider),
+            tsAccountManager: MockTSAccountManager(),
+            messageSenderJobQueue: MessageSenderJobQueue(appReadiness: appReadiness),
+            interactionStore: InteractionStoreImpl(),
+            cacheDirUrl: URL(fileURLWithPath: self.tempDirPath),
             db: db,
         )
+    }
+
+    deinit {
+        try? FileManager.default.removeItem(atPath: tempDirPath)
     }
 
     @Test
@@ -42,13 +53,13 @@ struct StickerInstallFlowTest {
         #expect(didInstall)
 
         let record = try #require(db.read { tx in
-            StickerManager.fetchInstalledSticker(stickerInfo: info, transaction: tx)
+            stickerManager.fetchInstalledSticker(stickerInfo: info, transaction: tx)
         })
         let localKey = try #require(record.localKey)
         let plaintextLength = try #require(record.plaintextLength)
         #expect(plaintextLength == UInt32(plaintext.count))
 
-        let fileUrl = StickerManager.stickerDataUrl(
+        let fileUrl = stickerManager.stickerDataUrl(
             forInstalledSticker: record,
             verifyExists: true,
         )!

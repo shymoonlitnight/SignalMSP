@@ -53,7 +53,6 @@ public class SSKEnvironment: NSObject {
     public let reachabilityManagerRef: SSKReachabilityManager
     public let syncManagerRef: SyncManager
     public let typingIndicatorsRef: TypingIndicators
-    public let stickerManagerRef: StickerManager
     @objc
     public let databaseStorageRef: SDSDatabaseStorage
     public let signalServiceAddressCacheRef: SignalServiceAddressCache
@@ -117,7 +116,6 @@ public class SSKEnvironment: NSObject {
         reachabilityManager: SSKReachabilityManager,
         syncManager: SyncManager,
         typingIndicators: TypingIndicators,
-        stickerManager: StickerManager,
         databaseStorage: SDSDatabaseStorage,
         signalServiceAddressCache: SignalServiceAddressCache,
         signalService: OWSSignalServiceProtocol,
@@ -174,7 +172,6 @@ public class SSKEnvironment: NSObject {
         self.syncManagerRef = syncManager
         self.reachabilityManagerRef = reachabilityManager
         self.typingIndicatorsRef = typingIndicators
-        self.stickerManagerRef = stickerManager
         self.databaseStorageRef = databaseStorage
         self.signalServiceAddressCacheRef = signalServiceAddressCache
         self.signalServiceRef = signalService

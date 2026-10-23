@@ -28,7 +28,12 @@ public class StickerView {
         forInstalledStickerInfo stickerInfo: StickerInfo,
         size: CGFloat? = nil,
     ) -> UIView? {
-        let metadata = StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo)
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
+        let metadata = db.read { tx in
+            stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+        }
         guard let stickerMetadata = metadata else {
             Logger.warn("Missing sticker metadata.")
             return nil

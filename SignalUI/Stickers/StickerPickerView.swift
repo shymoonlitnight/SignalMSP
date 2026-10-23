@@ -458,10 +458,13 @@ private class StickerPickerPageView: UIView {
     private let reusableStickerViewCache = StickerViewCache(maxSize: 32)
 
     private func reloadStickers() {
+        let db = DependenciesBridge.shared.db
+        let stickerManager = DependenciesBridge.shared.stickerManager
+
         let oldStickerPacks = stickerPacks
 
-        SSKEnvironment.shared.databaseStorageRef.read { transaction in
-            self.stickerPacks = StickerManager.installedStickerPacks(transaction: transaction).sorted {
+        db.read { transaction in
+            self.stickerPacks = stickerManager.installedStickerPacks(transaction: transaction).sorted {
                 $0.dateCreated > $1.dateCreated
             }
         }

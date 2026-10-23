@@ -14,7 +14,7 @@ public class AttachmentManagerImpl: AttachmentManager {
     private let orphanedAttachmentStore: OrphanedAttachmentStore
     private let orphanedBackupAttachmentScheduler: OrphanedBackupAttachmentScheduler
     private let remoteConfigManager: RemoteConfigManager
-    private let stickerManager: Shims.StickerManager
+    private let stickerManager: StickerManager
     private let localFileBackupStore: LocalFileBackupStore
 
     public init(
@@ -27,7 +27,7 @@ public class AttachmentManagerImpl: AttachmentManager {
         orphanedAttachmentStore: OrphanedAttachmentStore,
         orphanedBackupAttachmentScheduler: OrphanedBackupAttachmentScheduler,
         remoteConfigManager: RemoteConfigManager,
-        stickerManager: Shims.StickerManager,
+        stickerManager: StickerManager,
         localFileBackupStore: LocalFileBackupStore,
     ) {
         self.attachmentDownloadManager = attachmentDownloadManager
@@ -245,7 +245,7 @@ public class AttachmentManagerImpl: AttachmentManager {
             let installedSticker = self.stickerManager.fetchInstalledSticker(
                 packId: stickerInfo.stickerPackId,
                 stickerId: stickerInfo.stickerId,
-                tx: tx,
+                transaction: tx,
             )
             if installedSticker != nil {
                 guard
@@ -1069,27 +1069,5 @@ public class AttachmentManagerImpl: AttachmentManager {
                 tx: tx,
             )
         }
-    }
-}
-
-extension AttachmentManagerImpl {
-    public enum Shims {
-        public typealias StickerManager = _AttachmentManagerImpl_StickerManagerShim
-    }
-
-    public enum Wrappers {
-        public typealias StickerManager = _AttachmentManagerImpl_StickerManagerWrapper
-    }
-}
-
-public protocol _AttachmentManagerImpl_StickerManagerShim {
-    func fetchInstalledSticker(packId: Data, stickerId: UInt32, tx: DBReadTransaction) -> InstalledStickerRecord?
-}
-
-public class _AttachmentManagerImpl_StickerManagerWrapper: _AttachmentManagerImpl_StickerManagerShim {
-    public init() {}
-
-    public func fetchInstalledSticker(packId: Data, stickerId: UInt32, tx: DBReadTransaction) -> InstalledStickerRecord? {
-        return StickerManager.fetchInstalledSticker(packId: packId, stickerId: stickerId, transaction: tx)
     }
 }

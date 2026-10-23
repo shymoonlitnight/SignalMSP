@@ -17,8 +17,13 @@ enum DownloadStickerOperation {
         assert(stickerInfo.packId.count > 0)
         assert(stickerInfo.packKey.count > 0)
 
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
         if
-            let installedStickerMetadata = StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo)
+            let installedStickerMetadata = db.read(block: { tx in
+                stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+            })
         {
             // Already installed.
             return try installedStickerMetadata.readStickerData()

@@ -1102,6 +1102,9 @@ class ImageEditorCanvasView: UIView, ImageEditorModelObserver {
     ) -> CALayer? {
         AssertIsOnMainThread()
 
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
         let imageFrame = ImageEditorCanvasView.imageFrame(
             forViewSize: viewSize,
             imageSize: model.srcImageSizePixels,
@@ -1115,8 +1118,12 @@ class ImageEditorCanvasView: UIView, ImageEditorModelObserver {
             image = cachedImage
         case (.none, .regular(let stickerInfo)):
             // Regular sticker. Fetch its image
+            let metadata = db.read { tx in
+                stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx)
+            }
+
             guard
-                let metadata = StickerManager.installedStickerMetadataWithSneakyTransaction(stickerInfo: stickerInfo),
+                let metadata,
                 let imageData = try? metadata.readStickerData(),
                 let stickerImage = UIImage(data: imageData)
             else {

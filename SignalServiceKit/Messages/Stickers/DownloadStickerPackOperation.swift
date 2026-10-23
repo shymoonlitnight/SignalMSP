@@ -16,7 +16,14 @@ enum DownloadStickerPackOperation {
         owsAssertDebug(stickerPackInfo.packId.count > 0)
         owsAssertDebug(stickerPackInfo.packKey.count > 0)
 
-        if let stickerPack = StickerManager.fetchStickerPack(stickerPackInfo: stickerPackInfo) {
+        let stickerManager = DependenciesBridge.shared.stickerManager
+        let db = DependenciesBridge.shared.db
+
+        if
+            let stickerPack = db.read(block: { tx in
+                stickerManager.fetchStickerPack(stickerPackInfo: stickerPackInfo, transaction: tx)
+            })
+        {
             return stickerPack
         }
 
@@ -46,7 +53,7 @@ enum DownloadStickerPackOperation {
                 (400..<500).contains(statusCode),
                 statusCode != 429
             {
-                StickerManager.markStickerPackAsMissing(stickerPackInfo: stickerPackInfo)
+                stickerManager.markStickerPackAsMissing(stickerPackInfo: stickerPackInfo)
             }
 
             throw error

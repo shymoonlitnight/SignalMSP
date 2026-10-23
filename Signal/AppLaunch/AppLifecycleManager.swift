@@ -330,6 +330,7 @@ final class AppLifecycleManager: NSObject, UNUserNotificationCenterDelegate {
             databaseStorage: databaseStorage,
             modelReadCaches: { SSKEnvironment.shared.modelReadCachesRef },
             tsAccountManager: { DependenciesBridge.shared.tsAccountManager },
+            stickerManager: { DependenciesBridge.shared.stickerManager },
         )
         databaseMigratorRunner.registerBGProcessingTask(appReadiness: appReadiness)
 

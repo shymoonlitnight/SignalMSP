@@ -9,6 +9,7 @@ import GRDB
 public struct StickerMigrator {
     private typealias Columns = InstalledStickerRecord.CodingKeys
 
+    private let stickerManager: () -> StickerManager
     private let db: DB
     private let logger = PrefixedLogger(prefix: "StickerMigrator")
     private let kvStore = NewKeyValueStore(collection: "StickerMigrator")
@@ -17,8 +18,9 @@ public struct StickerMigrator {
         static let lastSeenRowId: String = "lastSeenRowId"
     }
 
-    public init(db: DB) {
+    public init(db: DB, stickerManager: @escaping () -> StickerManager) {
         self.db = db
+        self.stickerManager = stickerManager
     }
 
     public func needsToRun() -> Bool {
@@ -84,7 +86,7 @@ public struct StickerMigrator {
 
     private func migrate(_ row: InstalledStickerRecord, tx: DBWriteTransaction) {
         let stickerType = StickerType.stickerType(forContentType: row.contentType)
-        let url = StickerManager.cacheDirUrl()
+        let url = stickerManager().cacheDirUrl()
             .appendingPathComponent("\(row.uniqueId).\(stickerType.fileExtension)")
 
         let plaintext: Data

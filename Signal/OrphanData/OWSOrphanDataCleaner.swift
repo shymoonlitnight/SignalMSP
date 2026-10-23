@@ -50,12 +50,14 @@ enum OWSOrphanDataCleaner {
 
     /// This method finds (but does not delete) orphaned data.
     private static func findOrphanedData() async throws -> OWSOrphanData {
+        let stickerManager = DependenciesBridge.shared.stickerManager
+
         Logger.info("searching for orphaned data")
 
         let legacyProfileAvatarsFilePaths = try filePaths(inDirectorySafe: OWSUserProfile.legacyProfileAvatarsDirPath)
         let sharedDataProfileAvatarFilePaths = try filePaths(inDirectorySafe: OWSUserProfile.sharedDataProfileAvatarsDirPath)
         let allGroupAvatarFilePaths = try filePaths(inDirectorySafe: TSGroupModel.avatarsDirectory.path)
-        let allStickerFilePaths = try filePaths(inDirectorySafe: StickerManager.cacheDirUrl().path)
+        let allStickerFilePaths = try filePaths(inDirectorySafe: stickerManager.cacheDirUrl().path)
 
         let allOnDiskFilePaths: Set<String> = {
             var result: Set<String> = []
@@ -165,10 +167,10 @@ enum OWSOrphanDataCleaner {
             }
             try Task.checkCancellation()
 
-            activeStickerFilePaths.formUnion(StickerManager.filePathsForAllInstalledStickers(transaction: transaction))
+            activeStickerFilePaths.formUnion(stickerManager.filePathsForAllInstalledStickers(transaction: transaction))
             try Task.checkCancellation()
 
-            hasOrphanedPacksOrStickers = StickerManager.hasOrphanedData(tx: transaction)
+            hasOrphanedPacksOrStickers = stickerManager.hasOrphanedData(tx: transaction)
         }
 
         var orphanFilePaths = allOnDiskFilePaths
@@ -257,6 +259,8 @@ enum OWSOrphanDataCleaner {
         startTime: Date,
         shouldRemoveOrphanedData: Bool,
     ) async throws {
+        let stickerManager = DependenciesBridge.shared.stickerManager
+
         // We need to avoid cleaning up new files that are still in the process of
         // being created/written, so we don't clean up anything recent.
         let minimumOrphanAgeSeconds: TimeInterval = 15 * .minute
@@ -324,7 +328,7 @@ enum OWSOrphanDataCleaner {
 
         if orphanedData.hasOrphanedPacksOrStickers {
             await databaseStorage.awaitableWrite { transaction in
-                StickerManager.cleanUpOrphanedData(tx: transaction)
+                stickerManager.cleanUpOrphanedData(tx: transaction)
             }
         }
         try Task.checkCancellation()

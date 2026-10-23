@@ -15,6 +15,7 @@ class LazyDatabaseMigratorRunner: BGProcessingTaskRunner {
         databaseStorage: SDSDatabaseStorage,
         modelReadCaches: @escaping () -> ModelReadCaches,
         tsAccountManager: @escaping () -> TSAccountManager,
+        stickerManager: @escaping () -> StickerManager,
     ) {
         self.audioWaveformMigrator = AudioWaveformFileMigrator(
             dateProvider: { Date() },
@@ -25,7 +26,7 @@ class LazyDatabaseMigratorRunner: BGProcessingTaskRunner {
             modelReadCaches: modelReadCaches,
             tsAccountManager: tsAccountManager,
         )
-        self.stickerMigrator = StickerMigrator(db: databaseStorage)
+        self.stickerMigrator = StickerMigrator(db: databaseStorage, stickerManager: stickerManager)
     }
 
     static let taskIdentifier: String = "LazyDatabaseMigratorTask"

@@ -118,6 +118,8 @@ public extension ThreadUtil {
     ) -> TSOutgoingMessage {
         AssertIsOnMainThread()
 
+        let stickerManager = DependenciesBridge.shared.stickerManager
+
         let builder = TSOutgoingMessageBuilder.outgoingMessageBuilder(thread: thread)
         let message = SSKEnvironment.shared.databaseStorageRef.read { tx in
             applyDisappearingMessagesConfiguration(to: builder, tx: tx)
@@ -126,7 +128,7 @@ public extension ThreadUtil {
 
         Self.enqueueSendQueue.enqueue {
             let stickerDraft: MessageStickerDraft? = SSKEnvironment.shared.databaseStorageRef.read { tx in
-                guard let stickerMetadata = StickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx) else {
+                guard let stickerMetadata = stickerManager.installedStickerMetadata(stickerInfo: stickerInfo, transaction: tx) else {
                     owsFailDebug("Could not find sticker file.")
                     return nil
                 }

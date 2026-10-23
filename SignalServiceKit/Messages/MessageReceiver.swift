@@ -728,7 +728,7 @@ public final class MessageReceiver {
         } else if !syncMessage.stickerPackOperation.isEmpty {
             Logger.info("Received sticker pack operation(s): \(syncMessage.stickerPackOperation.count)")
             for packOperationProto in syncMessage.stickerPackOperation {
-                StickerManager.processIncomingStickerPackOperation(packOperationProto, transaction: tx)
+                DependenciesBridge.shared.stickerManager.processIncomingStickerPackOperation(packOperationProto, transaction: tx)
             }
         } else if let viewOnceOpen = syncMessage.viewOnceOpen {
             Logger.info("Received view-once read receipt sync message")
@@ -884,6 +884,7 @@ public final class MessageReceiver {
         let blockingManager = SSKEnvironment.shared.blockingManagerRef
         let syncManager = SSKEnvironment.shared.syncManagerRef
         let tsAccountManager = DependenciesBridge.shared.tsAccountManager
+        let stickerManager = DependenciesBridge.shared.stickerManager
 
         guard
             let registeredState = try? tsAccountManager.registeredState(tx: tx),
@@ -927,7 +928,7 @@ public final class MessageReceiver {
         case .configuration:
             // We send _two_ responses to the "configuration request".
             syncManager.sendConfigurationSyncMessage(tx: tx)
-            StickerManager.syncAllInstalledPacks(transaction: tx)
+            stickerManager.syncAllInstalledPacks(transaction: tx)
 
         case .keys:
             syncManager.sendKeysSyncMessage(tx: tx)

@@ -10,11 +10,13 @@ final class SendStickerFlow: ConversationPickerDelegate {
     private let db: DB
 
     private let stickerMetadata: any StickerMetadata
+    private let stickerManager: StickerManager
     private let selection = ConversationPickerSelection()
     private weak var navigationController: UINavigationController?
 
-    init(stickerMetadata: any StickerMetadata, db: DB) {
+    init(stickerMetadata: any StickerMetadata, stickerManager: StickerManager, db: DB) {
         self.stickerMetadata = stickerMetadata
+        self.stickerManager = stickerManager
         self.db = db
     }
 
@@ -38,7 +40,9 @@ final class SendStickerFlow: ConversationPickerDelegate {
         }
 
         let stickerInfo = stickerMetadata.stickerInfo
-        let installed = StickerManager.isStickerInstalled(stickerInfo: stickerInfo)
+        let installed = db.read { tx in
+            stickerManager.isStickerInstalled(stickerInfo: stickerInfo, transaction: tx)
+        }
 
         for thread in threads {
             if installed {

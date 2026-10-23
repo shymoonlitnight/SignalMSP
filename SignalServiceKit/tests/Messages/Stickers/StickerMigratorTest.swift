@@ -11,19 +11,40 @@ import UIKit
 @testable import SignalServiceKit
 
 @MainActor
-@Suite(.serialized, .disabled("Enable once StickerManager is refactored to take a sticker cache URL"))
-struct StickerMigratorTest {
+final class StickerMigratorTest {
     private typealias Columns = InstalledStickerRecord.CodingKeys
 
     private let db = InMemoryDB()
     private let migrator: StickerMigrator
     private let mockKVStore = NewKeyValueStore(collection: "StickerMigrator")
+    private let stickerManager: StickerManager
+    private let tempDirPath: String
 
     init() {
-        // Needed because StickerManager.cacheDirUrl() uses CurrentAppContext,
-        // we want to make sure each test has its own sticker dir.
-        SetCurrentAppContext(TestAppContext(), isRunningTests: true)
-        self.migrator = StickerMigrator(db: db)
+        let dateProvider = { Date() }
+        let appReadiness = AppReadinessMock()
+
+        self.tempDirPath = OWSFileSystem.temporaryFilePath(isAvailableWhileDeviceLocked: false).appendingPathComponent("StickerMigratorTest")
+        OWSFileSystem.ensureDirectoryExists(self.tempDirPath)
+
+        let stickerManager = StickerManager(
+            appReadiness: appReadiness,
+            dateProvider: dateProvider,
+            attachmentStore: AttachmentStore(),
+            attachmentDownloadStore: AttachmentDownloadStore(dateProvider: dateProvider),
+            tsAccountManager: MockTSAccountManager(),
+            messageSenderJobQueue: MessageSenderJobQueue(appReadiness: appReadiness),
+            interactionStore: InteractionStoreImpl(),
+            cacheDirUrl: URL(fileURLWithPath: self.tempDirPath),
+            db: db,
+        )
+        self.stickerManager = stickerManager
+
+        self.migrator = StickerMigrator(db: db, stickerManager: { stickerManager })
+    }
+
+    deinit {
+        try? FileManager.default.removeItem(atPath: tempDirPath)
     }
 
     @Test
@@ -128,7 +149,7 @@ struct StickerMigratorTest {
 
     private func stickerUrl(for record: InstalledStickerRecord) -> URL {
         let stickerType = StickerType.stickerType(forContentType: record.contentType)
-        return StickerManager.cacheDirUrl()
+        return stickerManager.cacheDirUrl()
             .appendingPathComponent("\(record.uniqueId).\(stickerType.fileExtension)")
     }
 
