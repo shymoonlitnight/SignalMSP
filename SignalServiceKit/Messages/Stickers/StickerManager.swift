@@ -493,12 +493,11 @@ public class StickerManager {
         guard let installedSticker = InstalledStickerRecord.anyFetch(uniqueId: uniqueId, transaction: transaction) else {
             return nil
         }
-        return installedStickerMetadata(installedSticker: installedSticker, transaction: transaction)
+        return installedStickerMetadata(installedSticker: installedSticker)
     }
 
     public func installedStickerMetadata(
         installedSticker: InstalledStickerRecord,
-        transaction: DBReadTransaction,
     ) -> (any StickerMetadata)? {
         let stickerInfo = installedSticker.info
         let stickerType = StickerType.stickerType(forContentType: installedSticker.contentType)

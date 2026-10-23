@@ -117,7 +117,7 @@ public protocol AttachmentContentValidator {
         ofEncryptedFileAt fileUrl: URL,
         attachmentKey: AttachmentKey,
         plaintextLength: UInt32,
-        integrityCheck: AttachmentIntegrityCheck,
+        integrityCheck: AttachmentIntegrityCheck?,
         mimeType: String,
         renderingFlag: AttachmentReference.RenderingFlag,
         sourceFilename: String?,

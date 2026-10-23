@@ -1974,8 +1974,6 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
         func validateAndPrepareInstalledSticker(
             _ sticker: InstalledStickerRecord,
         ) async throws -> PendingAttachment {
-            let attachmentValidator = self.attachmentValidator
-            let stickerManager = self.stickerManager
             return try await decryptionQueue.runWithThrowingTask {
                 guard
                     let stickerDataUrl = stickerManager.stickerDataUrl(
@@ -1984,6 +1982,19 @@ public class AttachmentDownloadManagerImpl: AttachmentDownloadManager {
                     )
                 else {
                     throw OWSAssertionError("Missing sticker")
+                }
+
+                let stickerType = StickerType.stickerType(forContentType: sticker.contentType)
+                if let plaintextLength = sticker.plaintextLength, let localKey = sticker.localKey {
+                    return try await attachmentValidator.validateDownloadedContents(
+                        ofEncryptedFileAt: stickerDataUrl,
+                        attachmentKey: AttachmentKey(combinedKey: localKey),
+                        plaintextLength: plaintextLength,
+                        integrityCheck: nil,
+                        mimeType: stickerType.mimeType,
+                        renderingFlag: .default,
+                        sourceFilename: nil,
+                    )
                 }
 
                 let mimeType: MimeType

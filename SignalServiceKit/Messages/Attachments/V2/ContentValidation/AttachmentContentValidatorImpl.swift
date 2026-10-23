@@ -81,7 +81,7 @@ public class AttachmentContentValidatorImpl: AttachmentContentValidator {
         ofEncryptedFileAt fileUrl: URL,
         attachmentKey inputAttachmentKey: AttachmentKey,
         plaintextLength: UInt32,
-        integrityCheck: AttachmentIntegrityCheck,
+        integrityCheck: AttachmentIntegrityCheck?,
         mimeType: String,
         renderingFlag: AttachmentReference.RenderingFlag,
         sourceFilename: String?,
