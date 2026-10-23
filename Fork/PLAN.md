@@ -88,13 +88,15 @@ Known risks:
   **Verify:** slow click on − and + toggles mute with the call screen open,
   backgrounded, and locked; call stays up; after the call, music apps'
   track skip works normally again.
-- [ ] **CP2.3 Volume double-tap (optional, unlocked only).** KVO on
+- [x] ~~**CP2.3 Volume double-tap (optional, unlocked only).**~~ **Skipped
+  (2026-10-23):** only registered with the call screen open, which key
+  commands and Control Center already cover; the BT13 uses track skip. KVO on
   `outputVolume`; exactly two steps within ~400 ms, then quiet, toggles mute
   and restores the volume. A held button (a fast run of steps) must not
   trigger. Only worth it if wanted on top of key commands and Control Center.
   **Verify:** double press toggles with the call screen open; holding a
   button only changes volume; volume ends where it started.
-- [ ] ~~**Play/pause**~~ Dropped: CP2.0 showed play/pause ends the call.
+- [x] ~~**Play/pause**~~ Dropped: CP2.0 showed play/pause ends the call.
 - [ ] **CP2.4 AirPods head gesture.** `CMHeadphoneMotionManager`, sideways tilt
   held ~0.5 s or double tilt; `NSMotionUsageDescription`.
   **Verify:** works backgrounded/locked; 5 minutes of normal conversation
