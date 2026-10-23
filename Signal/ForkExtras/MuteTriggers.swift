@@ -33,6 +33,7 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
 
     static let allSources: [SourceEntry] = [
         SourceEntry(settingKey: TrackSkipMuteTrigger.settingKey, make: { TrackSkipMuteTrigger() }),
+        SourceEntry(settingKey: HeadTiltMuteTrigger.settingKey, make: { HeadTiltMuteTrigger() }),
     ]
 
     /// Triggers closer together than this count as one press.
@@ -86,7 +87,7 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
             }
         }
         if !running.isEmpty {
-            Logger.info("MuteTriggers: started \(runningSourceNames)")
+            ForkLog.info("MuteTriggers: started \(runningSourceNames)")
         }
     }
 
@@ -94,7 +95,7 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
         guard !running.isEmpty else {
             return
         }
-        Logger.info("MuteTriggers: stopping \(runningSourceNames)")
+        ForkLog.info("MuteTriggers: stopping \(runningSourceNames)")
         running.forEach { $0.stop() }
         running = []
         lastTriggerTime = nil
@@ -103,7 +104,7 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
     func trigger(from sourceName: String) {
         let time = now()
         if let lastTriggerTime, time - lastTriggerTime < Self.debounceInterval {
-            Logger.info("MuteTriggers: ignored \(sourceName) (debounce)")
+            ForkLog.info("MuteTriggers: ignored \(sourceName) (debounce)")
             return
         }
         lastTriggerTime = time
@@ -111,9 +112,9 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
         Task { @MainActor in
             do {
                 let isMuted = try await toggleMute()
-                Logger.info("MuteTriggers: \(sourceName) toggled mute to \(isMuted)")
+                ForkLog.info("MuteTriggers: \(sourceName) toggled mute to \(isMuted)")
             } catch {
-                Logger.warn("MuteTriggers: \(sourceName) couldn't toggle mute: \(error)")
+                ForkLog.warn("MuteTriggers: \(sourceName) couldn't toggle mute: \(error)")
             }
         }
     }

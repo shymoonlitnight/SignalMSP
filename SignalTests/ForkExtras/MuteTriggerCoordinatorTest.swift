@@ -118,7 +118,10 @@ final class MuteTriggerCoordinatorTest: XCTestCase {
         XCTAssertEqual(toggles, 2)
     }
 
-    func testDefaultSourcesIncludeTrackSkip() {
-        XCTAssertEqual(MuteTriggerCoordinator.allSources.map(\.settingKey), [TrackSkipMuteTrigger.settingKey])
+    func testDefaultSources() {
+        XCTAssertEqual(
+            MuteTriggerCoordinator.allSources.map(\.settingKey),
+            [TrackSkipMuteTrigger.settingKey, HeadTiltMuteTrigger.settingKey],
+        )
     }
 }
