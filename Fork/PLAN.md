@@ -45,7 +45,7 @@ Known risks:
   **Verify:** `CallMuteShortcutsTest` and new `CallMuteControllerTest` pass. On
   device, the Toggle shortcut works with the call screen open, backgrounded,
   and locked; call-screen mute button and CallKit stay in sync.
-- [ ] **CP1.2 Call-screen key commands.** `keyCommands` (Space, arrows,
+- [x] **CP1.2 Call-screen key commands.** `keyCommands` (Space, arrows,
   Page Up/Down) on the individual and group call view controllers, calling
   `CallMuteController.toggle()`.
   **Verify:** simulator with hardware keyboard: Space toggles mute. Device:
