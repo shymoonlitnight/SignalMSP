@@ -251,6 +251,26 @@ class IndividualCallViewController: OWSViewController, IndividualCallObserver {
         }
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Receive hardware key commands.
+        becomeFirstResponder()
+    }
+
+    // MARK: - Key commands
+
+    override var canBecomeFirstResponder: Bool { true }
+
+    override var keyCommands: [UIKeyCommand]? {
+        (super.keyCommands ?? []) + CallMuteKeyCommands.make(action: #selector(didPressToggleMuteKey))
+    }
+
+    @objc
+    private func didPressToggleMuteKey() {
+        CallMuteKeyCommands.toggleMute()
+    }
+
     override func loadView() {
         view = UIView()
         view.clipsToBounds = true
@@ -1244,6 +1264,7 @@ extension IndividualCallViewController: CallViewControllerWindowReference {
 
         isCallMinimized = false
         showCallControlsIfHidden()
+        becomeFirstResponder()
 
         remoteMemberView.applyChangesToCallMemberViewAndVideoView(startWithVideoView: false) { aView in
             view.insertSubview(aView, aboveSubview: blurView)
