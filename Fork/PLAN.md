@@ -63,9 +63,11 @@ Known risks:
 
 ## Phase 2: `mute-triggers` (fork-only)
 
-- [ ] **CP2.0 Play/pause test (~30 min).** Throwaway `MPRemoteCommandCenter`
+- [x] **CP2.0 Play/pause test (~30 min).** Throwaway `MPRemoteCommandCenter`
   handler; press BT13 play/pause during a call.
-  **Verify:** record whether the call ends, holds, or the handler fires. Decides CP2.3.
+  **Result (2026-10-23): no-go.** The first press ended the call; Signal's
+  handler never fired. iOS routes media play/pause to CallKit's end-call
+  during a call. CP2.3 is dropped.
 - [ ] **CP2.1 Trigger infrastructure.** `Signal/ForkExtras/`: `MuteTriggerSource`
   (`start()`/`stop()`), `MuteTriggerCoordinator` driven by
   `CallServiceStateObserver` (one registration line in Signal code), ~300 ms
@@ -77,7 +79,7 @@ Known risks:
   ~400 ms toggles mute, volume restored via `MPVolumeView`.
   **Verify:** works foreground/background/locked; volume ends where it started;
   single presses still change volume.
-- [ ] **CP2.3 Play/pause** (only if CP2.0 passed).
+- [ ] ~~**CP2.3 Play/pause**~~ Dropped: CP2.0 showed play/pause ends the call.
   **Verify:** BT13 toggles mute and never ends the call, in all three states.
 - [ ] **CP2.4 AirPods head gesture.** `CMHeadphoneMotionManager`, sideways tilt
   held ~0.5 s or double tilt; `NSMotionUsageDescription`.

@@ -114,7 +114,8 @@ group call with someone else in it: alone in a group call Signal doesn't
 record from the microphone, which changes how iOS handles mute (AirPods stem
 press is rejected there). Also check that:
 
-- [ ] BT13 play/pause does not end the call.
+- [x] BT13 play/pause does not end the call. **Fails:** it ends the call
+      (tested 2026-10-23), so play/pause is not usable as a mute trigger.
 - [ ] Normal conversation (nodding, talking) doesn't trigger the head gesture.
 - [ ] Double-pressing volume leaves the volume where it started.
 - [ ] Triggers don't fire when no call is active.
