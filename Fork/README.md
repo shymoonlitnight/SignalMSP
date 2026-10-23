@@ -199,8 +199,14 @@ Call Mute Triggers**. Changes apply from the next call.
   − or + sends track skip, and works with the phone locked. Don't use
   play/pause: during a call iOS turns it into "end call".
 
-All triggers go through `CallMuteController` with a 0.3 s debounce. Logs
-start with `MuteTriggers:` in Signal's debug log.
+- **AirPods Head Tilt:** hold a sideways head tilt (ear toward shoulder,
+  about 34°) for half a second. Nods and shakes are ignored. Needs AirPods
+  with head tracking (Pro, Max, 3rd gen or later) and asks for Motion &
+  Fitness permission the first time a call starts with it on.
+
+All triggers go through `CallMuteController` with a 0.3 s debounce. Their
+messages start with `MuteTriggers:`, in Signal's debug log and live in
+Console.app (filter on subsystem `SignalMSP` or the text `MuteTriggers`).
 
 ## Background
 
