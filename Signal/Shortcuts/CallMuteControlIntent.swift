@@ -10,6 +10,9 @@ import Foundation
 ///
 /// This file is compiled into both the app and the SignalControls extension.
 /// As a `LiveActivityIntent`, it runs in the app's process, where the call is.
+///
+/// A tap always flips the call's actual mute state rather than applying
+/// `value`, so a tap still works if the control's display is ever stale.
 @available(iOS 17.0, *)
 struct SetCallMuteControlIntent: SetValueIntent, LiveActivityIntent {
     static var title: LocalizedStringResource = "Mute Call"
@@ -20,7 +23,7 @@ struct SetCallMuteControlIntent: SetValueIntent, LiveActivityIntent {
     var value: Bool
 
     func perform() async throws -> some IntentResult {
-        try await setMuted(value)
+        try await toggleMute()
         return .result()
     }
 
@@ -30,13 +33,13 @@ struct SetCallMuteControlIntent: SetValueIntent, LiveActivityIntent {
         var errorDescription: String? { "Open Signal to change mute." }
     }
 
-    private func setMuted(_ isMuted: Bool) async throws {
+    private func toggleMute() async throws {
         // Only reached if the system runs the intent in the extension.
         throw NotInAppError.notInApp
     }
 #else
-    private func setMuted(_ isMuted: Bool) async throws {
-        try await CallMuteController.live().setMuted(isMuted)
+    private func toggleMute() async throws {
+        try await CallMuteController.live().toggle()
     }
 #endif
 }

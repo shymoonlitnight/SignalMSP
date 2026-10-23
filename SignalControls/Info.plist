@@ -20,6 +20,8 @@
 	<string>8.35</string>
 	<key>CFBundleVersion</key>
 	<string>0</string>
+	<key>OWSBundleIDPrefix</key>
+	<string>$(SIGNAL_BUNDLEID_PREFIX)</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

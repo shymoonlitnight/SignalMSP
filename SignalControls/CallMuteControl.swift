@@ -10,10 +10,8 @@ import WidgetKit
 /// Control Center / Lock Screen / Action Button toggle for microphone mute
 /// during a call.
 struct CallMuteControl: ControlWidget {
-    static let kind = "org.signal.CallMuteControl"
-
     var body: some ControlWidgetConfiguration {
-        StaticControlConfiguration(kind: Self.kind, provider: Provider()) { isMuted in
+        StaticControlConfiguration(kind: CallMuteControlState.controlKind, provider: Provider()) { isMuted in
             ControlWidgetToggle("Mute Call", isOn: isMuted, action: SetCallMuteControlIntent()) { isOn in
                 Label(isOn ? "Muted" : "Unmuted", systemImage: isOn ? "mic.slash.fill" : "mic.fill")
             }
@@ -28,9 +26,8 @@ extension CallMuteControl {
         var previewValue: Bool { false }
 
         func currentValue() async throws -> Bool {
-            // Test version: always shows as unmuted. The real mute state is
-            // shared with the extension in a follow-up.
-            return false
+            // Written by the app whenever the call or its mute state changes.
+            return CallMuteControlState.isMuted
         }
     }
 }

@@ -180,3 +180,22 @@ final class CallMuteKeyCommandsTest: XCTestCase {
         XCTAssertEqual(commands.filter { $0.discoverabilityTitle != nil }.map(\.input), [" "])
     }
 }
+
+// MARK: -
+
+@MainActor
+final class CallMuteControlUpdaterTest: XCTestCase {
+    func testPublishesUnmutedWithoutACallAndSkipsRepeats() {
+        var stored: [Bool] = []
+        var reloads = 0
+        let updater = CallMuteControlUpdater(store: { stored.append($0) }, reloadControl: { reloads += 1 })
+
+        // Registering clears any state left over from a previous run.
+        updater.didUpdateCall(from: nil, to: nil)
+        updater.didUpdateCall(from: nil, to: nil)
+
+        XCTAssertEqual(stored, [false])
+        XCTAssertEqual(reloads, 1)
+        XCTAssertFalse(CallMuteControlUpdater.isMuted(for: nil))
+    }
+}
