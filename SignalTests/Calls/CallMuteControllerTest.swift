@@ -179,3 +179,27 @@ final class CallMuteControllerTest: XCTestCase {
         }
     }
 }
+
+// MARK: -
+
+final class CallMuteKeyCommandsTest: XCTestCase {
+    func testKeyCommands() {
+        let commands = CallMuteKeyCommands.make(action: #selector(NSObject.description))
+
+        XCTAssertEqual(commands.map(\.input), CallMuteKeyCommands.inputs)
+        XCTAssertTrue(commands.allSatisfy { $0.modifierFlags.isEmpty })
+        // Full Keyboard Access keeps priority for Space and the arrow keys.
+        XCTAssertTrue(commands.allSatisfy { !$0.wantsPriorityOverSystemBehavior })
+        // Only Space is listed in the keyboard shortcuts overlay.
+        XCTAssertEqual(commands.filter { $0.discoverabilityTitle != nil }.map(\.input), [" "])
+        if #available(iOS 26, *) {
+            XCTAssertTrue(commands.allSatisfy { $0.repeatBehavior == .nonRepeatable })
+        }
+    }
+
+    func testRepeatedPressesAreDebounced() {
+        XCTAssertTrue(CallMuteKeyCommands.shouldToggle(at: 10, lastToggleTime: nil))
+        XCTAssertFalse(CallMuteKeyCommands.shouldToggle(at: 10.1, lastToggleTime: 10))
+        XCTAssertTrue(CallMuteKeyCommands.shouldToggle(at: 10.3, lastToggleTime: 10))
+    }
+}
