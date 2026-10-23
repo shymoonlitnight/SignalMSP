@@ -109,7 +109,10 @@ with CallKit, so upstream is unlikely to accept them.
 ## Test plan
 
 For each trigger, test with the call screen in the foreground, with Signal
-in the background, and with the phone locked. Also check that:
+in the background, and with the phone locked. Test in a one-to-one call or a
+group call with someone else in it: alone in a group call Signal doesn't
+record from the microphone, which changes how iOS handles mute (AirPods stem
+press is rejected there). Also check that:
 
 - [ ] BT13 play/pause does not end the call.
 - [ ] Normal conversation (nodding, talking) doesn't trigger the head gesture.

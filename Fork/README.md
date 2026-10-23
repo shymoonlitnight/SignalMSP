@@ -191,7 +191,10 @@ carried on `mute-triggers` until then.
 ## Background
 
 - Signal uses CallKit by default (off in China). AirPods stem press already
-  mutes natively through CallKit.
+  mutes natively through CallKit, but only while Signal is recording from the
+  microphone. Alone in a group call, Signal isn't recording, so iOS plays
+  three low "can't mute" chimes (`MicUnmuteFail` in Console). It works in
+  one-to-one calls and in group calls with someone else (tested 2026-10-23).
 - Signal's existing Siri support uses old SiriKit messaging intents, not the
   App Intents framework. If this is pitched upstream, frame it as accessibility
   (motor disabilities, Switch Control, keyboard users). The intents expose only
