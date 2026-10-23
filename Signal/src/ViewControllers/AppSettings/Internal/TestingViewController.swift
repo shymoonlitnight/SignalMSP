@@ -55,6 +55,10 @@ class TestingViewController: OWSTableViewController2 {
 
         let notificationSection = OWSTableSection(title: "Notifications")
         addTestableFlag(
+            DebugFlags.clearNotificationsOnAppActivate,
+            toSection: notificationSection,
+        )
+        addTestableFlag(
             DebugFlags.unreadReminderIntervalSecs,
             toSection: notificationSection,
         )

@@ -258,6 +258,12 @@ public enum DebugFlags {
 
     // MARK: - TestableFlag: Notifications
 
+    public static let clearNotificationsOnAppActivate = TestableFlag<Bool>(
+        build > .internal,
+        title: LocalizationNotNeeded("Clear notifications on app activate"),
+        details: LocalizationNotNeeded("Delivered notifications are cleared when the app becomes active."),
+    )
+
     public static let unreadReminderIntervalSecs = TestableFlag<Int>(
         0,
         title: LocalizationNotNeeded("Unread Reminder Interval (secs)"),

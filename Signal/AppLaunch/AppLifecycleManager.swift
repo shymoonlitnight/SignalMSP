@@ -1872,6 +1872,10 @@ final class AppLifecycleManager: NSObject, UNUserNotificationCenterDelegate {
     private func clearAppropriateNotificationsAndRestoreBadgeCount() {
         AssertIsOnMainThread()
 
+        guard DebugFlags.clearNotificationsOnAppActivate.get() else {
+            return
+        }
+
         appReadiness.runNowOrWhenAppDidBecomeReadySync {
             let oldBadgeValue = UIApplication.shared.applicationIconBadgeNumber
             SSKEnvironment.shared.notificationPresenterRef.clearNotificationsForAppActivate()
