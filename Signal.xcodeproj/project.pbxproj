@@ -2125,6 +2125,7 @@
 		D221A0E8169DFFC500537ABF /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D221A0E7169DFFC500537ABF /* AVFoundation.framework */; };
 		D24B5BD5169F568C00681372 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D24B5BD4169F568C00681372 /* AudioToolbox.framework */; };
 		D2AEACDC16C426DA00C364C0 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AEACDB16C426DA00C364C0 /* CFNetwork.framework */; };
+		D6571D64ADC493D62564F933 /* CallMuteKeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */; };
 		D900E6F82DE10499004D01A1 /* DisappearingMessagesTimerSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D900E6F72DE1048A004D01A1 /* DisappearingMessagesTimerSettingsViewController.swift */; };
 		D900E6FF2DE143F9004D01A1 /* DisappearingMessagesCustomTimePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D900E6FE2DE143E9004D01A1 /* DisappearingMessagesCustomTimePickerViewController.swift */; };
 		D90137E0305A687A0008826F /* BackupArchiveOutputStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90137DF305A68740008826F /* BackupArchiveOutputStream.swift */; };
@@ -4637,6 +4638,7 @@
 		299F6904BB7E4C0E2463A169 /* Pods-SignalNSE.app store release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalNSE.app store release.xcconfig"; path = "Target Support Files/Pods-SignalNSE/Pods-SignalNSE.app store release.xcconfig"; sourceTree = "<group>"; };
 		2C1CB05FE7FDA3C1F0138D7F /* Pods-SignalServiceKitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalServiceKitTests.debug.xcconfig"; path = "Target Support Files/Pods-SignalServiceKitTests/Pods-SignalServiceKitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2D205E8F7C927C969E2B7D84 /* AciContactShareNameStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AciContactShareNameStore.swift; sourceTree = "<group>"; };
+		2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallMuteKeyCommands.swift; sourceTree = "<group>"; };
 		2E997798B7AF35DBBC0905DF /* Pods-SignalUI.testable release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalUI.testable release.xcconfig"; path = "Target Support Files/Pods-SignalUI/Pods-SignalUI.testable release.xcconfig"; sourceTree = "<group>"; };
 		3236FCC32592B67B006D33B9 /* NameCollisionReviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameCollisionReviewCell.swift; sourceTree = "<group>"; };
 		32525F9427C74B1A0099E801 /* GroupCallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupCallManager.swift; sourceTree = "<group>"; };
@@ -14866,6 +14868,7 @@
 				D9E43BA42CC194140001536E /* CallMemberVideoView.swift */,
 				D9E43BA52CC194140001536E /* CallMemberView.swift */,
 				D9E43BA62CC194140001536E /* CallMemberWaitingAndErrorView.swift */,
+				2DC634258E3DD17E9F4B562A /* CallMuteKeyCommands.swift */,
 				D9E43BA82CC194140001536E /* CallsListViewController+Strings.swift */,
 				D9E43BA92CC194140001536E /* CallsListViewController+ViewModelLoader.swift */,
 				D9E43BA72CC194140001536E /* CallsListViewController.swift */,
@@ -19065,6 +19068,7 @@
 				D9E43BF42CC194140001536E /* CallMemberView.swift in Sources */,
 				D9E43BF52CC194140001536E /* CallMemberWaitingAndErrorView.swift in Sources */,
 				2FB6A87595DCCFA60D6C3572 /* CallMuteController.swift in Sources */,
+				D6571D64ADC493D62564F933 /* CallMuteKeyCommands.swift in Sources */,
 				F2DDB6F103084AE9B885E6B8 /* CallMuteShortcuts.swift in Sources */,
 				B965716E2F0DC91900690CE9 /* CallQualitySurvey.swift in Sources */,
 				B985D29A2EE7E58700E3BF5F /* CallQualitySurveyCustomIssueViewController.swift in Sources */,

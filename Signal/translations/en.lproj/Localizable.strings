@@ -5341,6 +5341,9 @@
 /* A keyboard command to open the current conversation's sticker picker. */
 "KEY_COMMAND_STICKERS" = "Show Stickers";
 
+/* A keyboard command, on the call screen, to mute or unmute the microphone. */
+"KEY_COMMAND_TOGGLE_MUTE" = "Toggle Mute";
+
 /* A keyboard command to unarchive the current conversation. */
 "KEY_COMMAND_UNARCHIVE" = "Unarchive Chat";
 
