@@ -331,7 +331,6 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
 
     // This should only be accessed on the main thread.
     private var stickerMetadataMap = [String: any StickerMetadata]()
-    private var temporaryFileUrls = [URL]()
 
     public init(
         stickerPackInfo: StickerPackInfo,
@@ -354,20 +353,6 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
         )
 
         ensureState()
-    }
-
-    deinit {
-        // Eagerly clean up temp files.
-        let temporaryFileUrls = self.temporaryFileUrls
-        DispatchQueue.sharedUtility.async {
-            for fileUrl in temporaryFileUrls {
-                do {
-                    try OWSFileSystem.deleteFileIfExists(url: fileUrl)
-                } catch {
-                    owsFailDebug("Error: \(error)")
-                }
-            }
-        }
     }
 
     private func ensureState() {
@@ -471,14 +456,18 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
         // This sticker is not downloaded; try to download now.
         firstly(on: DispatchQueue.global()) {
             StickerManager.tryToDownloadSticker(stickerInfo: stickerInfo)
-        }.done(on: DispatchQueue.main) { [weak self] temporaryFileUrl in
+        }.done(on: DispatchQueue.main) { [weak self] stickerData in
             guard let self else {
                 return
             }
-            self.temporaryFileUrls.append(temporaryFileUrl)
+
             assert(self.downloadKeySet.contains(key))
             self.downloadKeySet.remove(key)
-            self.set(temporaryFileUrl: temporaryFileUrl, stickerInfo: stickerInfo, stickerPackItem: stickerPackItem)
+            self.set(
+                stickerInfo: stickerInfo,
+                stickerPackItem: stickerPackItem,
+                stickerData: stickerData,
+            )
         }.catch { [weak self] error in
             owsFailDebug("error: \(error)")
             guard let self else {
@@ -491,9 +480,9 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
     }
 
     private func set(
-        temporaryFileUrl: URL,
         stickerInfo: StickerInfo,
         stickerPackItem: StickerPackItem,
+        stickerData: Data,
     ) {
         AssertIsOnMainThread()
 
@@ -502,11 +491,12 @@ public class TransientStickerPackDataSource: BaseStickerPackDataSource {
             return
         }
         let stickerType = StickerManager.stickerType(forContentType: stickerPackItem.contentType)
-        let stickerMetadata = DecryptedStickerMetadata(
+
+        let stickerMetadata = TransientStickerMetadata(
             stickerInfo: stickerInfo,
             stickerType: stickerType,
-            stickerDataUrl: temporaryFileUrl,
             emojiString: stickerPackItem.emojiString,
+            stickerData: stickerData,
         )
         stickerMetadataMap[key] = stickerMetadata
         ensureState()

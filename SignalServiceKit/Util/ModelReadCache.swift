@@ -452,75 +452,17 @@ public class InteractionReadCache: NSObject {
 
 // MARK: -
 
-public class InstalledStickerCache {
-    private class Adapter: ModelCacheAdapter<String, InstalledStickerRecord> {
-        override func read(key: String, transaction: DBReadTransaction) -> InstalledStickerRecord? {
-            return InstalledStickerRecord.anyFetch(uniqueId: key, transaction: transaction)
-        }
-
-        override func key(forValue value: InstalledStickerRecord) -> String {
-            value.uniqueId
-        }
-
-        override func cacheKey(forKey key: String) -> ModelCacheKey<String> {
-            return ModelCacheKey(key: key)
-        }
-
-        override func copy(value: InstalledStickerRecord) throws -> InstalledStickerRecord {
-            return value.deepCopy()
-        }
-    }
-
-    private let cache: ModelReadCache<String, InstalledStickerRecord>
-    private static var cacheCountLimit: Int {
-        if CurrentAppContext().isMainApp {
-            // Large enough to hold three pages of max-size stickers.
-            return 600
-        } else {
-            // Large enough to hold the current default 49 stickers with a little room to grow.
-            return 64
-        }
-    }
-
-    private let adapter = Adapter(cacheName: "InstalledStickerRecord", cacheCountLimit: InstalledStickerCache.cacheCountLimit)
-
-    public init(_ factory: ModelReadCacheFactory) {
-        cache = factory.create(adapter: adapter)
-    }
-
-    public func getInstalledSticker(uniqueId: String, transaction: DBReadTransaction) -> InstalledStickerRecord? {
-        let cacheKey = adapter.cacheKey(forKey: uniqueId)
-        return cache.getValue(for: cacheKey, transaction: transaction)
-    }
-
-    public func didRemove(installedSticker: InstalledStickerRecord, transaction: DBWriteTransaction) {
-        cache.didRemove(value: installedSticker, transaction: transaction)
-    }
-
-    public func didInsertOrUpdate(installedSticker: InstalledStickerRecord, transaction: DBWriteTransaction) {
-        cache.didInsertOrUpdate(value: installedSticker, transaction: transaction)
-    }
-
-    public func didReadInstalledSticker(_ installedSticker: InstalledStickerRecord, transaction: DBReadTransaction) {
-        cache.didRead(value: installedSticker, transaction: transaction)
-    }
-}
-
-// MARK: -
-
 @objc
 public class ModelReadCaches: NSObject {
     @objc(initWithModelReadCacheFactory:)
     public init(factory: ModelReadCacheFactory) {
         threadReadCache = ThreadReadCache(factory)
         interactionReadCache = InteractionReadCache(factory)
-        installedStickerCache = InstalledStickerCache(factory)
     }
 
     @objc
     public let threadReadCache: ThreadReadCache
     public let interactionReadCache: InteractionReadCache
-    public let installedStickerCache: InstalledStickerCache
 
     fileprivate static let evacuateAllModelCaches = Notification.Name("EvacuateAllModelCaches")
 

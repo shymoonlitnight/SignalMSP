@@ -29,8 +29,7 @@ enum DownloadStickerPackOperation {
                 maxDownloadSize: CDNDownloadOperation.kMaxStickerPackDownloadSize,
             )
             do {
-                let decryptedFileUrl = try StickerManager.decrypt(at: encryptedFileUrl, packKey: stickerPackInfo.packKey)
-                let manifestData = try Data(contentsOf: decryptedFileUrl)
+                let manifestData = try StickerManager.decrypt(at: encryptedFileUrl, packKey: stickerPackInfo.packKey)
 
                 return try self.parseStickerPackManifest(
                     stickerPackInfo: stickerPackInfo,

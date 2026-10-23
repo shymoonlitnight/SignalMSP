@@ -98,6 +98,11 @@ extension StickerMetadata {
     }
 }
 
+/// Deprecated.
+///
+/// Kept around to support legacy stickers. New callers that need plaintext sticker data
+/// should use TransientStickerMetadata instead, which keeps sticker data in memory instead
+/// of referencing temporary files on disk.
 public class DecryptedStickerMetadata: StickerMetadata {
 
     public let stickerInfo: StickerInfo
@@ -176,6 +181,41 @@ public class EncryptedStickerMetadata: StickerMetadata {
     }
 
     public static func ==(lhs: EncryptedStickerMetadata, rhs: EncryptedStickerMetadata) -> Bool {
+        return lhs.stickerInfo.asKey() == rhs.stickerInfo.asKey()
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(stickerInfo.asKey().hashValue)
+    }
+}
+
+public class TransientStickerMetadata: StickerMetadata {
+    public let stickerInfo: StickerInfo
+    public let stickerType: StickerType
+    public let emojiString: String?
+    public let stickerData: Data
+
+    public init(
+        stickerInfo: StickerInfo,
+        stickerType: StickerType,
+        emojiString: String?,
+        stickerData: Data,
+    ) {
+        self.stickerInfo = stickerInfo
+        self.stickerType = stickerType
+        self.emojiString = emojiString
+        self.stickerData = stickerData
+    }
+
+    public func isValidImage() -> Bool {
+        return DataImageSource(stickerData).ows_isValidImage
+    }
+
+    public func readStickerData() throws -> Data {
+        return stickerData
+    }
+
+    public static func ==(lhs: TransientStickerMetadata, rhs: TransientStickerMetadata) -> Bool {
         return lhs.stickerInfo.asKey() == rhs.stickerInfo.asKey()
     }
 

@@ -19,6 +19,9 @@
 		040507172F8063E80078B769 /* RemoteMegaphoneFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98DD85D28EE53B00089333E /* RemoteMegaphoneFetcher.swift */; };
 		040507182F8064190078B769 /* RemoteReleaseNotesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040506F92F7EF4ED0078B769 /* RemoteReleaseNotesFetcher.swift */; };
 		040507192F8416090078B769 /* RemoteAnnouncementFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040506FD2F7FE9130078B769 /* RemoteAnnouncementFetcher.swift */; };
+		040F806C3082BDAF001043DA /* StickerMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040F806B3082BDAF001043DA /* StickerMigrator.swift */; };
+		040F806F3086B5C5001043DA /* StickerInstallFlowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040F806D3086B5C5001043DA /* StickerInstallFlowTest.swift */; };
+		040F80703086B5C5001043DA /* StickerMigratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 040F806E3086B5C5001043DA /* StickerMigratorTest.swift */; };
 		04127D912F23B3B000B4E95B /* CVCapsuleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04127D902F23B3B000B4E95B /* CVCapsuleLabel.swift */; };
 		041A5F072E05B3F900FAED05 /* BackupsGenericEnableMegaphone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041A5F062E05B3F000FAED05 /* BackupsGenericEnableMegaphone.swift */; };
 		041C24ED2DF782AF0065B685 /* OutgoingGroupUpdateMessageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BC9C6428B7C00A0077D442 /* OutgoingGroupUpdateMessageTest.swift */; };
@@ -4410,6 +4413,9 @@
 		040506FD2F7FE9130078B769 /* RemoteAnnouncementFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteAnnouncementFetcher.swift; sourceTree = "<group>"; };
 		040506FF2F8049910078B769 /* RemoteReleaseNotesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteReleaseNotesService.swift; sourceTree = "<group>"; };
 		040507142F8063A40078B769 /* RemoteReleaseNotesFetchingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteReleaseNotesFetchingManagerTests.swift; sourceTree = "<group>"; };
+		040F806B3082BDAF001043DA /* StickerMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerMigrator.swift; sourceTree = "<group>"; };
+		040F806D3086B5C5001043DA /* StickerInstallFlowTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerInstallFlowTest.swift; sourceTree = "<group>"; };
+		040F806E3086B5C5001043DA /* StickerMigratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerMigratorTest.swift; sourceTree = "<group>"; };
 		04127D902F23B3B000B4E95B /* CVCapsuleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVCapsuleLabel.swift; sourceTree = "<group>"; };
 		041A5F062E05B3F000FAED05 /* BackupsGenericEnableMegaphone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupsGenericEnableMegaphone.swift; sourceTree = "<group>"; };
 		042223B92EDF30B300158556 /* OutgoingUnpinMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutgoingUnpinMessage.swift; sourceTree = "<group>"; };
@@ -15269,7 +15275,9 @@
 				6633B3922BACF3EB003AFF60 /* MessageStickerSerializationTest.swift */,
 				F9426223289B1B5500460798 /* sample-sticker.encrypted */,
 				F9426224289B1B5500460798 /* sample-sticker.webp */,
+				040F806D3086B5C5001043DA /* StickerInstallFlowTest.swift */,
 				F9426225289B1B5500460798 /* StickerManagerTest.swift */,
+				040F806E3086B5C5001043DA /* StickerMigratorTest.swift */,
 				F9426226289B1B5500460798 /* StickerPackInfoTest.swift */,
 			);
 			path = Stickers;
@@ -15743,6 +15751,7 @@
 				50DCD9D02F450E220009FCE8 /* StickerInfo.swift */,
 				F9C5C919289453B100548EEE /* StickerManager.swift */,
 				F9C5C91B289453B100548EEE /* StickerMetadata.swift */,
+				040F806B3082BDAF001043DA /* StickerMigrator.swift */,
 				F9479EF7293D212C003B3503 /* StickerPackInfo.swift */,
 				50428EA42F2BD81700B0C969 /* StickerPackItem.swift */,
 				507F4F0D2F2A86F8000E6D7D /* StickerPackRecord.swift */,
@@ -20820,6 +20829,7 @@
 				50DCD9D12F450E220009FCE8 /* StickerInfo.swift in Sources */,
 				F9C5CC0B289453B300548EEE /* StickerManager.swift in Sources */,
 				F9C5CC0D289453B300548EEE /* StickerMetadata.swift in Sources */,
+				040F806C3082BDAF001043DA /* StickerMigrator.swift in Sources */,
 				F9479EF8293D212C003B3503 /* StickerPackInfo.swift in Sources */,
 				50428EA52F2BD81700B0C969 /* StickerPackItem.swift in Sources */,
 				507F4F0E2F2A86F8000E6D7D /* StickerPackRecord.swift in Sources */,
@@ -21270,7 +21280,9 @@
 				6664B9AB2A314EBD008EF74B /* SpoilerRevealStateTests.swift in Sources */,
 				F9613CDE2981F15700894B55 /* SqliteUtilTest.swift in Sources */,
 				F94262A2289B1B5600460798 /* SSKBaseTest.swift in Sources */,
+				040F806F3086B5C5001043DA /* StickerInstallFlowTest.swift in Sources */,
 				F942628D289B1B5600460798 /* StickerManagerTest.swift in Sources */,
+				040F80703086B5C5001043DA /* StickerMigratorTest.swift in Sources */,
 				F942628E289B1B5600460798 /* StickerPackInfoTest.swift in Sources */,
 				7254655E2BA032A900EABFD2 /* StorageServiceContactTest.swift in Sources */,
 				884BF73E28D37D5F00D94636 /* StoryManagerTest.swift in Sources */,

@@ -14,6 +14,8 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
     public let info: StickerInfo
     public let emojiString: String?
     public let contentType: String?
+    public let localKey: Data?
+    public let plaintextLength: UInt32?
 
     public enum CodingKeys: String, CodingKey, ColumnExpression {
         case id
@@ -22,6 +24,8 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
         case info
         case emojiString
         case contentType
+        case localKey
+        case plaintextLength
     }
 
     public init(from decoder: any Decoder) throws {
@@ -32,6 +36,8 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
         self.info = try LegacySDSSerializer().deserializeLegacySDSData(infoData, ofClass: StickerInfo.self)
         self.emojiString = try container.decodeIfPresent(String.self, forKey: .emojiString)
         self.contentType = try container.decodeIfPresent(String.self, forKey: .contentType)
+        self.localKey = try container.decodeIfPresent(Data.self, forKey: .localKey)
+        self.plaintextLength = try container.decodeIfPresent(UInt32.self, forKey: .plaintextLength)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -42,12 +48,16 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
         try container.encode(LegacySDSSerializer().serializeAsLegacySDSData(self.info), forKey: .info)
         try container.encodeIfPresent(self.emojiString, forKey: .emojiString)
         try container.encodeIfPresent(self.contentType, forKey: .contentType)
+        try container.encodeIfPresent(self.localKey, forKey: .localKey)
+        try container.encodeIfPresent(self.plaintextLength, forKey: .plaintextLength)
     }
 
     init(
         info: StickerInfo,
         contentType: String?,
         emojiString: String?,
+        localKey: Data,
+        plaintextLength: UInt32,
     ) {
         owsAssertDebug(!info.packId.isEmpty)
         owsAssertDebug(!info.packKey.isEmpty)
@@ -57,6 +67,8 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
         self.info = info
         self.contentType = contentType?.nilIfEmpty
         self.emojiString = emojiString
+        self.localKey = localKey
+        self.plaintextLength = plaintextLength
     }
 
     private init(
@@ -65,12 +77,16 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
         info: StickerInfo,
         contentType: String?,
         emojiString: String?,
+        localKey: Data?,
+        plaintextLength: UInt32?,
     ) {
         self.id = id
         self.uniqueId = uniqueId
         self.info = info
         self.contentType = contentType
         self.emojiString = emojiString
+        self.localKey = localKey
+        self.plaintextLength = plaintextLength
     }
 
     func deepCopy() -> Self {
@@ -80,6 +96,8 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
             info: self.info,
             contentType: self.contentType,
             emojiString: self.emojiString,
+            localKey: self.localKey,
+            plaintextLength: self.plaintextLength,
         )
     }
 
@@ -98,24 +116,28 @@ public final class InstalledStickerRecord: SDSCodableModel, Decodable {
     static func uniqueId(for stickerInfo: StickerInfo) -> String {
         return stickerInfo.asKey()
     }
+}
 
-    public func anyDidInsert(transaction: DBWriteTransaction) {
-        SSKEnvironment.shared.modelReadCachesRef.installedStickerCache.didInsertOrUpdate(installedSticker: self, transaction: transaction)
-    }
-
-    public func anyDidUpdate(transaction: DBWriteTransaction) {
-        SSKEnvironment.shared.modelReadCachesRef.installedStickerCache.didInsertOrUpdate(installedSticker: self, transaction: transaction)
-    }
-
-    public func anyDidRemove(transaction: DBWriteTransaction) {
-        SSKEnvironment.shared.modelReadCachesRef.installedStickerCache.didRemove(installedSticker: self, transaction: transaction)
-    }
-
-    public func anyDidFetchOne(transaction: DBReadTransaction) {
-        SSKEnvironment.shared.modelReadCachesRef.installedStickerCache.didReadInstalledSticker(self, transaction: transaction)
-    }
-
-    public func anyDidEnumerateOne(transaction: DBReadTransaction) {
-        SSKEnvironment.shared.modelReadCachesRef.installedStickerCache.didReadInstalledSticker(self, transaction: transaction)
+#if TESTABLE_BUILD
+extension InstalledStickerRecord {
+    static func mockPlaintext(
+        info: StickerInfo = StickerInfo(
+            packId: Randomness.generateRandomBytes(16),
+            packKey: Randomness.generateRandomBytes(StickerManager.packKeyLength),
+            stickerId: UInt32.random(in: 0..<1024),
+        ),
+        contentType: String? = MimeType.imageWebp.rawValue,
+        emojiString: String? = nil,
+    ) -> InstalledStickerRecord {
+        return InstalledStickerRecord(
+            id: nil,
+            uniqueId: Self.uniqueId(for: info),
+            info: info,
+            contentType: contentType,
+            emojiString: emojiString,
+            localKey: nil,
+            plaintextLength: nil,
+        )
     }
 }
+#endif

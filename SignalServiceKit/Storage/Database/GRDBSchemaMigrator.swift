@@ -374,6 +374,7 @@ public class GRDBSchemaMigrator {
         case migrateLegacyMentionNotificationMode
         case addLastSnapshotAt
         case removeLocalFileBackupLastEnumeratedAttachmentId
+        case addLocalKeyAndSizeToInstalledSticker
 
         // NOTE: Every time we add a migration id, consider
         // incrementing grdbSchemaVersionLatest.
@@ -505,7 +506,7 @@ public class GRDBSchemaMigrator {
     }
 
     public static let grdbSchemaVersionDefault: UInt = 0
-    public static let grdbSchemaVersionLatest: UInt = 164
+    public static let grdbSchemaVersionLatest: UInt = 165
 
     private class DatabaseMigratorWrapper {
         // Run with immediate (or disabled) foreign key checks so that pre-existing
@@ -5734,6 +5735,14 @@ public class GRDBSchemaMigrator {
                 """,
             )
 
+            return .success(())
+        }
+
+        migrator.registerMigration(.addLocalKeyAndSizeToInstalledSticker) { tx in
+            try tx.database.alter(table: InstalledStickerRecord.databaseTableName) {
+                $0.add(column: "localKey", .blob)
+                $0.add(column: "plaintextLength", .integer)
+            }
             return .success(())
         }
 

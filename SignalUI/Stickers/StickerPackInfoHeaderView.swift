@@ -209,14 +209,18 @@ public class StickerPackInfoHeaderView: UICollectionReusableView {
         let stickerInfos = stickerPack.stickerInfos()
         var total: Int64 = 0
         for info in stickerInfos {
-            guard let url = (dataSource.metadata(forSticker: info) as? DecryptedStickerMetadata)?.stickerDataUrl else {
+            let metadata = dataSource.metadata(forSticker: info)
+            if let encryptedMetadata = metadata as? EncryptedStickerMetadata {
+                total += Int64(encryptedMetadata.plaintextLength)
+            } else if let transientMetadata = metadata as? TransientStickerMetadata {
+                total += Int64(transientMetadata.stickerData.count)
+            } else {
+                // Must be legacy DecryptedStickerMetadata, which we no longer support.
+                // These will soon be migrated via LazyDatabaseMigratorRunner.
                 return nil
             }
-            guard let size = (try? FileManager.default.attributesOfItem(atPath: url.path)[.size]) as? Int64 else {
-                return nil
-            }
-            total += size
         }
+
         return total
     }
 

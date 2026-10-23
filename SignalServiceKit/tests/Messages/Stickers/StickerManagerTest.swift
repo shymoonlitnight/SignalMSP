@@ -108,15 +108,14 @@ class StickerManagerTest: XCTestCase {
         let decryptedStickerURL = bundle.url(forResource: "sample-sticker", withExtension: "webp")!
         let decryptedStickerData = try! Data(contentsOf: decryptedStickerURL)
 
-        let outputUrl = try! StickerManager.decrypt(at: encryptedStickerURL, packKey: packKey)
-        let outputData = try! Data(contentsOf: outputUrl)
+        let outputData = try! StickerManager.decrypt(at: encryptedStickerURL, packKey: packKey)
         XCTAssertEqual(outputData, decryptedStickerData)
     }
 }
 
 class StickerManagerTest2: SSKBaseTest {
 
-    func testSuggestedStickers() {
+    func testSuggestedStickers() async {
         // The "StickerManager.suggestedStickers" instance method does caching;
         // the class method does not.
 
@@ -126,15 +125,10 @@ class StickerManagerTest2: SSKBaseTest {
 
         let stickerInfo = StickerInfo.defaultValue
         let stickerData = Randomness.generateRandomBytes(1)
-        let temporaryFile = OWSFileSystem.temporaryFileUrl(
-            fileExtension: nil,
-            isAvailableWhileDeviceLocked: false,
-        )
-        try! stickerData.write(to: temporaryFile)
 
-        let success = StickerManager.installSticker(
+        let success = await SSKEnvironment.shared.stickerManagerRef.installSticker(
             stickerInfo: stickerInfo,
-            stickerUrl: temporaryFile,
+            stickerData: stickerData,
             contentType: MimeType.imageWebp.rawValue,
             emojiString: "🌼🇨🇦",
         )
@@ -148,7 +142,7 @@ class StickerManagerTest2: SSKBaseTest {
             XCTAssertEqual(0, StickerManager.suggestedStickers(for: "🇹🇹", tx: tx).count)
         }
 
-        SSKEnvironment.shared.databaseStorageRef.write { transaction in
+        await SSKEnvironment.shared.databaseStorageRef.awaitableWrite { transaction in
             // Don't bother calling completion.
             StickerManager.uninstallSticker(stickerInfo: stickerInfo, transaction: transaction)
         }

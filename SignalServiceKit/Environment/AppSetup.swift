@@ -2015,6 +2015,9 @@ extension AppSetup.GlobalsContinuation {
         let stickerManager = StickerManager(
             appReadiness: appReadiness,
             dateProvider: dateProvider,
+            attachmentStore: attachmentStore,
+            attachmentDownloadStore: attachmentDownloadStore,
+            db: db,
         )
         let sskPreferences = SSKPreferences()
         let groupV2Updates = testDependencies.groupV2Updates ?? GroupV2UpdatesImpl()
