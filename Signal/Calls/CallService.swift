@@ -83,6 +83,9 @@ final class CallService: CallServiceStateObserver, CallServiceStateDelegate {
     /// Keeps the Control Center mute toggle in step with the current call.
     private let callMuteControlUpdater = CallMuteControlUpdater()
 
+    /// SignalMSP fork: hands-free mute triggers (Signal/ForkExtras).
+    private let muteTriggerCoordinator = MuteTriggerCoordinator()
+
     let callServiceSettingsStore: CallServiceSettingsStore
     let callServiceState: CallServiceState
     var notificationObservers: [any NSObjectProtocol] = []
@@ -151,6 +154,7 @@ final class CallService: CallServiceStateObserver, CallServiceStateDelegate {
         self.callServiceState.delegate = self
         self.callServiceState.addObserver(self)
         self.callServiceState.addObserver(self.callMuteControlUpdater, syncStateImmediately: true)
+        self.callServiceState.addObserver(self.muteTriggerCoordinator)
 
         notificationObservers.append(NotificationCenter.default.addObserver(forName: .OWSApplicationDidEnterBackground, object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.didEnterBackground() }

@@ -14,6 +14,24 @@
 			<key>File</key>
 			<string>Acknowledgements</string>
 		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Call Mute Triggers</string>
+			<key>FooterText</key>
+			<string>SignalMSP: hands-free ways to mute or unmute during a call. Changes apply from the next call.</string>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
+			<string>Media Remote Track Skip</string>
+			<key>Key</key>
+			<string>MuteTrigger.trackSkip</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
 	</array>
 </dict>
 </plist>
