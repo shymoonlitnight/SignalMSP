@@ -12,8 +12,10 @@ import Foundation
 /// moment. Nods and head shakes are ignored, since people do both all the
 /// time in conversation.
 ///
-/// Angles are measured from a baseline that slowly follows the head while it's
-/// upright, so posture changes (or leaning on a bike) don't count as a tilt.
+/// Input is the head's sideways tilt measured from gravity, so 0 is truly
+/// upright and turning the head doesn't change it. Tilts are measured from a
+/// baseline that slowly follows the head's resting posture, but stays within
+/// `maxBaselineOffset` of upright so it can't drift away.
 struct HeadTiltDetector {
     enum Event: Equatable {
         /// A tilt was held long enough; toggle mute.
@@ -22,16 +24,19 @@ struct HeadTiltDetector {
         case nearMiss(heldFor: TimeInterval)
     }
 
-    /// How far from the baseline counts as tilted, in radians (~34°).
-    var threshold: Double = 0.6
-    /// The head must come back within this (~14°) before the next trigger.
+    /// How far from the baseline counts as tilted, in radians (~32°).
+    var threshold: Double = 0.55
+    /// After a trigger, the head must come back within this (~14°) of the
+    /// baseline, or of true upright, before the next trigger.
     var rearmThreshold: Double = 0.25
     /// How long the tilt must be held.
     var holdDuration: TimeInterval = 0.5
-    /// How quickly the baseline follows the head while upright.
-    var baselineTimeConstant: TimeInterval = 2.0
+    /// How quickly the baseline follows the resting posture.
+    var baselineTimeConstant: TimeInterval = 3.0
+    /// The baseline stays within this (~15°) of true upright.
+    var maxBaselineOffset: Double = 0.26
 
-    private(set) var baseline: Double?
+    private(set) var baseline: Double = 0
     private var lastTime: TimeInterval?
     private var tiltStart: TimeInterval?
     private var isArmed = true
@@ -39,20 +44,21 @@ struct HeadTiltDetector {
     /// Distance of the last sample from the baseline, in radians.
     private(set) var deviation: Double = 0
 
-    mutating func process(roll: Double, at time: TimeInterval) -> Event? {
-        guard let baseline, let lastTime else {
-            self.baseline = roll
-            self.lastTime = time
+    mutating func process(angle: Double, at time: TimeInterval) -> Event? {
+        guard let lastTime else {
+            lastTime = time
+            baseline = clampedBaseline(angle)
+            deviation = abs(angle - baseline)
             return nil
         }
         let elapsed = max(0, time - lastTime)
         self.lastTime = time
-        deviation = abs(roll - baseline)
+        deviation = abs(angle - baseline)
 
         // After a trigger, wait for the head to come back. The baseline stays
         // put meanwhile, so holding the tilt can't trigger again.
         if !isArmed {
-            if deviation < rearmThreshold {
+            if deviation < rearmThreshold || abs(angle) < rearmThreshold {
                 isArmed = true
             }
             return nil
@@ -76,8 +82,12 @@ struct HeadTiltDetector {
             event = .nearMiss(heldFor: time - tiltStart)
             self.tiltStart = nil
         }
-        self.baseline = baseline + (roll - baseline) * min(1, elapsed / baselineTimeConstant)
+        baseline = clampedBaseline(baseline + (angle - baseline) * min(1, elapsed / baselineTimeConstant))
         return event
+    }
+
+    private func clampedBaseline(_ value: Double) -> Double {
+        min(maxBaselineOffset, max(-maxBaselineOffset, value))
     }
 }
 
@@ -94,7 +104,7 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
 
     // Periodic summary for tuning and for checking that updates keep
     // arriving while backgrounded or locked.
-    private static let reportInterval: TimeInterval = 2
+    private static let reportInterval: TimeInterval = 1
     private var samplesSinceReport = 0
     private var lastReportTime: TimeInterval?
 
@@ -126,10 +136,13 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
         guard let motion else {
             return
         }
-        let attitude = motion.attitude
         let time = motion.timestamp
+        // Gravity in the headphones' frame. Its component along the ear-to-ear
+        // axis gives the sideways tilt; turning the head doesn't change it.
+        let gravity = motion.gravity
+        let sidewaysTilt = Self.tiltAngle(gravity.x)
 
-        switch detector.process(roll: attitude.roll, at: time) {
+        switch detector.process(angle: sidewaysTilt, at: time) {
         case .triggered:
             ForkLog.info("MuteTriggers: headTilt held \(Self.degrees(detector.deviation))° from baseline")
             onTrigger()
@@ -148,12 +161,19 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
             let rate = Double(samplesSinceReport) / (time - lastReportTime)
             ForkLog.info(
                 "MuteTriggers: headTilt \(Int(rate.rounded())) samples/s, "
-                    + "roll \(Self.degrees(attitude.roll))° pitch \(Self.degrees(attitude.pitch))° "
-                    + "yaw \(Self.degrees(attitude.yaw))°, tilt \(Self.degrees(detector.deviation))°",
+                    + "gravity tilt x \(Self.degrees(Self.tiltAngle(gravity.x)))° "
+                    + "y \(Self.degrees(Self.tiltAngle(gravity.y)))° "
+                    + "z \(Self.degrees(Self.tiltAngle(gravity.z)))°, "
+                    + "baseline \(Self.degrees(detector.baseline))°, from baseline \(Self.degrees(detector.deviation))°",
             )
             samplesSinceReport = 0
             self.lastReportTime = time
         }
+    }
+
+    /// Angle from level for one component of the unit gravity vector.
+    private static func tiltAngle(_ component: Double) -> Double {
+        asin(min(1, max(-1, component)))
     }
 
     private static func degrees(_ radians: Double) -> Int {
