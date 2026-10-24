@@ -200,7 +200,7 @@ Call Mute Triggers**. Changes apply from the next call.
   play/pause: during a call iOS turns it into "end call".
 
 - **AirPods Head Tilt:** hold a sideways head tilt (ear toward shoulder,
-  about 34°) for half a second. Nods and shakes are ignored. Needs AirPods
+  about 32°) for half a second. Nods and shakes are ignored. Needs AirPods
   with head tracking (Pro, Max, 3rd gen or later) and asks for Motion &
   Fitness permission the first time a call starts with it on.
 
