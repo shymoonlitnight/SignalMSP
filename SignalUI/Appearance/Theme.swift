@@ -284,21 +284,11 @@ public final class Theme {
     public class var backgroundColor: UIColor {
         isDarkThemeEnabled
             ? darkThemeBackgroundColor
-            : lightThemeBackgroundColor
-    }
-
-    public class var secondaryBackgroundColor: UIColor {
-        UIColor.Signal.secondaryBackground.resolvedColor(
-            with: isDarkThemeEnabled ? darkTraitCollection : lightTraitCollection,
-        )
-    }
-
-    public static var actionSheetBackgroundColor: UIColor {
-        isDarkThemeEnabled ? .ows_gray75 : .white
+            : UIColor.Signal.background.resolvedColor(with: lightTraitCollection)
     }
 
     public class var washColor: UIColor {
-        isDarkThemeEnabled ? darkThemeWashColor : .ows_gray05
+        isDarkThemeEnabled ? .ows_gray75 : .ows_gray05
     }
 
     public class var primaryTextColor: UIColor {
@@ -326,54 +316,7 @@ public final class Theme {
         backgroundColor
     }
 
-    // MARK: - Table View
-
-    public class var tableCell2BackgroundColor: UIColor {
-        isDarkThemeEnabled
-            ? darkThemeTableCell2BackgroundColor
-            : UIColor.Signal.secondaryGroupedBackground.resolvedColor(with: lightTraitCollection)
-    }
-
-    public class var tableCell2PresentedBackgroundColor: UIColor {
-        isDarkThemeEnabled
-            ? darkThemeTableCell2PresentedBackgroundColor
-            : UIColor.Signal.secondaryGroupedBackground.resolvedColor(with: elevatedLightTraitCollection)
-    }
-
-    public class var tableCell2SelectedBackgroundColor: UIColor {
-        UIColor(
-            light: UIColor(rgbHex: 0xD4D4D6),
-            lightHighContrast: UIColor(rgbHex: 0xC6C6CA),
-            dark: UIColor(rgbHex: 0x3A3A3D),
-            darkHighContrast: UIColor(rgbHex: 0x525257),
-        )
-    }
-
-    public class var tableView2BackgroundColor: UIColor {
-        isDarkThemeEnabled
-            ? darkThemeTableView2BackgroundColor
-            : UIColor.Signal.groupedBackground.resolvedColor(with: lightTraitCollection)
-    }
-
-    public class var tableView2PresentedBackgroundColor: UIColor {
-        isDarkThemeEnabled
-            ? darkThemeTableView2PresentedBackgroundColor
-            : UIColor.Signal.groupedBackground.resolvedColor(with: elevatedLightTraitCollection)
-    }
-
-    public class var tableView2SeparatorColor: UIColor {
-        isDarkThemeEnabled ? darkThemeTableView2SeparatorColor : .ows_gray20
-    }
-
-    public class var tableView2PresentedSeparatorColor: UIColor {
-        isDarkThemeEnabled ? darkThemeTableView2PresentedSeparatorColor : .ows_gray20
-    }
-
     // MARK: - Light Theme Colors
-
-    public class var lightThemeBackgroundColor: UIColor {
-        UIColor.Signal.background.resolvedColor(with: lightTraitCollection)
-    }
 
     public class var lightThemePrimaryColor: UIColor {
         UIColor.Signal.label.resolvedColor(with: lightTraitCollection)
@@ -401,33 +344,11 @@ public final class Theme {
         UIColor.Signal.secondaryLabel.resolvedColor(with: darkTraitCollection)
     }
 
-    public class var darkThemeWashColor: UIColor { .ows_gray75 }
-
     public class var darkThemeNavbarBackgroundColor: UIColor {
         darkThemeBackgroundColor
     }
 
     public class var darkThemeNavbarIconColor: UIColor { .ows_gray15 }
-
-    public class var darkThemeTableCell2BackgroundColor: UIColor {
-        UIColor.Signal.secondaryGroupedBackground.resolvedColor(with: darkTraitCollection)
-    }
-
-    public class var darkThemeTableCell2PresentedBackgroundColor: UIColor {
-        UIColor.Signal.secondaryGroupedBackground.resolvedColor(with: elevatedDarkTraitCollection)
-    }
-
-    public class var darkThemeTableView2BackgroundColor: UIColor {
-        UIColor.Signal.groupedBackground.resolvedColor(with: darkTraitCollection)
-    }
-
-    public class var darkThemeTableView2PresentedBackgroundColor: UIColor {
-        UIColor.Signal.groupedBackground.resolvedColor(with: elevatedDarkTraitCollection)
-    }
-
-    public class var darkThemeTableView2SeparatorColor: UIColor { .ows_gray75 }
-
-    public class var darkThemeTableView2PresentedSeparatorColor: UIColor { .ows_gray65 }
 
     // MARK: - Blur Effect
 
@@ -440,13 +361,7 @@ public final class Theme {
     // MARK: - Keyboard
 
     public class var keyboardAppearance: UIKeyboardAppearance {
-        isDarkThemeEnabled ? darkThemeKeyboardAppearance : .default
-    }
-
-    public class var darkThemeKeyboardAppearance: UIKeyboardAppearance { .dark }
-
-    public class var keyboardBackgroundColor: UIColor {
-        isDarkThemeEnabled ? .ows_gray90 : .ows_gray02
+        isDarkThemeEnabled ? .dark : .default
     }
 
     // MARK: - Search Bar

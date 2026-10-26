@@ -52,11 +52,11 @@ class LegacyGroupView: UIView {
     }
 
     func configure() {
-        backgroundColor = Theme.secondaryBackgroundColor
+        backgroundColor = .Signal.secondaryBackground
         layer.cornerRadius = 4
         layoutMargins = UIEdgeInsets(top: 10, leading: 12, bottom: 10, trailing: 12)
 
-        label.textColor = Theme.secondaryTextAndIconColor
+        label.textColor = .Signal.secondaryLabel
         label.font = .dynamicTypeFootnote
         label.textAlignment = .center
         label.numberOfLines = 0

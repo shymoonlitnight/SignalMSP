@@ -217,11 +217,11 @@ class UsernameSelectionViewController: OWSViewController, OWSNavigationChildCont
 
     private lazy var usernameErrorTextView: UITextView = {
         let textView = LinkingTextView()
-
+        textView.font = .dynamicTypeCaption1Clamped
+        textView.adjustsFontForContentSizeCategory = true
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textContainerInset = UIEdgeInsets(top: 12, leading: 16, bottom: 0, trailing: 16)
         textView.textColor = .Signal.red
-
         return textView
     }()
 
@@ -231,11 +231,12 @@ class UsernameSelectionViewController: OWSViewController, OWSNavigationChildCont
 
     private lazy var usernameFooterTextView: UITextView = {
         let textView = LinkingTextView()
-
+        textView.font = .dynamicTypeCaption1Clamped
+        textView.adjustsFontForContentSizeCategory = true
+        textView.textColor = .Signal.secondaryLabel
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textContainerInset = UIEdgeInsets(top: 12, leading: 16, bottom: 24, trailing: 16)
         textView.delegate = self
-
         return textView
     }()
 
@@ -250,16 +251,11 @@ class UsernameSelectionViewController: OWSViewController, OWSNavigationChildCont
 
         headerView.setColorsForCurrentTheme()
         usernameTextFieldWrapper.setColorsForCurrentTheme()
-
-        usernameFooterTextView.textColor = Theme.secondaryTextAndIconColor
     }
 
     override func contentSizeCategoryDidChange() {
         headerView.updateFontsForCurrentPreferredContentSize()
         usernameTextFieldWrapper.updateFontsForCurrentPreferredContentSize()
-
-        usernameErrorTextView.font = .dynamicTypeCaption1Clamped
-        usernameFooterTextView.font = .dynamicTypeCaption1Clamped
     }
 
     /// Only allow gesture-based dismissal when there have been no edits.

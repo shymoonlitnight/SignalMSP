@@ -695,10 +695,9 @@ struct ConversationHeaderBuilder {
 
         // Defaults need to be set *before* assigning the attributed text,
         // or the attributes will get overridden
-        label.textColor = Theme.secondaryTextAndIconColor
+        label.textColor = .Signal.secondaryLabel
         label.lineBreakMode = .byTruncatingTail
         label.font = .dynamicTypeSubheadlineClamped
-
         label.attributedText = attributedText
 
         return label

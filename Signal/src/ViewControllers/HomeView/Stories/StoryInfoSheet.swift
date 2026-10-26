@@ -301,7 +301,6 @@ class StoryInfoSheet: OWSTableViewController2, DatabaseChangeDelegate, UIAdaptiv
 
             SSKEnvironment.shared.databaseStorageRef.read { transaction in
                 var configuration = ContactCellView.Configuration(address: address, localUserDisplayMode: .asUser)
-                configuration.forceDarkAppearance = true
                 configuration.accessory = self.buildContactCellAccessory(
                     text: accessoryText,
                     transaction: transaction,

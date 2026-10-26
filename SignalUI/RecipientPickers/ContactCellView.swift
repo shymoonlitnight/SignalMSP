@@ -18,8 +18,6 @@ public class ContactCellView: ManualStackView {
 
         public let localUserDisplayMode: LocalUserDisplayMode
 
-        public var forceDarkAppearance = false
-
         public var accessoryMessage: String?
 
         public var customName: String?
@@ -119,35 +117,19 @@ public class ContactCellView: ManualStackView {
         super.init(name: "ContactCellView")
 
         nameLabel.lineBreakMode = .byTruncatingTail
+        nameLabel.textColor = .Signal.label
+        nameLabel.font = OWSTableItem.primaryLabelFont
+        nameLabel.adjustsFontForContentSizeCategory = true
+
+        subtitleLabel.textColor = .Signal.secondaryLabel
+        subtitleLabel.font = .dynamicTypeCaption1Clamped
+        subtitleLabel.adjustsFontForContentSizeCategory = true
+
+        accessoryLabel.font = .dynamicTypeSubheadlineClamped
         accessoryLabel.textAlignment = .right
+        accessoryLabel.textColor = OWSTableItem.accessoryGray
 
         self.shouldDeactivateConstraints = false
-    }
-
-    private var nameLabelFont: UIFont { OWSTableItem.primaryLabelFont }
-    fileprivate static var subtitleFont: UIFont { .dynamicTypeCaption1Clamped }
-
-    private func nameLabelColor(forceDarkAppearance: Bool) -> UIColor {
-        forceDarkAppearance ? Theme.darkThemePrimaryColor : Theme.primaryTextColor
-    }
-
-    private func configureFontsAndColors(forceDarkAppearance: Bool) {
-        nameLabel.font = nameLabelFont
-        subtitleLabel.font = Self.subtitleFont
-        accessoryLabel.font = .dynamicTypeSubheadlineClamped
-
-        nameLabel.textColor = nameLabelColor(forceDarkAppearance: forceDarkAppearance)
-        subtitleLabel.textColor = (forceDarkAppearance ? Theme.darkThemeSecondaryTextAndIconColor : Theme.secondaryTextAndIconColor)
-        accessoryLabel.textColor = Theme.isDarkThemeEnabled ? .ows_gray25 : .ows_gray45
-
-        if
-            let nameLabelText = nameLabel.attributedText?.string.nilIfEmpty,
-            let nameLabelColor = nameLabel.textColor
-        {
-            nameLabel.attributedText = nameLabelText.asAttributedString(attributes: [
-                .foregroundColor: nameLabelColor,
-            ])
-        }
     }
 
     public func configure(
@@ -184,7 +166,7 @@ public class ContactCellView: ManualStackView {
             case .unviewed:
                 badgeColor = .Signal.accent
             case .viewed, .noStories:
-                badgeColor = Theme.isDarkThemeEnabled ? .ows_gray65 : .ows_gray25
+                badgeColor = UIColor(light: .ows_gray25, dark: .ows_gray65)
             }
             let size: CGFloat = 20
             groupStoryBadgeView.backgroundColor = badgeColor
@@ -197,9 +179,6 @@ public class ContactCellView: ManualStackView {
             // Not a group or not a story. Remove badge
             groupStoryBadgeView.removeFromSuperview()
         }
-
-        // Update fonts to reflect changes to dynamic type.
-        configureFontsAndColors(forceDarkAppearance: configuration.forceDarkAppearance)
 
         updateNameLabels(configuration: configuration, transaction: transaction)
 
@@ -335,7 +314,7 @@ public class ContactCellView: ManualStackView {
         configuration: Configuration,
         transaction: DBReadTransaction,
     ) {
-        let textColor = self.nameLabelColor(forceDarkAppearance: configuration.forceDarkAppearance)
+        let textColor = UIColor.Signal.label
 
         let nameString = { () -> NSAttributedString in
             if let customName = configuration.customName?.nilIfEmpty {

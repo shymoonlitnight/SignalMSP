@@ -692,8 +692,6 @@ private class SafetyNumberCell: ContactTableViewCell {
             var configuration = ContactCellView.Configuration(address: item.address, localUserDisplayMode: .asUser)
             configuration.allowUserInteraction = true
 
-            configuration.forceDarkAppearance = traitCollection.userInterfaceStyle == .dark
-
             let buttonSize = button.intrinsicContentSize
             button.removeFromSuperview()
             let buttonWrapper = ManualLayoutView.wrapSubviewUsingIOSAutoLayout(button)

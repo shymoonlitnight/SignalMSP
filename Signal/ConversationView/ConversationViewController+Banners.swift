@@ -640,7 +640,7 @@ private class ConversationBannerView: UIView {
         } else {
             if UIAccessibility.isReduceTransparencyEnabled {
                 backgroundView = UIView()
-                backgroundView.backgroundColor = Theme.secondaryBackgroundColor
+                backgroundView.backgroundColor = .Signal.secondaryBackground
             } else {
                 backgroundView = UIVisualEffectView(effect: Theme.barBlurEffect)
             }

@@ -46,7 +46,7 @@ class UsernameLinkScanQRCodeViewController: OWSViewController, OWSNavigationChil
 
     private lazy var instructionsLabel: UILabel = {
         let label = UILabel()
-
+        label.font = .dynamicTypeSubheadline
         label.numberOfLines = 0
         label.textAlignment = .center
         label.lineBreakMode = .byWordWrapping
@@ -54,10 +54,9 @@ class UsernameLinkScanQRCodeViewController: OWSViewController, OWSNavigationChil
             "USERNAME_LINK_SCAN_QR_CODE_INSTRUCTIONS_LABEL",
             comment: "Text providing instructions on how to use the username link QR code scanning.",
         )
-
+        label.adjustsFontForContentSizeCategory = true
         // Always use dark theme since it sits over the scan mask.
         label.textColor = .white
-
         return label
     }()
 
@@ -83,16 +82,7 @@ class UsernameLinkScanQRCodeViewController: OWSViewController, OWSNavigationChil
 
         scanViewController.view.autoPinEdgesToSuperviewEdges()
         instructionsWrapperView.autoPinEdges(toSuperviewSafeAreaExcludingEdge: .bottom)
-
-        themeDidChange()
-        contentSizeCategoryDidChange()
     }
-
-    override func contentSizeCategoryDidChange() {
-        instructionsLabel.font = .dynamicTypeSubheadline
-    }
-
-    // MARK: Actions
 }
 
 // MARK: - Scan delegate

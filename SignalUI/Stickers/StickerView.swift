@@ -142,7 +142,7 @@ public class StickerReusableView: UIView {
     }
 
     private weak var placeholderView: StickerPlaceholderView?
-    public func showPlaceholder(color: UIColor = Theme.secondaryBackgroundColor) {
+    public func showPlaceholder(color: UIColor = .Signal.secondaryBackground) {
         guard placeholderView == nil else { return }
         let placeholderView = StickerPlaceholderView(color: color)
         self.placeholderView = placeholderView

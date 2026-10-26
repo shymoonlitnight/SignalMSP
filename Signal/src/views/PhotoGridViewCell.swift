@@ -5,7 +5,6 @@
 
 import SignalServiceKit
 import SignalUI
-import UIKit
 
 enum PhotoGridItemType {
     case photo
@@ -76,8 +75,6 @@ class PhotoGridViewCell: UICollectionViewCell {
 
     private(set) var photoGridItem: PhotoGridItem?
 
-    var loadingColor = Theme.washColor
-
     var allowsMultipleSelection = false {
         didSet {
             updateSelectionState()
@@ -102,12 +99,12 @@ class PhotoGridViewCell: UICollectionViewCell {
 
         highlightedMaskView = UIView()
         highlightedMaskView.alpha = 0.2
-        highlightedMaskView.backgroundColor = Theme.darkThemePrimaryColor
+        highlightedMaskView.backgroundColor = .white
         highlightedMaskView.isHidden = true
 
         selectedMaskView = UIView()
         selectedMaskView.alpha = 0.3
-        selectedMaskView.backgroundColor = Theme.darkThemeBackgroundColor
+        selectedMaskView.backgroundColor = .black
         selectedMaskView.isHidden = true
 
         super.init(frame: frame)
@@ -153,7 +150,7 @@ class PhotoGridViewCell: UICollectionViewCell {
         get { return imageView.image }
         set {
             imageView.image = newValue
-            imageView.backgroundColor = newValue == nil ? loadingColor : .clear
+            imageView.backgroundColor = newValue == nil ? Theme.washColor : .clear
         }
     }
 
