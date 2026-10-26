@@ -1522,7 +1522,7 @@ public class MessageSenderImpl: MessageSender, DeviceMessageBuilder {
                         localDeviceId: localDeviceId,
                         tx: tx,
                     ))
-                } catch SignalError.sessionNotFound(_) {
+                } catch SignalError.sessionNotFound(_), SignalError.invalidState(_) {
                     missingSessionPlaintextContent[deviceId] = plaintextContent
                 }
             }
@@ -1634,6 +1634,8 @@ public class MessageSenderImpl: MessageSender, DeviceMessageBuilder {
         localDeviceId: DeviceId,
         tx: DBWriteTransaction,
     ) throws -> DeviceMessage {
+        let signalProtocolStoreManager = DependenciesBridge.shared.signalProtocolStoreManager
+
         // This check is not necessary for the functioning of buildDeviceMessage; it's
         // instead here to make sure that we check hasCurrentState for the current session
         // on each send.  This allows us to guarantee that PQ protection is enabled on
@@ -1667,7 +1669,6 @@ public class MessageSenderImpl: MessageSender, DeviceMessageBuilder {
             }
         } catch IdentityManagerError.identityKeyMismatchForOutgoingMessage {
             Logger.warn("Found identity key mismatch on outgoing message to \(serviceId).\(deviceId). Archiving session before retrying...")
-            let signalProtocolStoreManager = DependenciesBridge.shared.signalProtocolStoreManager
             let aciSessionStore = signalProtocolStoreManager.signalProtocolStore(for: .aci).sessionStore
             aciSessionStore.archiveSession(forServiceId: serviceId, deviceId: deviceId, tx: tx)
             throw OWSRetryableMessageSenderError()
@@ -1679,6 +1680,10 @@ public class MessageSenderImpl: MessageSender, DeviceMessageBuilder {
             case SignalError.sessionNotFound:
                 // Callers expect this error & handle it. They will report any anomalous failures.
                 break
+            case SignalError.invalidState:
+                Logger.warn("archiving session due to invalid state: \(error)")
+                let aciSessionStore = signalProtocolStoreManager.signalProtocolStore(for: .aci).sessionStore
+                aciSessionStore.archiveSession(forServiceId: serviceId, deviceId: deviceId, tx: tx)
             default:
                 Logger.warn("Failed to encrypt message \(error)")
             }
