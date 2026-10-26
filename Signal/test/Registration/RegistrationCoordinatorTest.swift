@@ -205,9 +205,13 @@ public class RegistrationCoordinatorTest {
     }
 
     func setupTest(_ testCase: TestCase) -> RegistrationCoordinatorImpl {
+        return setUpTest(forMode: testCase.mode)
+    }
+
+    private func setUpTest(forMode mode: RegistrationMode) -> RegistrationCoordinatorImpl {
         return db.write {
             return registrationCoordinatorLoader.coordinator(
-                forDesiredMode: testCase.mode,
+                forDesiredMode: mode,
                 transaction: $0,
                 logger: .empty(),
             ) as! RegistrationCoordinatorImpl
@@ -258,12 +262,12 @@ public class RegistrationCoordinatorTest {
         switch mode {
         case .registering:
             // With no state set up, should show the splash.
-            #expect(await coordinator.nextStep() == .registrationSplash)
+            #expect(await coordinator.nextStep().isRegistrationSplash)
             // Once we show it, don't show it again.
             coordinator.continueFromSplash()
-            #expect(await coordinator.nextStep() != .registrationSplash)
+            #expect(await !coordinator.nextStep().isRegistrationSplash)
         case .reRegistering, .changingNumber:
-            #expect(await coordinator.nextStep() != .registrationSplash)
+            #expect(await !coordinator.nextStep().isRegistrationSplash)
         }
     }
 
@@ -276,7 +280,7 @@ public class RegistrationCoordinatorTest {
         setupDefaultAccountAttributes()
 
         // We should start with the banner.
-        #expect(await coordinator.nextStep() == .appUpdateBanner)
+        #expect(await coordinator.nextStep().isAppUpdateBanner)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -293,7 +297,7 @@ public class RegistrationCoordinatorTest {
         switch mode {
         case .registering:
             // Gotta get the splash out of the way.
-            #expect(await coordinator.nextStep() == .registrationSplash)
+            #expect(await coordinator.nextStep().isRegistrationSplash)
             coordinator.continueFromSplash()
             nextStep = await coordinator.nextStep()
         case .reRegistering, .changingNumber:
@@ -302,14 +306,14 @@ public class RegistrationCoordinatorTest {
         }
 
         // Now we should show the permissions.
-        #expect(nextStep == .permissions)
+        #expect(nextStep.isPermissions)
         // Doesn't change even if we try and proceed.
-        #expect(await coordinator.nextStep() == .permissions)
+        #expect(await coordinator.nextStep().isPermissions)
 
         // Once the state is updated we can proceed.
         nextStep = await coordinator.requestPermissions().awaitable()
-        #expect(nextStep != .registrationSplash)
-        #expect(nextStep != .permissions)
+        #expect(!nextStep.isRegistrationSplash)
+        #expect(!nextStep.isPermissions)
     }
 
     // MARK: - Reg Recovery Password Path
@@ -317,7 +321,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.testCases(), [true, false])
     func runRegRecoverPwPathTestHappyPath(testCase: TestCase, wasReglockEnabled: Bool) async throws {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -413,20 +416,24 @@ public class RegistrationCoordinatorTest {
         // a previously registered device, and we can skip intros.
 
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = await coordinator.nextStep() else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        guard case .pinEntry(let pinState) = await coordinator.nextStep() else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable().isDone)
 
         // Since we set profile info, we should have scheduled a reupload.
         #expect(profileManagerMock.didScheduleReuploadLocalProfile)
@@ -440,7 +447,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.testCases())
     func testRegRecoveryPwPath_wrongPIN(testCase: TestCase) async throws {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -523,32 +529,43 @@ public class RegistrationCoordinatorTest {
         // Once we do the storage service restore,
         // then we are finished!
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        do {
+            guard case .pinEntry(let pinState) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+                Issue.record("must be enteringExistingPin with skippability")
+                return
+            }
+        }
 
         // Give it the wrong PIN, it should reject and give us the same step again.
-        #expect(
-            await coordinator.submitPINCode(wrongPinCode).awaitable() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(
-                    mode: mode,
-                    error: .wrongPin(wrongPin: wrongPinCode),
-                    remainingAttempts: 9,
-                )),
-        )
+        nextStep = await coordinator.submitPINCode(wrongPinCode).awaitable()
+        do {
+            guard case .pinEntry(let pinState) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: 9) = pinState.operation else {
+                Issue.record("must be enteringExistingPin with skippability")
+                return
+            }
+        }
 
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable().isDone)
 
         // Since we set profile info, we should have scheduled a reupload.
         #expect(profileManagerMock.didScheduleReuploadLocalProfile)
@@ -559,7 +576,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.onlyReRegisteringTestCases())
     func testRegRecoveryPwPath_wrongPassword(testCase: TestCase) async {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -614,32 +630,40 @@ public class RegistrationCoordinatorTest {
         // Resolve with an updated session.
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(nextVerificationAttempt: 0)))
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         // Check we have the master key now, to be safe.
         #expect(!didClearPinCode)
 
         // Give it the pin code, which should make it try and register.
+        nextStep = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
         // Now we should expect to be at verification code entry since we already set the phone number.
+        guard case .verificationCodeEntry(let codeState) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
         // No exit allowed since we've already started trying to create the account.
-        #expect(
-            await coordinator.submitPINCode(Stubs.pinCode).awaitable() ==
-                .verificationCodeEntry(
-                    stubs.verificationCodeEntryState(mode: mode, exitConfigOverride: .noExitAllowed),
-                ),
-        )
+        #expect(codeState.exitConfiguration == .noExitAllowed)
+        #expect(codeState.validationError == nil)
 
         // We want to have kept the master key; we failed the reg recovery pw check
         // but that could happen even if the key is valid. Once we finish session based
@@ -650,7 +674,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.onlyReRegisteringTestCases())
     func testRegRecoveryPwPath_failedReglock(testCase: TestCase) async {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -724,40 +747,44 @@ public class RegistrationCoordinatorTest {
         // Resolve with an updated session.
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(nextVerificationAttempt: 0)))
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
-
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
         #expect(!didClearPinCode)
 
         // Give it the pin code, which should make it try and register.
-        // Now we should expect to be at verification code entry since we already set the phone number.
+        nextStep = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
+        guard case .verificationCodeEntry(let codeState) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
         // No exit allowed since we've already started trying to create the account.
+        #expect(codeState.exitConfiguration == .noExitAllowed)
+        #expect(codeState.validationError == nil)
         // We want to have wiped our master key; we failed reglock, which means the key itself is wrong
-        #expect(
-            await coordinator.submitPINCode(Stubs.pinCode).awaitable() ==
-                .verificationCodeEntry(
-                    stubs.verificationCodeEntryState(mode: mode, exitConfigOverride: .noExitAllowed),
-                ),
-        )
-
         #expect(didClearPinCode)
     }
 
     @MainActor @Test(arguments: Self.testCases())
     func testRegRecoveryPwPath_retryNetworkError(testCase: TestCase) async throws {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -860,22 +887,30 @@ public class RegistrationCoordinatorTest {
         // Once we do the storage service restore,
         // then we are finished!
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         // Give it the pin code, which should make it try and register.
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        nextStep = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
+        #expect(nextStep.isDone)
 
         let expectedSteps: [TestStep] = [
             .requestPushToken,
@@ -910,7 +945,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.onlyReRegisteringTestCases())
     func testRegRecoveryPwPath_failedReglock2(testCase: TestCase) async {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -993,27 +1027,37 @@ public class RegistrationCoordinatorTest {
 
         #expect(!didClearPinCode)
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         // Give it the pin code, which should make it try and register.
         _ = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
 
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.pinCode).awaitable() ==
-                .enterRecoveryKey(RegistrationEnterAccountEntropyPoolState(canShowBackButton: false, canShowNoKeyHelpButton: false)),
-        )
+        nextStep = await coordinator.submitVerificationCode(Stubs.pinCode).awaitable()
+        guard case .enterRecoveryKey(let recoveryKeyState) = nextStep else {
+            Issue.record("must be enterRecoveryKey")
+            return
+        }
+        #expect(!recoveryKeyState.canShowBackButton)
+        #expect(!recoveryKeyState.canShowNoKeyHelpButton)
 
         // We want to have wiped our master key; we failed reglock, which means the key itself is wrong.
         #expect(!didClearPinCode)
@@ -1025,7 +1069,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.onlyReRegisteringTestCases())
     func testRegRecoveryPwPath_reglock_failedLocalCredentials(testCase: TestCase) async {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -1161,26 +1204,33 @@ public class RegistrationCoordinatorTest {
         // Once we do the username reclamation,
         // then we are finished!
 
+        var nextStep = await coordinator.nextStep()
+
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         #expect(getSvrCredentialUsernames() == [Stubs.svr2AuthCredential.credential.username])
 
         #expect(!didClearPinCode)
 
         // Give it the pin code, which should make it try and register.
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable().isDone)
 
         #expect(!didClearPinCode)
 
@@ -1201,7 +1251,6 @@ public class RegistrationCoordinatorTest {
     @MainActor @Test(arguments: Self.onlyReRegisteringTestCases())
     func testRegRecoveryPwPath_reglock_localAndRemoteKeysRejected(testCase: TestCase) async {
         let coordinator = setupTest(testCase)
-        let mode = testCase.mode
 
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
@@ -1306,49 +1355,51 @@ public class RegistrationCoordinatorTest {
         // Give back a verified session.
         sessionManager.addSubmitCodeResponseMock(.success(stubs.session(verified: true)))
 
-        let acknowledgeAction: RegistrationReglockTimeoutAcknowledgeAction = switch testCase.mode {
-        case .registering: .resetPhoneNumber
-        case .changingNumber, .reRegistering: .none
-        }
+        var nextStep = await coordinator.nextStep()
 
         // We haven't set a phone number so it should ask for that.
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
-
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
         // Give it a phone number, which should show the PIN entry step.
-        // Now it should ask for the PIN to confirm the user knows it.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForRegRecoveryPath(mode: mode)),
-        )
+        // Now it should ask for the PIN to confirm the user knows it.
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         // Give it the pin code, which should make it try and register.
-        #expect(
-            await coordinator.submitPINCode(Stubs.pinCode).awaitable() ==
-                .verificationCodeEntry(
-                    stubs.verificationCodeEntryState(
-                        mode: mode,
-                        // TODO: [Refactor]: Is 'noExitAllowed' the correct value to expect here?
-                        exitConfigOverride: .noExitAllowed,
-                    ),
-                ),
-        )
-
+        nextStep = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
+        guard case .verificationCodeEntry(let codeState) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        // TODO: [Refactor]: Is 'noExitAllowed' the correct value to expect here?
+        #expect(codeState.exitConfiguration == .noExitAllowed)
         #expect(!didClearPinCode)
 
         // Submit verification code
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable() ==
-                .reglockTimeout(
-                    RegistrationReglockTimeoutState(
-                        reglockExpirationDate: dateProvider().addingTimeInterval(TimeInterval(10)),
-                        acknowledgeAction: acknowledgeAction,
-                    ),
-                ),
-        )
+        nextStep = await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable()
+        guard case .reglockTimeout(let reglockState) = nextStep else {
+            Issue.record("must be reglockTimeout")
+            return
+        }
+        let acknowledgeAction: RegistrationReglockTimeoutAcknowledgeAction
+        switch testCase.mode {
+        case .registering:
+            acknowledgeAction = .resetPhoneNumber
+        case .changingNumber, .reRegistering:
+            acknowledgeAction = .none
+        }
+        #expect(reglockState.acknowledgeAction == acknowledgeAction)
+        #expect(reglockState.reglockExpirationDate == dateProvider().addingTimeInterval(10))
 
         // We want to have wiped our master key; we failed reglock, which means the key itself is wrong.
         #expect(!didClearPinCode)
@@ -1369,11 +1420,7 @@ public class RegistrationCoordinatorTest {
         mockSVRCredentials(isMatch: true)
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         let aep = buildKeyDataMocks(testCase)
         let initialMasterKey = aep.getMasterKey()
@@ -1464,17 +1511,23 @@ public class RegistrationCoordinatorTest {
         // At this point, we should be asking for PIN entry so we can use the credential
         // to recover the SVR master key.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForSVRAuthCredentialPath(mode: mode)),
-        )
+        var nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
 
         // We should have wiped the invalid and unknown credentials.
         #expect(getSvrCredentialUsernames() == [Stubs.svr2AuthCredential.credential.username, "aaaa"])
 
         // Enter the PIN, which should try and recover from SVR.
         // Once we do that, it should follow the Reg Recovery Password Path.
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        nextStep = await coordinator.submitPINCode(Stubs.pinCode).awaitable()
+        #expect(nextStep.isDone)
 
         let expectedSteps: [TestStep] = [
             .restoreKeys,
@@ -1509,11 +1562,7 @@ public class RegistrationCoordinatorTest {
         mockSVRCredentials(isMatch: false)
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Once the first request fails, it should try an start a session.
         // We'll ask for a push challenge, though we don't need to resolve it in this test.
@@ -1535,10 +1584,11 @@ public class RegistrationCoordinatorTest {
         // Give it a phone number, which should cause it to check the auth credentials.
         // Now we should expect to be at verification code entry since we already set the phone number.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
 
         // We should have wiped the invalid and unknown credentials.
         #expect(getSvrCredentialUsernames() == [Stubs.svr2AuthCredential.credential.username, "aaaa"])
@@ -1560,11 +1610,7 @@ public class RegistrationCoordinatorTest {
         storeSvrCredentials(credentialCandidates)
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Don't give back any matches, which means we will want to create a session as a fallback.
         var expectedSVRCheckRequest = RegistrationRequestFactory.svr2AuthCredentialCheckRequest(
@@ -1613,27 +1659,34 @@ public class RegistrationCoordinatorTest {
         // Give it a phone number, which should cause it to check the auth credentials.
         // Now we should expect to be at verification code entry since we already set the phone number.
         coordinator.submitE164(originalE164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        var nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
 
         // We should have wiped the invalid and unknown credentials.
         #expect(getSvrCredentialUsernames() == [Stubs.svr2AuthCredential.credential.username])
 
         // Now change the phone number; this should take us back to phone number entry.
         coordinator.requestChangeE164()
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Now it should ask for PIN entry; we are on the SVR auth credential path.
         coordinator.submitE164(changedE164)
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForSVRAuthCredentialPath(mode: mode)),
-        )
+        nextStep = await coordinator.nextStep()
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
+        guard case .enteringExistingPin(skippability: .canSkip, remainingAttempts: _) = pinState.operation else {
+            Issue.record("must be enteringExistingPin with skippability")
+            return
+        }
     }
 
     // MARK: - Session Path
@@ -1715,23 +1768,40 @@ public class RegistrationCoordinatorTest {
         storageServiceManagerMock.addRotateManifestMock({ _, _ in return .value(()) })
 
         // Submit a code.
-        // Now we should ask to create a PIN.
-        // No exit allowed since we've already started trying to create the account.
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.pinCode).awaitable() ==
-                .pinEntry(Stubs.pinEntryStateForPostRegCreate(mode: mode, exitConfigOverride: .noExitAllowed)),
-        )
+        var nextStep = await coordinator.submitVerificationCode(Stubs.pinCode).awaitable()
+        do {
+            // Now we should ask to create a PIN.
+            guard case .pinEntry(let pinState) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            // No exit allowed since we've already started trying to create the account.
+            #expect(pinState.exitConfiguration == .noExitAllowed)
+            guard case .creatingNewPin = pinState.operation else {
+                Issue.record("must be creatingNewPin")
+                return
+            }
+        }
 
         // Confirm the pin first.
-        // No exit allowed since we've already started trying to create the account.
         coordinator.setPINCodeForConfirmation(.stub())
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(Stubs.pinEntryStateForPostRegConfirm(mode: mode, exitConfigOverride: .noExitAllowed)),
-        )
+        nextStep = await coordinator.nextStep()
+        do {
+            guard case .pinEntry(let pinState) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            // No exit allowed since we've already started trying to create the account.
+            #expect(pinState.exitConfiguration == .noExitAllowed)
+            guard case .confirmingNewPin(let confirmState) = pinState.operation else {
+                Issue.record("must be creatingNewPin")
+                return
+            }
+            #expect(confirmState.pinToConfirm == Stubs.pinCode)
+        }
 
         // When we submit the pin, it should backup with SVR.
-        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable() == .done)
+        #expect(await coordinator.submitPINCode(Stubs.pinCode).awaitable().isDone)
 
         // Since we set profile info, we should have scheduled a reupload.
         #expect(profileManagerMock.didScheduleReuploadLocalProfile)
@@ -1739,21 +1809,12 @@ public class RegistrationCoordinatorTest {
         #expect(didMarkPinEnabled)
     }
 
-    @MainActor @Test(arguments: Self.testCases())
-    func testSessionPath_invalidE164(testCase: TestCase) async {
-        let coordinator = setupTest(testCase)
-        let mode = testCase.mode
+    @MainActor @Test
+    func testSessionPath_invalidE164() async {
+        let coordinator = setUpTest(forMode: .registering)
         let badE164 = E164("+15555555555")!
 
-        switch mode {
-        case .registering, .changingNumber:
-            break
-        case .reRegistering:
-            // no changing the number when reregistering
-            return
-        }
-
-        await setUpSessionPath(coordinator: coordinator, mode: mode)
+        await setUpSessionPath(coordinator: coordinator, mode: .registering)
 
         // Reject for invalid argument (the e164).
         sessionManager.addBeginSessionResponseMock(.invalidArgument)
@@ -1762,16 +1823,17 @@ public class RegistrationCoordinatorTest {
         // It should put us on the phone number entry screen again
         // with an error.
         coordinator.submitE164(badE164)
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(
-                    stubs.phoneNumberEntryState(
-                        mode: mode,
-                        previouslyEnteredE164: badE164,
-                        withValidationErrorFor: .invalidArgument,
-                    ),
-                ),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry(.registration(.initialRegistration(let entryState))) = nextStep else {
+            Issue.record("must be phoneNumberEntry(registration(initialRegistration(...)))")
+            return
+        }
+        guard case .invalidE164(let invalidE164) = entryState.validationError else {
+            Issue.record("must be invalidE164")
+            return
+        }
+        #expect(entryState.previouslyEnteredE164 == badE164)
+        #expect(invalidE164.invalidE164 == badE164)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -1790,16 +1852,25 @@ public class RegistrationCoordinatorTest {
         // It should put us on the phone number entry screen again
         // with an error.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(
-                    stubs.phoneNumberEntryState(
-                        mode: mode,
-                        previouslyEnteredE164: Stubs.e164,
-                        withValidationErrorFor: .retryAfter(15),
-                    ),
-                ),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry(let state) = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
+        let validationError: RegistrationPhoneNumberViewState.ValidationError?
+        switch state {
+        case .registration(.initialRegistration(let state)):
+            validationError = state.validationError
+        case .registration(.reregistration(let state)):
+            validationError = state.validationError
+        case .changingNumber:
+            validationError = nil
+        }
+        guard case .rateLimited(let rateLimitedState) = validationError else {
+            Issue.record("must be rateLimited")
+            return
+        }
+        #expect(rateLimitedState.expiration == dateProvider().addingTimeInterval(15))
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -1817,15 +1888,14 @@ public class RegistrationCoordinatorTest {
         // Give it a phone number, which should cause it to start a session.
         // It should put us on the verification code entry screen with an error.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextSMS: 10,
-                    nextVerificationAttempt: nil,
-                    validationError: .smsResendTimeout,
-                )),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry(let state) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        #expect(state.validationError == .smsResendTimeout)
+        #expect(state.nextSMSDate == dateProvider().addingTimeInterval(10))
+        #expect(state.nextVerificationAttemptDate == nil)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -1855,22 +1925,28 @@ public class RegistrationCoordinatorTest {
         // Give it a phone number, which should cause it to start a session.
         // We should get back the code entry step, with a validation error for the sms transport.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextSMS: nil,
-                    nextVerificationAttempt: nil,
-                    validationError: .failedInitialTransport(failedTransport: .sms),
-                )),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .failedInitialTransport(failedTransport: .sms) = state.validationError else {
+                Issue.record("must be failedInitialTransport(sms)")
+                return
+            }
+        }
 
         // We should get back the code entry step.
         coordinator.requestVoiceCode()
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            #expect(state.validationError == nil)
+        }
         #expect(sessionManager.didRequestCode)
     }
 
@@ -1900,33 +1976,42 @@ public class RegistrationCoordinatorTest {
         // We should get back the code entry step,
         // with a validation error for the sms transport.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextVerificationAttempt: nil,
-                    validationError: .failedInitialTransport(failedTransport: .sms),
-                )),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .failedInitialTransport(failedTransport: .sms) = state.validationError else {
+                Issue.record("must be failedInitialTransport(sms)")
+                return
+            }
+        }
 
         // The server says no code is available to submit. We know
         // we never sent a code, so show a unique error for that
         // but keep the user on the code entry screen so they can
         // retry sending a code with a transport method of their choice.
 
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable() ==
-                .showErrorSheet(.submittingVerificationCodeBeforeAnyCodeSent),
-        )
+        do {
+            let nextStep = await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable()
+            guard case .showErrorSheet(.submittingVerificationCodeBeforeAnyCodeSent) = nextStep else {
+                Issue.record("must be showErrorSheet(submittingVerificationCodeBeforeAnyCodeSent)")
+                return
+            }
+        }
 
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextVerificationAttempt: nil,
-                    validationError: .failedInitialTransport(failedTransport: .sms),
-                )),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .failedInitialTransport(failedTransport: .sms) = state.validationError else {
+                Issue.record("must be failedInitialTransport(sms)")
+                return
+            }
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -1959,16 +2044,25 @@ public class RegistrationCoordinatorTest {
         // It should put us on the phone number entry screen again
         // with an error.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(
-                    stubs.phoneNumberEntryState(
-                        mode: mode,
-                        previouslyEnteredE164: Stubs.e164,
-                        withValidationErrorFor: .retryAfter(15),
-                    ),
-                ),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry(let state) = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
+        let validationError: RegistrationPhoneNumberViewState.ValidationError?
+        switch state {
+        case .registration(.initialRegistration(let state)):
+            validationError = state.validationError
+        case .registration(.reregistration(let state)):
+            validationError = state.validationError
+        case .changingNumber:
+            validationError = nil
+        }
+        guard case .rateLimited(let rateLimitedState) = validationError else {
+            Issue.record("must be rateLimited")
+            return
+        }
+        #expect(rateLimitedState.expiration == dateProvider().addingTimeInterval(15))
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2022,32 +2116,39 @@ public class RegistrationCoordinatorTest {
         )))
 
         // Give it a phone number, which should cause it to start a session.
-        // We should be on the verification code entry screen.
         coordinator.submitE164(originalE164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(
-                    stubs.verificationCodeEntryState(mode: mode, e164: originalE164),
-                ),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            // We should be on the verification code entry screen.
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            #expect(state.e164 == originalE164)
+            #expect(state.validationError == nil)
+        }
 
         // Ask to change the number; this should put us back on phone number entry.
         coordinator.requestChangeE164()
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
 
         // Give it the new phone number, which should cause it to start a session.
-        // We should be on the verification code entry screen.
         // TODO: Missing a 'requestPushToken'?
         coordinator.submitE164(changedE164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(
-                    stubs.verificationCodeEntryState(mode: mode, e164: changedE164),
-                ),
-        )
+        do {
+            let nextStep = await coordinator.nextStep()
+            // We should be on the verification code entry screen.
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            #expect(state.e164 == changedE164)
+            #expect(state.validationError == nil)
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2082,23 +2183,32 @@ public class RegistrationCoordinatorTest {
         )))
 
         // Give it a phone number, which should cause it to start a session.
-        // Once we get that session, we should get a captcha step back.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .captchaChallenge)
+        var nextStep = await coordinator.nextStep()
+        // Once we get that session, we should get a captcha step back.
+        guard case .captchaChallenge = nextStep else {
+            Issue.record("must be captchaChallenge")
+            return
+        }
 
         // We should get back the code entry step. Submit a captcha challenge.
-        #expect(
-            await coordinator.submitCaptcha(Stubs.captchaToken).awaitable() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        nextStep = await coordinator.submitCaptcha(Stubs.captchaToken).awaitable()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
 
-        // Now try and resend a code, which should hit us with the captcha challenge immediately.
+        // Now try and resend a code, which should hit us with the captcha
+        // challenge immediately.
         coordinator.requestSMSCode()
-        #expect(await coordinator.nextStep() == .captchaChallenge)
+        nextStep = await coordinator.nextStep()
+        guard case .captchaChallenge = nextStep else {
+            Issue.record("must be captchaChallenge")
+            return
+        }
 
-        // This means when we fulfill the challenge, it should
-        // immediately try and send the code that couldn't be sent before because
-        // of the challenge.
+        // This means when we fulfill the challenge, it should immediately try and
+        // send the code that couldn't be sent before because of the challenge.
         stubs.date = date.addingTimeInterval(10)
         let secondCodeDate = date
 
@@ -2112,10 +2222,11 @@ public class RegistrationCoordinatorTest {
         // entry screen.
         // TODO[Registration]: test that the "next SMS code" state is properly set
         // given the new sms code date above.
-        #expect(
-            await coordinator.submitCaptcha(Stubs.captchaToken).awaitable() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        nextStep = await coordinator.submitCaptcha(Stubs.captchaToken).awaitable()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2153,10 +2264,11 @@ public class RegistrationCoordinatorTest {
         _ = await coordinator.nextStep()
 
         // We should still be waiting.
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
         #expect(
             sessionManager.latestChallengeFulfillment ==
                 .pushChallenge("a pre-auth challenge token"),
@@ -2172,11 +2284,7 @@ public class RegistrationCoordinatorTest {
         setupDefaultAccountAttributes()
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         pushRegistrationManagerMock.addRequestPushTokenMock({ .success(Stubs.apnsRegistrationId) })
 
@@ -2201,7 +2309,11 @@ public class RegistrationCoordinatorTest {
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .showErrorSheet(.sessionInvalidated))
+        let nextStep = await coordinator.nextStep()
+        guard case .showErrorSheet(.sessionInvalidated) = nextStep else {
+            Issue.record("must be showErrorSheet(sessionInvalidated)")
+            return
+        }
 
         // One time to set up, one time for the min wait time, one time
         // for the full timeout.
@@ -2217,11 +2329,7 @@ public class RegistrationCoordinatorTest {
         setupDefaultAccountAttributes()
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         pushRegistrationManagerMock.addRequestPushTokenMock({ .success(Stubs.apnsRegistrationId) })
 
@@ -2244,7 +2352,11 @@ public class RegistrationCoordinatorTest {
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .showErrorSheet(.sessionInvalidated))
+        let nextStep = await coordinator.nextStep()
+        guard case .showErrorSheet(.sessionInvalidated) = nextStep else {
+            Issue.record("must be showErrorSheet(sessionInvalidated)")
+            return
+        }
 
         // One time to set up, one time for the min wait time, one time
         // for the full timeout.
@@ -2259,17 +2371,9 @@ public class RegistrationCoordinatorTest {
         // Set profile info so we skip those steps.
         setupDefaultAccountAttributes()
         pushRegistrationManagerMock.addRequestPushTokenMock({ .pushUnsupported(description: "") })
-        pushRegistrationManagerMock.setReceivePreAuthChallengeTokenMock({
-            try! await Task.sleep(nanoseconds: TimeInterval.infinity.clampedNanoseconds)
-            fatalError()
-        })
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Require a push challenge, which we won't be able to answer.
         sessionManager.addBeginSessionResponseMock(.success(stubs.session(
@@ -2279,13 +2383,11 @@ public class RegistrationCoordinatorTest {
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(
-                    mode: mode,
-                    previouslyEnteredE164: Stubs.e164,
-                )),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
         #expect(sessionManager.latestChallengeFulfillment == nil)
     }
 
@@ -2318,7 +2420,11 @@ public class RegistrationCoordinatorTest {
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)))
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
         let fulfillment = sessionManager.latestChallengeFulfillment
         #expect(fulfillment == .pushChallenge("a pre-auth challenge token"))
     }
@@ -2352,7 +2458,11 @@ public class RegistrationCoordinatorTest {
 
         // After that, we should get a captcha step back, because we haven't
         // yet received the push challenge token.
-        #expect(await coordinator.nextStep() == .captchaChallenge)
+        let nextStep = await coordinator.nextStep()
+        guard case .captchaChallenge = nextStep else {
+            Issue.record("must be captchaChallenge")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2396,7 +2506,11 @@ public class RegistrationCoordinatorTest {
         // Once we get that session, we should wait a short time for the
         // push challenge token and fulfill it.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)))
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2408,20 +2522,12 @@ public class RegistrationCoordinatorTest {
         setupDefaultAccountAttributes()
 
         pushRegistrationManagerMock.addRequestPushTokenMock({ .pushUnsupported(description: "") })
-        pushRegistrationManagerMock.setReceivePreAuthChallengeTokenMock({
-            try! await Task.sleep(nanoseconds: TimeInterval.infinity.clampedNanoseconds)
-            fatalError()
-        })
 
         // No other setup; no auth credentials, SVR keys, etc in storage
         // so that we immediately go to the session flow.
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Give back a session with multiple challenges.
         sessionManager.addBeginSessionResponseMock(.success(stubs.session(
@@ -2431,7 +2537,11 @@ public class RegistrationCoordinatorTest {
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .captchaChallenge)
+        let nextStep = await coordinator.nextStep()
+        guard case .captchaChallenge = nextStep else {
+            Issue.record("must be captchaChallenge")
+            return
+        }
         #expect(sessionManager.latestChallengeFulfillment == nil)
     }
 
@@ -2459,10 +2569,18 @@ public class RegistrationCoordinatorTest {
         // We have an unknown challenge, but we should do known challenges first!
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
-        #expect(await coordinator.nextStep() == .captchaChallenge)
+        var nextStep = await coordinator.nextStep()
+        guard case .captchaChallenge = nextStep else {
+            Issue.record("must be captchaChallenge")
+            return
+        }
 
         // This means we should get the app update banner.
-        #expect(await coordinator.submitCaptcha(Stubs.captchaToken).awaitable() == .appUpdateBanner)
+        nextStep = await coordinator.submitCaptcha(Stubs.captchaToken).awaitable()
+        guard case .appUpdateBanner = nextStep else {
+            Issue.record("must be appUpdateBanner")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2479,13 +2597,15 @@ public class RegistrationCoordinatorTest {
 
         // Now try and send the wrong code.
         let badCode = "garbage"
-        #expect(
-            await coordinator.submitVerificationCode(badCode).awaitable() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    validationError: .invalidVerificationCode(invalidCode: badCode),
-                )),
-        )
+        let nextStep = await coordinator.submitVerificationCode(badCode).awaitable()
+        guard case .verificationCodeEntry(let state) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        guard case .invalidVerificationCode(invalidCode: badCode) = state.validationError else {
+            Issue.record("must be invalidVerificationCode")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2521,37 +2641,52 @@ public class RegistrationCoordinatorTest {
             retryAfterHeader: 4,
         ))
 
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextVerificationAttempt: 10,
-                    validationError: .submitCodeTimeout,
-                )),
-        )
+        var nextStep = await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable()
+        do {
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .submitCodeTimeout = state.validationError else {
+                Issue.record("must be submitCodeTimeout")
+                return
+            }
+            #expect(state.nextCallDate == dateProvider())
+            #expect(state.nextSMSDate == dateProvider())
+            #expect(state.nextVerificationAttemptDate == dateProvider().addingTimeInterval(10))
+        }
 
         coordinator.requestSMSCode()
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextSMS: 7,
-                    nextVerificationAttempt: 9,
-                    validationError: .smsResendTimeout,
-                )),
-        )
+        nextStep = await coordinator.nextStep()
+        do {
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .smsResendTimeout = state.validationError else {
+                Issue.record("must be smsResendTimeout")
+                return
+            }
+            #expect(state.nextCallDate == dateProvider())
+            #expect(state.nextSMSDate == dateProvider().addingTimeInterval(7))
+            #expect(state.nextVerificationAttemptDate == dateProvider().addingTimeInterval(9))
+        }
 
         coordinator.requestVoiceCode()
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextSMS: 5,
-                    nextCall: 4,
-                    nextVerificationAttempt: 8,
-                    validationError: .voiceResendTimeout,
-                )),
-        )
+        nextStep = await coordinator.nextStep()
+        do {
+            guard case .verificationCodeEntry(let state) = nextStep else {
+                Issue.record("must be verificationCodeEntry")
+                return
+            }
+            guard case .voiceResendTimeout = state.validationError else {
+                Issue.record("must be voiceResendTimeout")
+                return
+            }
+            #expect(state.nextCallDate == dateProvider().addingTimeInterval(4))
+            #expect(state.nextSMSDate == dateProvider().addingTimeInterval(5))
+            #expect(state.nextVerificationAttemptDate == dateProvider().addingTimeInterval(8))
+        }
 
         #expect(sessionManager.didRequestCode)
     }
@@ -2572,18 +2707,18 @@ public class RegistrationCoordinatorTest {
         // The server says no code is available to submit. But we think we tried
         // sending a code with local state. We want to be on the verification
         // code entry screen, with an error so the user retries sending a code.
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable() ==
-                .showErrorSheet(.verificationCodeSubmissionUnavailable),
-        )
+        var nextStep = await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable()
+        guard case .showErrorSheet(.verificationCodeSubmissionUnavailable) = nextStep else {
+            Issue.record("must be showErrorSheet(verificationCodeSubmissionUnavailable)")
+            return
+        }
 
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextVerificationAttempt: nil,
-                )),
-        )
+        nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry(let state) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        #expect(state.nextVerificationAttemptDate == nil)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2597,18 +2732,18 @@ public class RegistrationCoordinatorTest {
         // but with no ability to resubmit.
         sessionManager.addSubmitCodeResponseMock(.retryAfterTimeout(stubs.session(), retryAfterHeader: nil))
 
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable() ==
-                .showErrorSheet(.verificationCodeSubmissionUnavailable),
-        )
+        var nextStep = await coordinator.submitVerificationCode(Stubs.verificationCode).awaitable()
+        guard case .showErrorSheet(.verificationCodeSubmissionUnavailable) = nextStep else {
+            Issue.record("must be showErrorSheet(verificationCodeSubmissionUnavailable)")
+            return
+        }
 
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(
-                    mode: mode,
-                    nextVerificationAttempt: nil,
-                )),
-        )
+        nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry(let state) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        #expect(state.nextVerificationAttemptDate == nil)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2633,25 +2768,25 @@ public class RegistrationCoordinatorTest {
         sessionManager.addSubmitCodeResponseMock(.invalidSession)
 
         // Give it a phone number, which should cause it to start a session.
-        // Now we should expect to be at verification code entry since we sent the code.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        var nextStep = await coordinator.nextStep()
+        // Now we should expect to be at verification code entry since we sent the code.
+        guard case .verificationCodeEntry = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
 
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.pinCode).awaitable() ==
-                .showErrorSheet(.sessionInvalidated),
-        )
+        nextStep = await coordinator.submitVerificationCode(Stubs.pinCode).awaitable()
+        guard case .showErrorSheet(.sessionInvalidated) = nextStep else {
+            Issue.record("must be showErrorSheet(sessionInvalidated)")
+            return
+        }
 
-        #expect(
-            await coordinator.nextStep() ==
-                .phoneNumberEntry(stubs.phoneNumberEntryState(
-                    mode: mode,
-                    previouslyEnteredE164: Stubs.e164,
-                )),
-        )
+        nextStep = await coordinator.nextStep()
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2733,21 +2868,26 @@ public class RegistrationCoordinatorTest {
             return .value(())
         })
 
+        var nextStep = await coordinator.submitVerificationCode(Stubs.pinCode).awaitable()
         // Now we should ask to create a PIN.
+        guard case .pinEntry(let pinState) = nextStep else {
+            Issue.record("must be pinEntry")
+            return
+        }
         // No exit allowed since we've already started trying to create the account.
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.pinCode).awaitable() ==
-                .pinEntry(
-                    Stubs.pinEntryStateForPostRegCreate(mode: mode, exitConfigOverride: .noExitAllowed),
-                ),
-        )
+        #expect(pinState.exitConfiguration == .noExitAllowed)
+        guard case .creatingNewPin = pinState.operation else {
+            Issue.record("must be creatingNewPin")
+            return
+        }
 
         // At this point we should not have set the AEP.
         #expect(db.read { accountKeyStore.getAccountEntropyPool(tx: $0) == nil })
 
         // Skip the PIN code.
         coordinator.skipPINCode()
-        #expect(await coordinator.nextStep() == .done)
+        nextStep = await coordinator.nextStep()
+        #expect(nextStep.isDone)
 
         // We should now have set the AEP.
         #expect(db.read { accountKeyStore.getAccountEntropyPool(tx: $0) != nil })
@@ -2756,21 +2896,12 @@ public class RegistrationCoordinatorTest {
         #expect(profileManagerMock.didScheduleReuploadLocalProfile)
     }
 
-    @MainActor @Test(arguments: Self.testCases())
-    func testSessionPath_skipPINRestore_createNewPIN(testCase: TestCase) async {
-        let coordinator = setupTest(testCase)
-        let mode = testCase.mode
+    @MainActor @Test
+    func testSessionPath_skipPINRestore_createNewPIN() async {
+        let coordinator = setUpTest(forMode: .registering)
         let newMasterKey = Stubs.accountEntropyPoolToGenerate.getMasterKey()
 
-        switch mode {
-        case .registering:
-            break
-        case .reRegistering, .changingNumber:
-            // Test only applies to registering scenarios.
-            return
-        }
-
-        await createSessionAndRequestFirstCode(coordinator: coordinator, mode: mode)
+        await createSessionAndRequestFirstCode(coordinator: coordinator, mode: .registering)
 
         // Give back a verified session.
         sessionManager.addSubmitCodeResponseMock(.success(stubs.session(
@@ -2833,29 +2964,40 @@ public class RegistrationCoordinatorTest {
         // then we are finished!
 
         // Now we should ask to restore the PIN.
-        #expect(
-            await coordinator.submitVerificationCode(Stubs.pinCode).awaitable() ==
-                .pinEntry(
-                    Stubs.pinEntryStateForPostRegRestore(mode: mode),
-                ),
-        )
+        var nextStep = await coordinator.submitVerificationCode(Stubs.pinCode).awaitable()
+        do {
+            guard case .pinEntry(let state) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            guard case .enteringExistingPin(skippability: .canSkipAndCreateNew, remainingAttempts: _) = state.operation else {
+                Issue.record("must be enteringExistingPin with skip & create new")
+                return
+            }
+        }
 
         // Skip the PIN code and create a new one instead.
         // When we skip, we should be asked to _create_ the PIN.
         coordinator.skipAndCreateNewPINCode()
-        #expect(
-            await coordinator.nextStep() ==
-                .pinEntry(
-                    Stubs.pinEntryStateForPostRegCreate(mode: mode, exitConfigOverride: .noExitAllowed),
-                ),
-        )
+        nextStep = await coordinator.nextStep()
+        do {
+            guard case .pinEntry(let state) = nextStep else {
+                Issue.record("must be pinEntry")
+                return
+            }
+            guard case .creatingNewPin = state.operation else {
+                Issue.record("must be creatingNewPin")
+                return
+            }
+        }
 
         // At this point we should not have set the AEP.
         #expect(db.read { accountKeyStore.getAccountEntropyPool(tx: $0) == nil })
 
         // Skip this PIN code, too.
         coordinator.skipPINCode()
-        #expect(await coordinator.nextStep() == .done)
+        nextStep = await coordinator.nextStep()
+        #expect(nextStep.isDone)
 
         // We should now have set the master key (i.e., the AEP).
         #expect(db.read { accountKeyStore.getAccountEntropyPool(tx: $0) != nil })
@@ -2951,7 +3093,6 @@ public class RegistrationCoordinatorTest {
     private func goThroughOpeningHappyPath(
         coordinator: any RegistrationCoordinator,
         mode: RegistrationMode,
-        expectedNextStep: RegistrationStep,
     ) async {
         contactsStore.doesNeedContactsAuthorization = true
         pushRegistrationManagerMock.doesNeedNotificationAuthorization = true
@@ -2959,17 +3100,21 @@ public class RegistrationCoordinatorTest {
         switch mode {
         case .registering:
             // Gotta get the splash out of the way.
-            #expect(await coordinator.nextStep() == .registrationSplash)
+            #expect(await coordinator.nextStep().isRegistrationSplash)
+            coordinator.continueFromSplash()
         case .reRegistering, .changingNumber:
             break
         }
 
         // Now we should show the permissions.
-        coordinator.continueFromSplash()
-        #expect(await coordinator.nextStep() == .permissions)
+        #expect(await coordinator.nextStep().isPermissions)
 
         // Once the state is updated we can proceed.
-        #expect(await coordinator.requestPermissions().awaitable() == expectedNextStep)
+        let nextStep = await coordinator.requestPermissions().awaitable()
+        guard case .phoneNumberEntry = nextStep else {
+            Issue.record("must be phoneNumberEntry")
+            return
+        }
     }
 
     @MainActor
@@ -2988,11 +3133,7 @@ public class RegistrationCoordinatorTest {
         // so that we immediately go to the session flow.
 
         // Get past the opening.
-        await goThroughOpeningHappyPath(
-            coordinator: coordinator,
-            mode: mode,
-            expectedNextStep: .phoneNumberEntry(stubs.phoneNumberEntryState(mode: mode)),
-        )
+        await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
     }
 
     @MainActor
@@ -3016,10 +3157,12 @@ public class RegistrationCoordinatorTest {
 
         // We should get back the code entry step.
         coordinator.submitE164(Stubs.e164)
-        #expect(
-            await coordinator.nextStep() ==
-                .verificationCodeEntry(stubs.verificationCodeEntryState(mode: mode)),
-        )
+        let nextStep = await coordinator.nextStep()
+        guard case .verificationCodeEntry(let codeState) = nextStep else {
+            Issue.record("must be verificationCodeEntry")
+            return
+        }
+        #expect(codeState.validationError == nil)
     }
 
     // MARK: - Helpers
@@ -3210,229 +3353,6 @@ public class RegistrationCoordinatorTest {
                 verified: verified,
             )
         }
-
-        // MARK: Step States
-
-        static func pinEntryStateForRegRecoveryPath(
-            mode: RegistrationMode,
-            error: RegistrationPinValidationError? = nil,
-            remainingAttempts: UInt? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .enteringExistingPin(
-                    skippability: .canSkip,
-                    remainingAttempts: remainingAttempts,
-                ),
-                error: error,
-                contactSupportMode: .v2WithUnknownReglockState,
-                exitConfiguration: mode.pinExitConfig,
-            )
-        }
-
-        static func pinEntryStateForSVRAuthCredentialPath(
-            mode: RegistrationMode,
-            error: RegistrationPinValidationError? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .enteringExistingPin(skippability: .canSkip, remainingAttempts: nil),
-                error: error,
-                contactSupportMode: .v2WithUnknownReglockState,
-                exitConfiguration: mode.pinExitConfig,
-            )
-        }
-
-        func phoneNumberEntryState(
-            mode: RegistrationMode,
-            previouslyEnteredE164: E164? = nil,
-            withValidationErrorFor response: Registration.BeginSessionResponse? = nil,
-        ) -> RegistrationPhoneNumberViewState {
-            let response = response ?? .success(session())
-            let validationError: RegistrationPhoneNumberViewState.ValidationError?
-            switch response {
-            case .success:
-                validationError = nil
-            case .invalidArgument:
-                validationError = .invalidE164(.init(invalidE164: previouslyEnteredE164 ?? Stubs.e164))
-            case .retryAfter(let timeInterval):
-                validationError = .rateLimited(.init(
-                    expiration: date.addingTimeInterval(timeInterval!),
-                    e164: previouslyEnteredE164 ?? Stubs.e164,
-                ))
-            case .networkFailure, .genericError:
-                Issue.record("Should not be generating phone number state for error responses.")
-                validationError = nil
-            }
-
-            switch mode {
-            case .registering:
-                return .registration(.initialRegistration(.init(
-                    previouslyEnteredE164: previouslyEnteredE164,
-                    validationError: validationError,
-                    canExitRegistration: true,
-                )))
-            case .reRegistering(let params):
-                return .registration(.reregistration(RegistrationPhoneNumberViewState.Reregistration(
-                    localPhoneNumber: params.phoneNumber,
-                    validationError: validationError,
-                    canExitRegistration: true,
-                )))
-            case .changingNumber(let changeNumberParams):
-                switch validationError {
-                case .none:
-                    if let newE164 = previouslyEnteredE164 {
-                        return .changingNumber(.confirmation(.init(
-                            oldE164: changeNumberParams.oldE164,
-                            newE164: newE164,
-                            rateLimitedError: nil,
-                        )))
-                    } else {
-                        return .changingNumber(.initialEntry(.init(
-                            oldE164: changeNumberParams.oldE164,
-                            newE164: nil,
-                            hasConfirmed: false,
-                            invalidE164Error: nil,
-                        )))
-                    }
-                case .rateLimited(let error):
-                    return .changingNumber(.confirmation(.init(
-                        oldE164: changeNumberParams.oldE164,
-                        newE164: previouslyEnteredE164!,
-                        rateLimitedError: error,
-                    )))
-                case .invalidInput:
-                    owsFail("Can't happen.")
-                case .invalidE164(let error):
-                    return .changingNumber(.initialEntry(.init(
-                        oldE164: changeNumberParams.oldE164,
-                        newE164: previouslyEnteredE164,
-                        hasConfirmed: previouslyEnteredE164 != nil,
-                        invalidE164Error: error,
-                    )))
-                }
-            }
-        }
-
-        func verificationCodeEntryState(
-            mode: RegistrationMode,
-            e164: E164 = Stubs.e164,
-            nextSMS: TimeInterval? = 0,
-            nextCall: TimeInterval? = 0,
-            showHelpText: Bool = false,
-            nextVerificationAttempt: TimeInterval? = 0,
-            validationError: RegistrationVerificationValidationError? = nil,
-            exitConfigOverride: RegistrationVerificationState.ExitConfiguration? = nil,
-        ) -> RegistrationVerificationState {
-
-            let canChangeE164: Bool
-            switch mode {
-            case .reRegistering:
-                canChangeE164 = false
-            case .registering, .changingNumber:
-                canChangeE164 = true
-            }
-
-            return RegistrationVerificationState(
-                e164: e164,
-                nextSMSDate: nextSMS.map { date.addingTimeInterval($0) },
-                nextCallDate: nextCall.map { date.addingTimeInterval($0) },
-                nextVerificationAttemptDate: nextVerificationAttempt.map { date.addingTimeInterval($0) },
-                canChangeE164: canChangeE164,
-                showHelpText: showHelpText,
-                validationError: validationError,
-                exitConfiguration: exitConfigOverride ?? mode.verificationExitConfig,
-            )
-        }
-
-        static func pinEntryStateForSessionPathReglock(
-            mode: RegistrationMode,
-            error: RegistrationPinValidationError? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .enteringExistingPin(skippability: .unskippable, remainingAttempts: nil),
-                error: error,
-                contactSupportMode: .v2WithReglock,
-                exitConfiguration: mode.pinExitConfig,
-            )
-        }
-
-        static func pinEntryStateForPostRegRestore(
-            mode: RegistrationMode,
-            exitConfigOverride: RegistrationPinState.ExitConfiguration? = nil,
-            error: RegistrationPinValidationError? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .enteringExistingPin(
-                    skippability: .canSkipAndCreateNew,
-                    remainingAttempts: nil,
-                ),
-                error: error,
-                contactSupportMode: .v2NoReglock,
-                exitConfiguration: exitConfigOverride ?? mode.pinExitConfig,
-            )
-        }
-
-        static func pinEntryStateForPostRegCreate(
-            mode: RegistrationMode,
-            exitConfigOverride: RegistrationPinState.ExitConfiguration? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .creatingNewPin,
-                error: nil,
-                contactSupportMode: .v2NoReglock,
-                exitConfiguration: exitConfigOverride ?? mode.pinExitConfig,
-            )
-        }
-
-        static func pinEntryStateForPostRegConfirm(
-            mode: RegistrationMode,
-            error: RegistrationPinValidationError? = nil,
-            exitConfigOverride: RegistrationPinState.ExitConfiguration? = nil,
-        ) -> RegistrationPinState {
-            return RegistrationPinState(
-                operation: .confirmingNewPin(.stub()),
-                error: error,
-                contactSupportMode: .v2NoReglock,
-                exitConfiguration: exitConfigOverride ?? mode.pinExitConfig,
-            )
-        }
-    }
-}
-
-extension RegistrationMode {
-
-    var testDescription: String {
-        switch self {
-        case .registering:
-            return "registering"
-        case .reRegistering:
-            return "re-registering"
-        case .changingNumber:
-            return "changing number"
-        }
-    }
-
-    var pinExitConfig: RegistrationPinState.ExitConfiguration {
-        switch self {
-        case .registering:
-            return .noExitAllowed
-        case .reRegistering:
-            return .exitReRegistration
-        case .changingNumber:
-            // TODO[Registration]: test change number properly
-            return .exitChangeNumber
-        }
-    }
-
-    var verificationExitConfig: RegistrationVerificationState.ExitConfiguration {
-        switch self {
-        case .registering:
-            return .noExitAllowed
-        case .reRegistering:
-            return .exitReRegistration
-        case .changingNumber:
-            // TODO[Registration]: test change number properly
-            return .exitChangeNumber
-        }
     }
 }
 
@@ -3502,5 +3422,35 @@ private extension TSRequest {
         owsPrecondition(authHeader.hasPrefix("Basic "))
         let authValue = String(data: Data(base64Encoded: String(authHeader.dropFirst(6)))!, encoding: .utf8)!
         return String(authValue.split(separator: ":").dropFirst().first!)
+    }
+}
+
+private extension RegistrationStep {
+    var isRegistrationSplash: Bool {
+        if case .registrationSplash = self {
+            return true
+        }
+        return false
+    }
+
+    var isAppUpdateBanner: Bool {
+        if case .appUpdateBanner = self {
+            return true
+        }
+        return false
+    }
+
+    var isPermissions: Bool {
+        if case .permissions = self {
+            return true
+        }
+        return false
+    }
+
+    var isDone: Bool {
+        if case .done = self {
+            return true
+        }
+        return false
     }
 }

@@ -437,7 +437,7 @@ public class RegistrationNavigationController: OWSNavigationController {
                     comment: "Error shown if an SMS/call service provider is unable to send a verification code to the provided number.",
                 )
             case .becameDeregistered(let localIdentifiers):
-                handleDeregistrationReset(localIdentifiers: localIdentifiers.wrappedValue)
+                handleDeregistrationReset(localIdentifiers: localIdentifiers)
                 return nil
             case .verificationCodeSubmissionUnavailable:
                 title = nil

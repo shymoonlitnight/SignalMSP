@@ -20,7 +20,7 @@ protocol RegistrationSignalLoginPresenter: AnyObject {
 
 // MARK: - RegistrationEnterAccountViewState
 
-public struct RegistrationSignalLoginState: Equatable {
+public struct RegistrationSignalLoginState {
     let aci: Aci?
     let aep: SignalServiceKit.AccountEntropyPool?
 }

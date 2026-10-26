@@ -36,7 +36,7 @@ public enum RegistrationVerificationValidationError: Equatable {
 
 // MARK: - RegistrationVerificationState
 
-public struct RegistrationVerificationState: Equatable {
+public struct RegistrationVerificationState {
     let e164: E164
     let nextSMSDate: Date?
     let nextCallDate: Date?
@@ -46,7 +46,7 @@ public struct RegistrationVerificationState: Equatable {
     let showHelpText: Bool
     let validationError: RegistrationVerificationValidationError?
 
-    public enum ExitConfiguration: Equatable {
+    public enum ExitConfiguration {
         case noExitAllowed
         case exitReRegistration
         case exitChangeNumber

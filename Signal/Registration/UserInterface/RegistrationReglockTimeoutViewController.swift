@@ -18,7 +18,7 @@ public enum RegistrationReglockTimeoutAcknowledgeAction {
 
 // MARK: - RegistrationReglockTimeoutState
 
-public struct RegistrationReglockTimeoutState: Equatable {
+public struct RegistrationReglockTimeoutState {
     let reglockExpirationDate: Date
     let acknowledgeAction: RegistrationReglockTimeoutAcknowledgeAction
 }

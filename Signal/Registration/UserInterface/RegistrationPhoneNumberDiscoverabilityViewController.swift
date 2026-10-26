@@ -11,7 +11,7 @@ protocol RegistrationPhoneNumberDiscoverabilityPresenter: AnyObject {
     var presentedAsModal: Bool { get }
 }
 
-public struct RegistrationPhoneNumberDiscoverabilityState: Equatable {
+public struct RegistrationPhoneNumberDiscoverabilityState {
     let phoneNumber: String
     var phoneNumberDiscoverability: PhoneNumberDiscoverability
 }

@@ -6,26 +6,6 @@
 import Foundation
 public import LibSignalClient
 
-/// This is deprecated and should not be used.
-public struct EquatableReregisteringLocalIdentifiers: Equatable {
-    public let wrappedValue: ReregisteringLocalIdentifiers
-
-    public init(_ wrappedValue: ReregisteringLocalIdentifiers) {
-        self.wrappedValue = wrappedValue
-    }
-
-    public static func ==(lhs: Self, rhs: Self) -> Bool {
-        switch (lhs.wrappedValue, rhs.wrappedValue) {
-        case (.phoneNumberfull(let lhsPhoneNumber, let lhsAci), .phoneNumberfull(let rhsPhoneNumber, let rhsAci)):
-            return lhsPhoneNumber == rhsPhoneNumber && lhsAci == rhsAci
-        case (.phoneNumberless(let lhsAci), .phoneNumberless(let rhsAci)):
-            return lhsAci == rhsAci
-        default:
-            return false
-        }
-    }
-}
-
 public enum ReregisteringLocalIdentifiers: Codable {
     case phoneNumberfull(phoneNumber: String, aci: Aci?)
     case phoneNumberless(aci: Aci)

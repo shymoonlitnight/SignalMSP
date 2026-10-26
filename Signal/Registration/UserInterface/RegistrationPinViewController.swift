@@ -17,9 +17,9 @@ public enum RegistrationPinCharacterSet {
 /// A blob provided when confirming the PIN, which should be passed
 /// back in to the confirm step controller.
 /// Fields should not be inspected outside of this class.
-public struct RegistrationPinConfirmationBlob: Equatable {
+public struct RegistrationPinConfirmationBlob {
     fileprivate let characterSet: RegistrationPinCharacterSet
-    fileprivate let pinToConfirm: String
+    let pinToConfirm: String
 
 #if TESTABLE_BUILD
     public static func stub() -> Self {
@@ -28,15 +28,15 @@ public struct RegistrationPinConfirmationBlob: Equatable {
 #endif
 }
 
-public enum RegistrationPinValidationError: Equatable {
+public enum RegistrationPinValidationError {
     case wrongPin(wrongPin: String)
     case serverError
 }
 
 // MARK: - RegistrationPinState
 
-public struct RegistrationPinState: Equatable {
-    public enum Skippability: Equatable {
+public struct RegistrationPinState {
+    public enum Skippability {
         /// The user cannot skip PIN entry due to reglock.
         case unskippable
         /// The user can skip PIN entry for now but may require the PIN
@@ -53,7 +53,7 @@ public struct RegistrationPinState: Equatable {
         }
     }
 
-    public enum RegistrationPinOperation: Equatable {
+    public enum RegistrationPinOperation {
         case creatingNewPin
         case confirmingNewPin(RegistrationPinConfirmationBlob)
         case enteringExistingPin(
@@ -77,7 +77,7 @@ public struct RegistrationPinState: Equatable {
     let error: RegistrationPinValidationError?
     let contactSupportMode: ContactSupportActionSheet.EmailFilter.RegistrationPINMode
 
-    public enum ExitConfiguration: Equatable {
+    public enum ExitConfiguration {
         case noExitAllowed
         case exitReRegistration
         case exitChangeNumber

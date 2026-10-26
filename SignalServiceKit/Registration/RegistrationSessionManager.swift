@@ -36,7 +36,7 @@ public protocol RegistrationSessionManager {
 
 public enum Registration {
 
-    public enum CodeTransport: String, Equatable {
+    public enum CodeTransport: String {
         case sms
         case voice
     }

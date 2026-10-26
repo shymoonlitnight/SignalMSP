@@ -10,7 +10,7 @@ import SignalUI
 // MARK: -
 
 /// The two ways a user can get a Signal Login on the login selection screen.
-public enum RegistrationSignalLoginSelection: Equatable {
+public enum RegistrationSignalLoginSelection {
     case purchaseLogin
     case existingLogin
 }
@@ -25,7 +25,7 @@ protocol RegistrationSignalLoginSplashPresenter: AnyObject {
 
 // MARK: -
 
-public struct RegistrationSignalLoginSplashState: Equatable {
+public struct RegistrationSignalLoginSplashState {
     var formattedPrice: String
     let initialSelection: RegistrationSignalLoginSelection
 

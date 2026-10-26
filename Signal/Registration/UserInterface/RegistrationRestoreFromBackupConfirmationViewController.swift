@@ -14,8 +14,8 @@ protocol RegistrationRestoreFromBackupConfirmationPresenter: AnyObject {
     func cancelRestoreFromBackup()
 }
 
-public class RegistrationRestoreFromBackupConfirmationState: ObservableObject, Equatable {
-    public enum AvailableBackup: Equatable {
+public class RegistrationRestoreFromBackupConfirmationState: ObservableObject {
+    public enum AvailableBackup {
         case remote(Date?, UInt64?, RegistrationProvisioningMessage.BackupTier)
         case local(Date)
     }
@@ -23,13 +23,6 @@ public class RegistrationRestoreFromBackupConfirmationState: ObservableObject, E
     enum Mode {
         case manual
         case quickRestore
-    }
-
-    public static func ==(
-        lhs: RegistrationRestoreFromBackupConfirmationState,
-        rhs: RegistrationRestoreFromBackupConfirmationState,
-    ) -> Bool {
-        lhs.availableBackups == rhs.availableBackups
     }
 
     let mode: Mode

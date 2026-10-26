@@ -9,7 +9,7 @@ import SignalUI
 
 // MARK: - RegistrationProfileState
 
-public struct RegistrationProfileState: Equatable {
+public struct RegistrationProfileState {
     var discoverabilityState: RegistrationPhoneNumberDiscoverabilityState?
 }
 

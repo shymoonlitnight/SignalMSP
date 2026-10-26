@@ -6,7 +6,7 @@
 import Foundation
 public import SignalServiceKit
 
-public enum RegistrationStep: Equatable, CustomStringConvertible {
+public enum RegistrationStep: CustomStringConvertible {
 
     // MARK: - Opening Steps
 
@@ -65,7 +65,7 @@ public enum RegistrationStep: Equatable, CustomStringConvertible {
     // MARK: - Post-Registration
 
     /// The path taken to get to the restore options screen
-    public enum RestorePath: Equatable {
+    public enum RestorePath {
         public enum BackupTier {
             case free
             case paid
@@ -113,7 +113,7 @@ public enum RegistrationStep: Equatable, CustomStringConvertible {
 
     // MARK: - Non-ViewController steps
 
-    public enum ErrorSheet: Equatable {
+    public enum ErrorSheet {
         /// We received a session that indicates we won't be able to use it to
         /// request a code.
         case sessionCanNeverRequestVerificationCode
@@ -136,7 +136,7 @@ public enum RegistrationStep: Equatable, CustomStringConvertible {
         /// post-registration steps they were deregistered, likely by
         /// another device registering on the same number.
         /// The only path forward is to reset _everything_ and re-register.
-        case becameDeregistered(localIdentifiers: EquatableReregisteringLocalIdentifiers)
+        case becameDeregistered(localIdentifiers: ReregisteringLocalIdentifiers)
 
         /// A network error occurred. The user can probably fix this by
         /// checking their internet connection.

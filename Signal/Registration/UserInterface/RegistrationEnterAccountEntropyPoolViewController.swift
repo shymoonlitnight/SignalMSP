@@ -14,7 +14,7 @@ protocol RegistrationEnterAccountEntropyPoolPresenter: AnyObject {
     func forgotKeyAction()
 }
 
-public struct RegistrationEnterAccountEntropyPoolState: Equatable {
+public struct RegistrationEnterAccountEntropyPoolState {
     let canShowBackButton: Bool
     let canShowNoKeyHelpButton: Bool
 }

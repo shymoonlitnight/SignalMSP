@@ -7,8 +7,8 @@ import SafariServices
 import SignalServiceKit
 import SignalUI
 
-public struct RegistrationPinAttemptsExhaustedViewState: Equatable {
-    public enum Mode: Equatable {
+public struct RegistrationPinAttemptsExhaustedViewState {
+    public enum Mode {
         /// We've already registered and were attempting to restore backups from kbs
         /// but ran out of guesses; we can proceed without backups.
         case restoringBackup

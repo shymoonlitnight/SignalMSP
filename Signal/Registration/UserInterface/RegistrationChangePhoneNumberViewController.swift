@@ -52,13 +52,13 @@ class RegistrationChangePhoneNumberViewController: OWSTableViewController2 {
         updateTableContents()
 
         if let invalidNumberError = state.invalidE164Error {
-            showInvalidPhoneNumberAlertIfNecessary(for: invalidNumberError)
+            showInvalidPhoneNumberAlertIfNecessary(for: invalidNumberError.invalidE164)
         }
     }
 
-    private var previousInvalidNumber: RegistrationPhoneNumberViewState.ValidationError.InvalidE164?
+    private var previousInvalidNumber: E164?
 
-    private func showInvalidPhoneNumberAlertIfNecessary(for invalidNumber: RegistrationPhoneNumberViewState.ValidationError.InvalidE164) {
+    private func showInvalidPhoneNumberAlertIfNecessary(for invalidNumber: E164) {
         let shouldShowAlert = invalidNumber != previousInvalidNumber
         if shouldShowAlert {
             OWSActionSheets.showActionSheet(

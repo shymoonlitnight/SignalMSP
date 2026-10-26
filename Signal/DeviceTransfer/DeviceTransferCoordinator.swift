@@ -8,7 +8,7 @@ import SignalServiceKit
 
 /// DeviceTransferCoordinator manages high-level orchestration of the device transfer flow,
 /// using a TransferStatusViewModel passed to the UI that drives progress and success/cancel behavior.
-public class DeviceTransferCoordinator: Equatable {
+public class DeviceTransferCoordinator {
     private let logger = PrefixedLogger(prefix: "[DeviceTransfer][Incoming]")
 
     let transferStatusViewModel = TransferStatusViewModel()
@@ -196,9 +196,5 @@ public class DeviceTransferCoordinator: Equatable {
     public func stopAcceptingTransfers() async {
         await incomingDeviceTransferTask.stopAcceptingTransfersFromOldDevices()
         discoveredPeersListenerTask.take()?.cancel()
-    }
-
-    public static func ==(lhs: DeviceTransferCoordinator, rhs: DeviceTransferCoordinator) -> Bool {
-        lhs.restoreMethodToken == rhs.restoreMethodToken
     }
 }

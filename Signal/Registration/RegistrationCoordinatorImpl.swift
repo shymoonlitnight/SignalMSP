@@ -5046,7 +5046,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
         await deps.registrationWebSocketManager.releaseRestrictedWebSocket(isRegistered: false)
         inMemoryState.hasOpenedConnection = false
 
-        return .showErrorSheet(.becameDeregistered(localIdentifiers: EquatableReregisteringLocalIdentifiers(accountIdentity.localIdentifiers.asReregisteringLocalIdentifiers)))
+        return .showErrorSheet(.becameDeregistered(localIdentifiers: accountIdentity.localIdentifiers.asReregisteringLocalIdentifiers))
     }
 
     // MARK: - Account objects
