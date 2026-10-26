@@ -106,26 +106,26 @@ class BlockingAnnouncementOnlyView: ConversationBottomPanelView {
 // MARK: -
 
 class MessageUserSubsetSheet: OWSTableSheetViewController {
+
     private let addresses: [SignalServiceAddress]
-    private let forceDarkMode: Bool
     private let groupThread: TSGroupThread?
 
     init(addresses: [SignalServiceAddress], forceDarkMode: Bool, groupThread: TSGroupThread?) {
         owsAssertDebug(!addresses.isEmpty)
         self.addresses = addresses
-        self.forceDarkMode = forceDarkMode
         self.groupThread = groupThread
 
         super.init()
 
-        tableViewController.forceDarkMode = forceDarkMode
+        if forceDarkMode {
+            overrideUserInterfaceStyle = .dark
+        }
 
         tableViewController.defaultSeparatorInsetLeading = (
             OWSTableViewController2.cellHInnerMargin +
                 CGFloat(AvatarBuilder.smallAvatarSizePoints) +
                 ContactCellView.avatarTextHSpacing,
         )
-
         tableViewController.tableView.register(
             ContactTableViewCell.self,
             forCellReuseIdentifier: ContactTableViewCell.reuseIdentifier,
@@ -160,7 +160,6 @@ class MessageUserSubsetSheet: OWSTableSheetViewController {
                     cell.selectionStyle = .none
 
                     var configuration = ContactCellView.Configuration(address: address, localUserDisplayMode: .asLocalUser)
-                    configuration.forceDarkAppearance = self?.forceDarkMode ?? false
 
                     if
                         let groupThread = self?.groupThread,

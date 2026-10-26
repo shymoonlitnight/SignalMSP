@@ -323,13 +323,13 @@ public class OWSTableItem {
     }
 
     public class func configureCell(_ cell: UITableViewCell) {
-        cell.backgroundColor = Theme.backgroundColor
-        cell.selectedBackgroundView?.backgroundColor = Theme.tableCell2SelectedBackgroundColor
-        cell.multipleSelectionBackgroundView?.backgroundColor = Theme.tableCell2SelectedBackgroundColor
+        cell.backgroundColor = OWSTableViewController2.defaultCellBackgroundColor
+        cell.selectedBackgroundView?.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
+        cell.multipleSelectionBackgroundView?.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
 
-        cell.textLabel?.font = self.primaryLabelFont
-        cell.textLabel?.textColor = Theme.primaryTextColor
-        cell.detailTextLabel?.textColor = Theme.secondaryTextAndIconColor
+        cell.textLabel?.font = primaryLabelFont
+        cell.textLabel?.textColor = .Signal.label
+        cell.detailTextLabel?.textColor = .Signal.secondaryLabel
         cell.detailTextLabel?.font = OWSTableItem.accessoryLabelFont
     }
 
@@ -353,8 +353,8 @@ public extension OWSTableItem {
     static var iconSpacing: CGFloat { 16 }
     static var iconSize: CGFloat { 24 }
 
-    private static func accessoryGray() -> UIColor {
-        Theme.isDarkThemeEnabled ? .ows_gray25 : .ows_gray45
+    static var accessoryGray: UIColor {
+        UIColor(light: .ows_gray45, dark: .ows_gray25)
     }
 
     static func imageView(
@@ -364,7 +364,7 @@ public extension OWSTableItem {
     ) -> UIImageView {
         let iconImage = Theme.iconImage(icon)
         let iconView = imageView(forImage: iconImage)
-        iconView.tintColor = tintColor ?? Theme.primaryIconColor
+        iconView.tintColor = tintColor ?? .Signal.label
         iconView.autoSetDimensions(to: .square(iconSize))
         return iconView
     }
@@ -521,7 +521,7 @@ public extension OWSTableItem {
         if let textColor {
             nameLabel.textColor = textColor
         } else {
-            nameLabel.textColor = Theme.primaryTextColor
+            nameLabel.textColor = .Signal.label
         }
         nameLabel.font = OWSTableItem.primaryLabelFont
         nameLabel.adjustsFontForContentSizeCategory = true
@@ -556,7 +556,7 @@ public extension OWSTableItem {
             let subtitleLabel = UILabel()
             subtitleLabel.text = subtitle
             subtitleLabel.numberOfLines = 0
-            subtitleLabel.textColor = accessoryGray()
+            subtitleLabel.textColor = OWSTableItem.accessoryGray
             subtitleLabel.font = .dynamicTypeFootnoteClamped
 
             let labels = UIStackView(arrangedSubviews: [nameLabel, subtitleLabel])
@@ -609,7 +609,7 @@ public extension OWSTableItem {
         } else if let accessoryText {
             let accessoryLabel = UILabel()
             accessoryLabel.text = accessoryText
-            accessoryLabel.textColor = accessoryTextColor ?? accessoryGray()
+            accessoryLabel.textColor = accessoryTextColor ?? OWSTableItem.accessoryGray
             accessoryLabel.font = OWSTableItem.accessoryLabelFont
             accessoryLabel.adjustsFontForContentSizeCategory = true
 
@@ -672,7 +672,7 @@ public extension OWSTableItem {
         let iconWrapper = UIView.container()
         iconWrapper.addSubview(iconView)
         iconView.autoCenterInSuperview()
-        iconWrapper.backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray65 : .ows_gray02
+        iconWrapper.backgroundColor = UIColor(light: .ows_gray02, dark: .ows_gray65)
         iconWrapper.layer.cornerRadius = iconSize * 0.5
         iconWrapper.autoSetDimensions(to: CGSize(square: iconSize))
         iconWrapper.setCompressionResistanceHigh()
@@ -781,7 +781,7 @@ public extension OWSTableItem {
     /// - Returns: An ``OWSTableItem`` with the `textField` embedded.
     static func textFieldItem(
         _ textField: UITextField,
-        textColor: @escaping @autoclosure () -> UIColor? = Theme.primaryTextColor,
+        textColor: @escaping @autoclosure () -> UIColor? = .Signal.label,
     ) -> OWSTableItem {
         .init(customCellBlock: {
             if let textColor = textColor() {

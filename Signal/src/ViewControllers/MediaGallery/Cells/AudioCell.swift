@@ -116,7 +116,7 @@ class AudioCell: MediaTileListModeCell {
 
     private let audioMessageContainerView: UIView = {
         let view = UIView.container()
-        view.backgroundColor = UIColor(dynamicProvider: { _ in Theme.tableCell2PresentedBackgroundColor })
+        view.backgroundColor = .Signal.tertiaryBackground
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true

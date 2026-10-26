@@ -248,7 +248,7 @@ public class MoreSafetyTipsViewController: InteractiveSheetViewController, UIScr
 
     let contentScrollView = UIScrollView()
     override public var interactiveScrollViews: [UIScrollView] { [contentScrollView] }
-    override public var sheetBackgroundColor: UIColor { Theme.tableView2PresentedBackgroundColor }
+    override public var sheetBackgroundColor: UIColor { OWSTableViewController2.tableBackgroundColor }
 
     private enum Constants {
         static let stackSpacing: CGFloat = 12.0

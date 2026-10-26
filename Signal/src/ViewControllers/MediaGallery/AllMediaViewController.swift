@@ -51,8 +51,3 @@ extension AllMediaViewController: MediaPresentationContextProvider {
         return tileViewController.mediaPresentationContext(item: item, in: coordinateSpace)
     }
 }
-
-extension AllMediaViewController: OWSNavigationChildController {
-
-    var navbarBackgroundColorOverride: UIColor? { Theme.tableView2PresentedBackgroundColor }
-}

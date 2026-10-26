@@ -71,10 +71,10 @@ class SAELoadViewController: UIViewController, OWSNavigationChildController {
             self.navigationItem.rightBarButtonItem?.isEnabled = false
         }
 
-        self.view.backgroundColor = (
-            self.shouldMimicRecipientPicker
-                ? Theme.tableView2PresentedBackgroundColor
-                : Theme.backgroundColor,
+        view.backgroundColor = (
+            shouldMimicRecipientPicker
+                ? OWSTableViewController2.tableBackgroundColor
+                : .Signal.background,
         )
 
         let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -114,6 +114,9 @@ class SAELoadViewController: UIViewController, OWSNavigationChildController {
     var navbarBackgroundColorOverride: UIColor? {
         // The false case should be the default, but we can't access the
         // extension's default implementation here.
-        return self.shouldMimicRecipientPicker ? Theme.tableView2PresentedBackgroundColor : nil
+        if shouldMimicRecipientPicker {
+            return OWSTableViewController2.tableBackgroundColor
+        }
+        return nil
     }
 }

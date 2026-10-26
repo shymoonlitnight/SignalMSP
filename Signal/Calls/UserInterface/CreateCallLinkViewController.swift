@@ -3,11 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalRingRTC
 import SignalServiceKit
 import SignalUI
-import UIKit
 
 class CreateCallLinkViewController: InteractiveSheetViewController {
     private lazy var _navigationController = OWSNavigationController()
@@ -15,7 +13,7 @@ class CreateCallLinkViewController: InteractiveSheetViewController {
 
     override var interactiveScrollViews: [UIScrollView] { [self._callLinkViewController.tableView] }
 
-    override var sheetBackgroundColor: UIColor { Theme.tableView2PresentedBackgroundColor }
+    override var sheetBackgroundColor: UIColor { OWSTableViewController2.tableBackgroundColor }
 
     // MARK: -
 

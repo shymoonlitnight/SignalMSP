@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import UIKit
 
 public class SettingsHeaderButton: UIView {
@@ -93,13 +92,13 @@ public class SettingsHeaderButton: UIView {
         }
     }
 
-    public var buttonBackgroundColor: UIColor = Theme.tableCell2BackgroundColor {
+    public var buttonBackgroundColor = OWSTableViewController2.defaultCellBackgroundColor {
         didSet {
             updateButtonBackgroundColorTransformer()
         }
     }
 
-    public var selectedButtonBackgroundColor: UIColor = Theme.tableCell2SelectedBackgroundColor {
+    public var selectedButtonBackgroundColor = OWSTableViewController2.cellSelectedBackgroundColor {
         didSet {
             updateButtonBackgroundColorTransformer()
         }

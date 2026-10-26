@@ -60,13 +60,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     /// Alternatively, callers could wrap content using `OWSTableViewController2.buildHeaderFooterView(for:...)`
     open func bottomFooter() -> UIView? { nil }
 
-    public var forceDarkMode = false {
-        didSet {
-            guard isViewLoaded else { return }
-            applyTheme()
-        }
-    }
-
     /// Whether or not this table view should avoid being hidden behind the
     /// keyboard.
     public var shouldAvoidKeyboard = false {
@@ -112,9 +105,12 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.tableFooterView = UIView()
         tableView.estimatedRowHeight = defaultCellHeight
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.sectionIndexColor = .Signal.label
+        tableView.separatorColor = .clear
+        tableView.separatorInset = .zero
+        tableView.separatorStyle = .none
         view.addSubview(tableView)
 
         // Pin top edge of tableView.
@@ -201,18 +197,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
-    /// Applies theme and reloads table contents.
-    ///
-    /// Does not reload header/footer views. Subclasses that use header/footer
-    /// views that need to update in response to theme changes should override
-    /// this method to do so manually.
-    override open func themeDidChange() {
-        super.themeDidChange()
-
-        applyTheme()
-        applyContents()
-    }
-
     public enum BackgroundStyle {
         case `default`
         case clear
@@ -225,32 +209,17 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     /// point will remove the system dynamic background.
     public var backgroundStyle: BackgroundStyle = .default
 
-    public var tableBackgroundColor: UIColor {
-        AssertIsOnMainThread()
-
-        return Self.tableBackgroundColor(
-            isUsingPresentedStyle: isUsingPresentedStyle,
-            forceDarkMode: forceDarkMode,
-        )
-    }
-
     private func applyTheme() {
         switch backgroundStyle {
         case .default:
-            tableView.backgroundColor = self.tableBackgroundColor
+            tableView.backgroundColor = Self.tableBackgroundColor
         case .clear:
             tableView.backgroundColor = nil
         case .none:
             break
         }
 
-        tableView.sectionIndexColor = forceDarkMode ? Theme.darkThemePrimaryColor : Theme.primaryTextColor
-
         updateNavbarStyling()
-
-        tableView.separatorColor = .clear
-        tableView.separatorInset = .zero
-        tableView.separatorStyle = .none
     }
 
     private var bottomEdgeConstraints: [NSLayoutConstraint]?
@@ -310,23 +279,9 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         return tableView.contentOffset.y <= (defaultSpacingBetweenSections ?? 0) - tableView.adjustedContentInset.top
     }
 
-    open var preferredNavigationBarStyle: OWSNavigationBarStyle {
-        return usesSolidNavbarStyle ? .solid : .blur
-    }
+    open var preferredNavigationBarStyle: OWSNavigationBarStyle { usesSolidNavbarStyle ? .solid : .blur }
 
-    open var navbarBackgroundColorOverride: UIColor? {
-        if usesSolidNavbarStyle {
-            tableBackgroundColor
-        } else if forceDarkMode {
-            Theme.darkThemeNavbarBackgroundColor
-        } else {
-            nil
-        }
-    }
-
-    open var navbarTintColorOverride: UIColor? {
-        forceDarkMode ? Theme.darkThemePrimaryColor : nil
-    }
+    open var navbarBackgroundColorOverride: UIColor? { usesSolidNavbarStyle ? Self.tableBackgroundColor : nil }
 
     // MARK: -
 
@@ -336,8 +291,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         super.viewWillAppear(animated)
 
         applyTheme()
-
-        tableView.tableFooterView = UIView()
 
         hasViewAppeared = true
     }
@@ -349,8 +302,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     }
 
     private func section(for index: Int) -> OWSTableSection? {
-        AssertIsOnMainThread()
-
         guard let section = contents.sections[safe: index] else {
             owsFailDebug("Missing section: \(index)")
             return nil
@@ -359,8 +310,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     }
 
     private func item(for indexPath: IndexPath) -> OWSTableItem? {
-        AssertIsOnMainThread()
-
         guard let section = contents.sections[safe: indexPath.section] else {
             owsFailDebug("Missing section: \(indexPath.section)")
             return nil
@@ -382,8 +331,6 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     }
 
     private func applyContents(shouldReload: Bool = true) {
-        AssertIsOnMainThread()
-
         updateTableMargins()
 
         if let title = contents.title?.nilIfEmpty {
@@ -513,11 +460,11 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         let cellBackgroundColor: UIColor
         let cellSelectedBackgroundColor: UIColor
         if let customCell = cell as? CustomBackgroundColorCell {
-            cellBackgroundColor = customCell.customBackgroundColor(forceDarkMode: forceDarkMode)
-            cellSelectedBackgroundColor = customCell.customSelectedBackgroundColor(forceDarkMode: forceDarkMode)
+            cellBackgroundColor = customCell.customBackgroundColor
+            cellSelectedBackgroundColor = customCell.customSelectedBackgroundColor
         } else {
             cellBackgroundColor = self.cellBackgroundColor
-            cellSelectedBackgroundColor = self.cellSelectedBackgroundColor
+            cellSelectedBackgroundColor = Self.cellSelectedBackgroundColor
         }
 
         cell.backgroundView = buildCellBackgroundView(
@@ -575,7 +522,7 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
                     separatorLayer: separatorLayer,
                     view: view,
                     sectionSeparatorInsetLeading: section.separatorInsetLeading,
-                    separatorColor: self.separatorColor,
+                    separatorColor: Self.separatorColor,
                 )
             }
         }
@@ -608,11 +555,7 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
 
     /// Approximate cell corner rounding. Now that we use native inset grouped
     /// tables, this is only an approximation and its use should be avoided.
-    public static let cellRounding: CGFloat = if #available(iOS 26, *) {
-        22
-    } else {
-        10
-    }
+    public static let cellRounding: CGFloat = if #available(iOS 26, *) { 22 } else { 10 }
 
     public static var maximumInnerWidth: CGFloat { 496 }
 
@@ -642,19 +585,13 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
     }
 
     // The distance from the cell border to the cell content.
-    public static var cellVInnerMargin: CGFloat {
-        13
-    }
+    public static var cellVInnerMargin: CGFloat { 13 }
 
-    private var automaticDimension: CGFloat {
-        UITableView.automaticDimension
-    }
+    private var automaticDimension: CGFloat { UITableView.automaticDimension }
 
     public static var useNativeSectionTitleAppearance: Bool { if #available(iOS 26, *) { true } else { false } }
 
-    public static var defaultHeaderFont: UIFont {
-        .dynamicTypeHeadlineClamped
-    }
+    public static var defaultHeaderFont: UIFont { .dynamicTypeHeadlineClamped }
 
     public static var defaultHeaderTextColor: UIColor {
         useNativeSectionTitleAppearance ? .Signal.secondaryLabel : .Signal.label
@@ -674,9 +611,7 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
 
     public static var defaultFooterFont: UIFont { .dynamicTypeFootnoteClamped }
 
-    public static var defaultFooterTextColor: UIColor {
-        UIColor.Signal.secondaryLabel
-    }
+    public static var defaultFooterTextColor: UIColor { .Signal.secondaryLabel }
 
     public static var defaultFooterTextStyle: BonMot.StringStyle {
         BonMot.StringStyle([
@@ -732,7 +667,7 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         let textView = LinkingTextView()
         switch backgroundStyle {
         case .default:
-            textView.backgroundColor = self.tableBackgroundColor
+            textView.backgroundColor = Self.tableBackgroundColor
         case .clear:
             textView.backgroundColor = .clear
         case .none:
@@ -1041,71 +976,37 @@ open class OWSTableViewController2: OWSViewController, OWSNavigationChildControl
         delegate?.tableViewWillBeginDragging(tableView)
     }
 
-    // MARK: - Theme
+    // MARK: - Colors
 
-    public static func tableBackgroundColor(
-        isUsingPresentedStyle: Bool,
-        forceDarkMode: Bool = false,
-    ) -> UIColor {
-        AssertIsOnMainThread()
-
-        if isUsingPresentedStyle {
-            return forceDarkMode
-                ? Theme.darkThemeTableView2PresentedBackgroundColor
-                : Theme.tableView2PresentedBackgroundColor
-        } else {
-            return forceDarkMode
-                ? Theme.darkThemeTableView2BackgroundColor
-                : Theme.tableView2BackgroundColor
-        }
+    public static var tableBackgroundColor: UIColor {
+        .Signal.groupedBackground
     }
 
     public var cellBackgroundColor: UIColor {
-        overrideCellBackgroundColor ??
-            Self.cellBackgroundColor(
-                isUsingPresentedStyle: isUsingPresentedStyle,
-                forceDarkMode: forceDarkMode,
-            )
-    }
-
-    public static func cellBackgroundColor(
-        isUsingPresentedStyle: Bool,
-        forceDarkMode: Bool = false,
-    ) -> UIColor {
-        if isUsingPresentedStyle {
-            return forceDarkMode
-                ? Theme.darkThemeTableCell2PresentedBackgroundColor
-                : Theme.tableCell2PresentedBackgroundColor
-        } else {
-            return forceDarkMode
-                ? Theme.darkThemeTableCell2BackgroundColor
-                : Theme.tableCell2BackgroundColor
+        if let overrideCellBackgroundColor {
+            return overrideCellBackgroundColor
         }
+        return Self.defaultCellBackgroundColor
     }
 
-    public var cellSelectedBackgroundColor: UIColor {
-        Self.cellSelectedBackgroundColor(forceDarkMode: forceDarkMode)
+    public static var defaultCellBackgroundColor: UIColor {
+        UIColor.Signal.secondaryGroupedBackground
     }
 
-    public static func cellSelectedBackgroundColor(forceDarkMode: Bool = false) -> UIColor {
-        if forceDarkMode {
-            return Theme.tableCell2SelectedBackgroundColor.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
-        }
-        return Theme.tableCell2SelectedBackgroundColor
+    public static var cellSelectedBackgroundColor: UIColor {
+        UIColor(
+            light: UIColor(rgbHex: 0xD4D4D6),
+            lightHighContrast: UIColor(rgbHex: 0xC6C6CA),
+            dark: UIColor(rgbHex: 0x3A3A3D),
+            darkHighContrast: UIColor(rgbHex: 0x525257),
+        )
     }
 
-    public var separatorColor: UIColor {
-        if isUsingPresentedStyle {
-            return forceDarkMode
-                ? Theme.darkThemeTableView2PresentedSeparatorColor
-                : Theme.tableView2PresentedSeparatorColor
-        } else {
-            return forceDarkMode
-                ? Theme.darkThemeTableView2SeparatorColor
-                : Theme.tableView2SeparatorColor
-        }
+    public static var separatorColor: UIColor {
+        .Signal.opaqueSeparator
     }
 
+    @available(iOS, deprecated: 26, message: "No longer needed")
     public static func removeBackButtonText(viewController: UIViewController) {
         if #available(iOS 26, *) { return }
         // We never want to show titles on back buttons, so we replace it with

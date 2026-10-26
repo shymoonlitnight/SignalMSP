@@ -27,7 +27,6 @@ class StoryInfoSheet: OWSTableViewController2, DatabaseChangeDelegate, UIAdaptiv
         DependenciesBridge.shared.databaseChangeObserver.appendDatabaseChangeDelegate(self)
 
         overrideUserInterfaceStyle = .dark
-        forceDarkMode = true
 
         modalPresentationStyle = .pageSheet
         presentationController?.delegate = self

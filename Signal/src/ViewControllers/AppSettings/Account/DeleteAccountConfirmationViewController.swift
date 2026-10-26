@@ -318,7 +318,7 @@ class DeleteAccountConfirmationViewController: OWSTableViewController2 {
     private func deleteAccount() {
         Task {
             let overlayView = UIView()
-            overlayView.backgroundColor = self.tableBackgroundColor.withAlphaComponent(0.9)
+            overlayView.backgroundColor = OWSTableViewController2.tableBackgroundColor.withAlphaComponent(0.9)
             overlayView.alpha = 0
             self.navigationController?.view.addSubview(overlayView)
             overlayView.autoPinEdgesToSuperviewEdges()

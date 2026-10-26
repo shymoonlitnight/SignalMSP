@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
 import SignalUI
 
@@ -52,7 +51,6 @@ class NameEditorViewController: OWSTableViewController2 {
         self.isPresentedInSheet = true
         let navigationController = OWSNavigationController(rootViewController: self)
         if forceDarkMode {
-            self.forceDarkMode = true
             navigationController.overrideUserInterfaceStyle = .dark
         }
         viewController.presentFormSheet(navigationController, animated: true)

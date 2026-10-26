@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SignalServiceKit
 import SignalUI
 public import UIKit
@@ -436,7 +435,6 @@ struct ConversationHeaderBuilder {
         }
         button.isEnabled = isEnabled
         button.buttonBackgroundColor = delegate.tableViewController.cellBackgroundColor
-        button.selectedButtonBackgroundColor = delegate.tableViewController.cellSelectedBackgroundColor
 
         if maxIconButtonWidth < button.minimumWidth {
             maxIconButtonWidth = button.minimumWidth
@@ -450,7 +448,6 @@ struct ConversationHeaderBuilder {
         button.isEnabled = isEnabled
         button.menu = menu
         button.buttonBackgroundColor = delegate.tableViewController.cellBackgroundColor
-        button.selectedButtonBackgroundColor = delegate.tableViewController.cellSelectedBackgroundColor
 
         if maxIconButtonWidth < button.minimumWidth {
             maxIconButtonWidth = button.minimumWidth
@@ -713,13 +710,11 @@ struct ConversationHeaderBuilder {
         header.alignment = .center
         header.layoutMargins = .init(top: 0, left: 0, bottom: 24, right: 0)
         header.isLayoutMarginsRelativeArrangement = true
-
         header.isUserInteractionEnabled = true
         header.accessibilityIdentifier = UIView.accessibilityIdentifier(in: delegate, name: "mainSectionHeader")
         if !options.contains(.noBackground) {
-            header.addBackgroundView(withBackgroundColor: delegate.tableViewController.tableBackgroundColor)
+            header.addBackgroundView(withBackgroundColor: OWSTableViewController2.tableBackgroundColor)
         }
-
         return header
     }
 }

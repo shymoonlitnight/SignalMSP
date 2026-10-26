@@ -189,8 +189,6 @@ class UsernameLinkPresentQRCodeViewController: OWSTableViewController2 {
     ) -> SettingsHeaderButton {
 
         let button = SettingsHeaderButton(title: title.capitalized, icon: icon)
-        button.buttonBackgroundColor = Self.cellBackgroundColor(isUsingPresentedStyle: true)
-        button.selectedButtonBackgroundColor = Self.cellSelectedBackgroundColor()
         button.addActionHandler({ [weak button] in
             guard let button else { return }
             block(button)

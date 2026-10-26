@@ -241,14 +241,11 @@ class UsernameSelectionViewController: OWSViewController, OWSNavigationChildCont
 
     // MARK: View lifecycle
 
-    var navbarBackgroundColorOverride: UIColor? {
-        Theme.tableView2PresentedBackgroundColor
-    }
+    var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     override func themeDidChange() {
         super.themeDidChange()
 
-        view.backgroundColor = Theme.tableView2PresentedBackgroundColor
         owsNavigationController?.updateNavbarAppearance()
 
         headerView.setColorsForCurrentTheme()
@@ -273,6 +270,8 @@ class UsernameSelectionViewController: OWSViewController, OWSNavigationChildCont
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        view.backgroundColor = .Signal.groupedBackground
 
         setupNavBar()
         setupViewConstraints()

@@ -5,7 +5,7 @@
 
 import SignalServiceKit
 
-class ContactReminderTableViewCell: UITableViewCell {
+class ContactReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
 
     private let learnMoreAction: () -> Void
     private let dismissAction: () -> Void
@@ -101,14 +101,14 @@ class ContactReminderTableViewCell: UITableViewCell {
     private func didTapDismiss() {
         dismissAction()
     }
-}
 
-extension ContactReminderTableViewCell: CustomBackgroundColorCell {
-    func customBackgroundColor(forceDarkMode: Bool) -> UIColor {
-        (forceDarkMode || Theme.isDarkThemeEnabled) ? .ows_gray80 : .ows_gray12
+    // MARK: - CustomBackgroundColorCell
+
+    var customBackgroundColor: UIColor {
+        UIColor(light: .ows_gray12, dark: .ows_gray80)
     }
 
-    func customSelectedBackgroundColor(forceDarkMode: Bool) -> UIColor {
-        customBackgroundColor(forceDarkMode: forceDarkMode)
+    var customSelectedBackgroundColor: UIColor {
+        customBackgroundColor
     }
 }

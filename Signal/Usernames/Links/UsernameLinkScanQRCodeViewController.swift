@@ -15,6 +15,7 @@ protocol UsernameLinkScanDelegate: AnyObject {
 
 class UsernameLinkScanQRCodeViewController: OWSViewController, OWSNavigationChildController {
     var preferredNavigationBarStyle: OWSNavigationBarStyle { .blur }
+    var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         .portrait
@@ -61,12 +62,6 @@ class UsernameLinkScanQRCodeViewController: OWSViewController, OWSNavigationChil
     }()
 
     // MARK: - Lifecycle
-
-    var navbarBackgroundColorOverride: UIColor? {
-        return OWSTableViewController2.tableBackgroundColor(
-            isUsingPresentedStyle: true,
-        )
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()

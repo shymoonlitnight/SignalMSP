@@ -141,13 +141,9 @@ class ProfileSettingsViewController: OWSTableViewController2 {
         updateTableContents()
     }
 
-    override var preferredNavigationBarStyle: OWSNavigationBarStyle {
-        return .blur
-    }
+    override var preferredNavigationBarStyle: OWSNavigationBarStyle { .blur }
 
-    override var navbarBackgroundColorOverride: UIColor? {
-        return tableBackgroundColor
-    }
+    override var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     private var fullName: String? {
         let givenName = profileValues.givenName.currentValue

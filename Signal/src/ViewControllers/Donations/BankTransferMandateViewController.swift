@@ -9,7 +9,7 @@ import SignalUI
 @MainActor
 class BankTransferMandateViewController: OWSTableViewController2, UITextViewDelegate {
     override var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }
-    override var navbarBackgroundColorOverride: UIColor? { self.tableBackgroundColor }
+    override var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     private enum State {
         case loading

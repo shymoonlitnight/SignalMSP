@@ -109,7 +109,7 @@ class MyStoryCell: UITableViewCell {
     override func updateConfiguration(using state: UICellConfigurationState) {
         var configuration = UIBackgroundConfiguration.clear()
         if state.isSelected || state.isHighlighted {
-            configuration.backgroundColor = Theme.tableCell2SelectedBackgroundColor
+            configuration.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
             if useSidebarAppearance {
                 configuration.cornerRadius = 24
             }

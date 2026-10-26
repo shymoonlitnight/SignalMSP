@@ -709,7 +709,7 @@ open class ConversationPickerViewController: OWSTableViewController2 {
             let secondMediaPreview = makeMediaPreview(secondAttachment)
         {
             let mediaPreviewBorder = UIView()
-            mediaPreviewBorder.backgroundColor = self.tableBackgroundColor
+            mediaPreviewBorder.backgroundColor = OWSTableViewController2.tableBackgroundColor
             mediaPreviewBorder.layer.masksToBounds = true
             mediaPreviewBorder.layer.cornerRadius = mediaPreview.layer.cornerRadius
             container.insertSubview(mediaPreviewBorder, belowSubview: mediaPreview)

@@ -95,7 +95,7 @@ open class ContactPickerViewController: OWSViewController, OWSNavigationChildCon
 
     public var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }
 
-    public var navbarBackgroundColorOverride: UIColor? { tableViewController.tableBackgroundColor }
+    public var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     // MARK: Contacts
 

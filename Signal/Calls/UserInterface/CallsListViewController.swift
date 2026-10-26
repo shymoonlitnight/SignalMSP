@@ -2578,7 +2578,7 @@ private extension CallsListViewController {
         override func updateConfiguration(using state: UICellConfigurationState) {
             var configuration = UIBackgroundConfiguration.clear()
             if state.isSelected || state.isHighlighted {
-                configuration.backgroundColor = Theme.tableCell2SelectedBackgroundColor
+                configuration.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
                 if useSidebarAppearance {
                     configuration.cornerRadius = 36
                 }
@@ -2712,7 +2712,7 @@ private extension CallsListViewController {
         override func updateConfiguration(using state: UICellConfigurationState) {
             var configuration = UIBackgroundConfiguration.clear()
             if state.isSelected || state.isHighlighted {
-                configuration.backgroundColor = Theme.tableCell2SelectedBackgroundColor
+                configuration.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
                 if useSidebarAppearance {
                     configuration.cornerRadius = 36
                 }

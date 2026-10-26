@@ -230,7 +230,7 @@ class LinkOrSyncPickerSheet: StackSheetViewController {
         button.configuration?.cornerStyle = .large
         button.configurationUpdateHandler = { button in
             button.configuration?.baseBackgroundColor = button.isHighlighted
-                ? Theme.tableCell2SelectedBackgroundColor
+                ? OWSTableViewController2.cellSelectedBackgroundColor
                 : UIColor.Signal.secondaryGroupedBackground
         }
         button.addSubview(stackView)

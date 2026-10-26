@@ -6,7 +6,6 @@
 import LibSignalClient
 import SignalServiceKit
 import SignalUI
-import UIKit
 
 // MARK: - CallLinkApprovalRequestDetailsSheet
 
@@ -35,10 +34,10 @@ class CallLinkApprovalRequestDetailsSheet: OWSTableSheetViewController {
     ) {
         self.approvalRequest = approvalRequest
         self.approvalViewModel = approvalViewModel
+
         super.init()
 
-        self.overrideUserInterfaceStyle = .dark
-        self.tableViewController.forceDarkMode = true
+        overrideUserInterfaceStyle = .dark
     }
 
     private weak var fromViewController: UIViewController?

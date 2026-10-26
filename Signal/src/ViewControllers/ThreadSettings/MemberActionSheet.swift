@@ -46,7 +46,6 @@ struct ProfileSheetSheetCoordinator {
         )
         if viewController.overrideUserInterfaceStyle == .dark {
             sheet.overrideUserInterfaceStyle = .dark
-            sheet.tableViewController.forceDarkMode = true
         }
         sheet.present(from: viewController)
     }

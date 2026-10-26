@@ -38,7 +38,7 @@ class DonationPaymentDetailsViewController: OWSTableViewController2, UITextViewD
     var threeDSecureAuthenticationFuture: Future<String>?
 
     override var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }
-    override var navbarBackgroundColorOverride: UIColor? { tableBackgroundColor }
+    override var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     init(
         donationAmount: FiatMoney,

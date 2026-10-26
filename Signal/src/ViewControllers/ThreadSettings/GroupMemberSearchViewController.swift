@@ -104,7 +104,7 @@ class GroupMemberSearchViewController: OWSViewController {
 
         cell.backgroundColor = UIColor.Signal.secondaryGroupedBackground
         let selectedBackgroundView = UIView()
-        selectedBackgroundView.backgroundColor = Theme.tableCell2SelectedBackgroundColor
+        selectedBackgroundView.backgroundColor = OWSTableViewController2.cellSelectedBackgroundColor
         cell.selectedBackgroundView = selectedBackgroundView
 
         return cell

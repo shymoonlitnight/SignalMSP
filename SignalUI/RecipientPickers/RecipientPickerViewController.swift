@@ -123,7 +123,7 @@ public class RecipientPickerViewController: OWSViewController, OWSNavigationChil
 
     public var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }
 
-    public var navbarBackgroundColorOverride: UIColor? { tableViewController.tableBackgroundColor }
+    public var navbarBackgroundColorOverride: UIColor? { OWSTableViewController2.tableBackgroundColor }
 
     // MARK: Search
 
@@ -679,7 +679,7 @@ extension RecipientPickerViewController {
         stackView.layoutMargins = .init(margin: 20)
 
         let result = UIView()
-        result.backgroundColor = tableViewController.tableBackgroundColor
+        result.backgroundColor = OWSTableViewController2.tableBackgroundColor
         result.addSubview(stackView)
         stackView.autoPinWidthToSuperview()
         stackView.autoVCenterInSuperview()
@@ -1472,11 +1472,11 @@ extension RecipientPickerViewController {
 
 class ContactAccessLimitedReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
 
-    func customBackgroundColor(forceDarkMode: Bool) -> UIColor {
-        Theme.isDarkThemeEnabled ? .ows_gray80 : .ows_gray05
+    var customBackgroundColor: UIColor {
+        UIColor(light: .ows_gray05, dark: .ows_gray80)
     }
 
-    func customSelectedBackgroundColor(forceDarkMode: Bool) -> UIColor {
-        customBackgroundColor(forceDarkMode: forceDarkMode)
+    var customSelectedBackgroundColor: UIColor {
+        customBackgroundColor
     }
 }
