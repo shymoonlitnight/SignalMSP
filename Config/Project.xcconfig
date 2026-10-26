@@ -8,5 +8,20 @@ GCC_TREAT_WARNINGS_AS_ERRORS = YES
 MTL_TREAT_WARNINGS_AS_ERRORS = YES
 OTHER_SWIFT_FLAGS = $(inherited) -warnings-as-errors
 
+// Signing and app identity. User.xcconfig can override these to build with
+// another team (see User.xcconfig.sample).
+DEVELOPMENT_TEAM = U68MSDN6DR
+SIGNAL_BUNDLEID_PREFIX = org.whispersystems
+SIGNAL_ORG_BUNDLEID_PREFIX = org.signal
+SIGNAL_MERCHANTID = org.signalfoundation
+SIGNAL_APP_NAME = $(TARGET_NAME)
+
+// Entitlements for App Store Release builds. Other configurations use the
+// plain .entitlements files, which leave out the entitlements Apple grants
+// only to Signal (such as com.apple.developer.pushkit.unrestricted-voip).
+SIGNAL_APPSTORE_ENTITLEMENTS = Signal/Signal-AppStore.entitlements
+SIGNAL_NSE_APPSTORE_ENTITLEMENTS = SignalNSE/SignalNSE-AppStore.entitlements
+SIGNAL_SHARE_EXTENSION_APPSTORE_ENTITLEMENTS = SignalShareExtension/SignalShareExtension-AppStore.entitlements
+
 // User-specific overrides
 #include? "User.xcconfig"
