@@ -9,3 +9,18 @@ OTHER_SWIFT_FLAGS = $(inherited) -no-warnings-as-errors
 // the relevant line in the Podfile to set RINGRTC_USE_FILE_BASED_CAMERA, and
 // put a video file at the below location
 // MAYBE_INPUT_VIDEO_PATH = Signal/test/Assets/input_video.mp4
+
+// To build with your own Apple Developer team, uncomment and fill in these.
+// When unset, the values in Project.xcconfig apply.
+// DEVELOPMENT_TEAM = ABCDE12345                        // your team ID
+// SIGNAL_BUNDLEID_PREFIX = org.example                 // app, extensions, App Group
+// SIGNAL_ORG_BUNDLEID_PREFIX = $(SIGNAL_BUNDLEID_PREFIX) // frameworks and test bundles
+// SIGNAL_MERCHANTID = org.example                      // Apple Pay merchant ID suffix
+// SIGNAL_APP_NAME = Signal                             // home-screen name
+//
+// App Store Release builds use entitlements Apple grants only to Signal, so
+// another team can't get a provisioning profile for them. Use the plain
+// entitlements (the ones Debug builds use), or files of your own:
+// SIGNAL_APPSTORE_ENTITLEMENTS = Signal/Signal.entitlements
+// SIGNAL_NSE_APPSTORE_ENTITLEMENTS = SignalNSE/SignalNSE.entitlements
+// SIGNAL_SHARE_EXTENSION_APPSTORE_ENTITLEMENTS = SignalShareExtension/SignalShareExtension.entitlements
