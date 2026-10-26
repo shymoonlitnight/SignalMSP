@@ -2590,86 +2590,53 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             // credential candidates to check, enter it now.
             return .phoneNumberEntry(phoneNumberEntryState())
         }
-        return await makeSVR2AuthCredentialCheckRequest(
-            svr2AuthCredentialCandidates: svr2AuthCredentialCandidates,
-            e164: e164,
-            failureCount: 0,
+        // Regardless of whether this succeeds or fails, we want to move on to the
+        // next step, so wipe the candidates so we don't re-check them.
+        self.inMemoryState.svr2AuthCredentialCandidates = nil
+        self.inMemoryState.svrAuthCredential = try? await Retry.performWithBackoff(
+            maxAttempts: Constants.networkErrorRetries + 1,
+            isRetryable: { $0.isNetworkFailureOrTimeout },
+            block: {
+                return try await makeSVR2AuthCredentialCheckRequest(
+                    svr2AuthCredentialCandidates: svr2AuthCredentialCandidates,
+                    e164: e164,
+                )
+            },
         )
+        return await nextStep()
     }
 
     @MainActor
     private func makeSVR2AuthCredentialCheckRequest(
         svr2AuthCredentialCandidates: [SVR2AuthCredential],
         e164: E164,
-        failureCount: Int,
-    ) async -> RegistrationStep {
-        let response = await Service.makeSVR2AuthCheckRequest(
+    ) async throws -> SVR2AuthCredential? {
+        let response = try await Service.makeSVR2AuthCheckRequest(
             e164: e164,
             candidateCredentials: svr2AuthCredentialCandidates,
             networkManager: deps.networkManager,
             logger: logger,
         )
-        return await self.handleSVR2AuthCredentialCheckResponse(
-            response,
-            svr2AuthCredentialCandidates: svr2AuthCredentialCandidates,
-            e164: e164,
-            failureCount: failureCount,
-        )
-    }
-
-    @MainActor
-    private func handleSVR2AuthCredentialCheckResponse(
-        _ response: Service.SVR2AuthCheckResponse,
-        svr2AuthCredentialCandidates: [SVR2AuthCredential],
-        e164: E164,
-        failureCount: Int,
-    ) async -> RegistrationStep {
-        let maxAutomaticRetries = Constants.networkErrorRetries
-
         var matchedCredential: SVR2AuthCredential?
-        var credentialsToDelete = [SVR2AuthCredential]()
-        switch response {
-        case .networkError:
-            if failureCount < maxAutomaticRetries {
-                let minimumBackoff = OWSOperation.retryIntervalForExponentialBackoff(failureCount: failureCount + 1)
-                try? await Task.sleep(nanoseconds: minimumBackoff.clampedNanoseconds)
-                return await makeSVR2AuthCredentialCheckRequest(
-                    svr2AuthCredentialCandidates: svr2AuthCredentialCandidates,
-                    e164: e164,
-                    failureCount: failureCount + 1,
-                )
-            }
-            self.inMemoryState.svr2AuthCredentialCandidates = nil
-            return await nextStep()
-        case .genericError:
-            // If we failed to verify, wipe the candidates so we don't try again
-            // and keep going.
-            self.inMemoryState.svr2AuthCredentialCandidates = nil
-            return await nextStep()
-        case .success(let response):
-            for candidate in svr2AuthCredentialCandidates {
-                let result: RegistrationServiceResponses.SVR2AuthCheckResponse.Result? = response.result(for: candidate)
-                switch result {
-                case .match:
-                    matchedCredential = candidate
-                case .notMatch:
-                    // Still valid, keep it around but don't use it.
-                    continue
-                case .invalid, .none:
-                    credentialsToDelete.append(candidate)
-                }
+        var invalidCredentials = [SVR2AuthCredential]()
+        for candidate in svr2AuthCredentialCandidates {
+            let result = response.result(for: candidate)
+            switch result {
+            case .match:
+                matchedCredential = candidate
+            case .notMatch:
+                // Still valid, keep it around but don't use it.
+                continue
+            case .invalid, .none:
+                invalidCredentials.append(candidate)
             }
         }
-        // Wipe the candidates so we don't re-check them.
-        self.inMemoryState.svr2AuthCredentialCandidates = nil
-        // If this is nil, the next time we call `nextStepForSVRAuthCredentialPath`
-        // will just return an empty promise.
-
-        self.inMemoryState.svrAuthCredential = matchedCredential
-        self.db.write { tx in
-            self.deps.svrAuthCredentialManager.deleteInvalidCredentials(credentialsToDelete, tx)
+        if !invalidCredentials.isEmpty {
+            self.db.write { tx in
+                self.deps.svrAuthCredentialManager.deleteInvalidCredentials(invalidCredentials, tx)
+            }
         }
-        return await nextStep()
+        return matchedCredential
     }
 
     // MARK: - RegistrationSession Pathway
