@@ -16,6 +16,7 @@ final class AppIconSettingsTableViewController: OWSViewController, UITextViewDel
 
     private static let appIcons: [AppIcon] = [
         .default,
+        .signal,
         .white,
         .color,
         .night,

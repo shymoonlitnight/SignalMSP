@@ -16,7 +16,9 @@ extension UIApplication {
 }
 
 enum AppIcon: String {
-    case `default` = "AppIcon"
+    case `default` = "AppIcon-MSP"
+    /// Upstream Signal's default icon, offered as an alternate.
+    case signal = "AppIcon"
     case white = "AppIcon-white"
     case color = "AppIcon-color"
     case night = "AppIcon-dark"
@@ -48,7 +50,8 @@ enum AppIcon: String {
 
     var previewImageResource: ImageResource {
         switch self {
-        case .default: ImageResource.AppIconPreview.default
+        case .default: ImageResource.AppIconPreview.msp
+        case .signal: ImageResource.AppIconPreview.default
         case .white: ImageResource.AppIconPreview.white
         case .color: ImageResource.AppIconPreview.color
         case .night: ImageResource.AppIconPreview.dark
