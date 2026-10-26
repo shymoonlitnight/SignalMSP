@@ -969,10 +969,6 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
     // Shortcuts for the commonly used ones.
     private var db: any DB { deps.db }
 
-    private func isAutoRetryable(_ error: any Error) -> Bool {
-        return autoRetryableAfter(error) != nil
-    }
-
     private func autoRetryableAfter(_ error: any Error) -> TimeInterval? {
         if
             error.httpStatusCode == 429,
@@ -2199,16 +2195,19 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
 
         // Attempt to register right away with the password.
         do {
-            return try await Retry.performWithBackoff(
+            return try await Retry.performWithMinimumBackoff(
                 maxAttempts: Constants.networkErrorRetries + 1,
-                preferredBackoffBlock: {
-                    return autoRetryableAfter($0)
-                },
-                isRetryable: {
-                    return $0.isNetworkFailureOrTimeout || isAutoRetryable($0)
-                },
                 block: {
                     return try await registerForRegRecoveryPwPath(regRecoveryPw: regRecoveryPw, e164: e164)
+                },
+                onError: {
+                    if $0.isNetworkFailureOrTimeout {
+                        return .retryAfterBackoff()
+                    }
+                    if let retryAfter = autoRetryableAfter($0) {
+                        return .retryAfterAtLeast(retryAfter)
+                    }
+                    throw $0
                 },
             )
         } catch where error.httpStatusCode == 429 {
@@ -2759,15 +2758,20 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             // We have to complete registration.
             let sessionFromBeforeRequest = session
             do {
-                return try await Retry.performWithBackoff(
+                return try await Retry.performWithMinimumBackoff(
                     maxAttempts: Constants.networkErrorRetries + 1,
-                    preferredBackoffBlock: {
-                        return autoRetryableAfter($0)
+                    block: {
+                        return try await makeRegisterOrChangeNumberRequestFromSession(session)
                     },
-                    isRetryable: {
-                        return $0.isNetworkFailureOrTimeout || isAutoRetryable($0)
+                    onError: {
+                        if $0.isNetworkFailureOrTimeout {
+                            return .retryAfterBackoff()
+                        }
+                        if let retryAfter = autoRetryableAfter($0) {
+                            return .retryAfterAtLeast(retryAfter)
+                        }
+                        throw $0
                     },
-                    block: { try await makeRegisterOrChangeNumberRequestFromSession(session) },
                 )
             } catch where error.httpStatusCode == 429 {
                 let timeInterval = error.httpResponseHeaders?.retryAfterTimeInterval
