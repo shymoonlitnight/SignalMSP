@@ -23839,7 +23839,7 @@
 			repositoryURL = "https://github.com/signalapp/libPhoneNumber-iOS";
 			requirement = {
 				kind = exactVersion;
-				version = "1.2.0-signal.1";
+				version = "1.2.0-signal.2";
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
