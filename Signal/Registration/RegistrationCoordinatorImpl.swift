@@ -1871,15 +1871,15 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
         case manualRestore
         /// Attempting to register using the reg recovery password
         /// derived from the SVR master key.
-        case registrationRecoveryPassword(password: RegistrationRecoveryPassword)
+        case registrationRecoveryPassword(phoneNumber: E164, password: RegistrationRecoveryPassword)
         /// Attempting to recover from SVR auth credentials
         /// which let us talk to SVR server, recover the master key,
         /// and swap to the registrationRecoveryPassword path.
-        case svrAuthCredential(SVRAuthCredential)
+        case svrAuthCredential(phoneNumber: E164, authCredential: SVRAuthCredential)
         /// We might have un-verified SVR auth credentials
         /// synced from another device; first we need to check them
         /// with the server and then potentially go to the svrAuthCredential path.
-        case svrAuthCredentialCandidates([SVR2AuthCredential])
+        case svrAuthCredentialCandidates(phoneNumber: E164, authCredentials: [SVR2AuthCredential])
         /// Verifying via SMS code using a `RegistrationSession`.
         /// Used as a fallback if the above paths are unavailable or fail.
         case session(RegistrationSession)
@@ -1969,20 +1969,20 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
         // These paths are only available if the user knows their PIN.
         // If they skipped because they don't know it (or exhausted their guesses),
         // don't bother with them.
-        if !persistedState.hasSkippedPinEntry {
+        if !persistedState.hasSkippedPinEntry, let phoneNumber = persistedState.e164 {
             if let password = inMemoryState.regRecoveryPw {
                 // If we have a reg recover password (but no session), try using that
                 // to register.
                 // Once again, to get off this path and fall back to session (if it fails)
                 // or proceed to profile setup (if it succeeds) we must wipe this state.
-                return .registrationRecoveryPassword(password: password)
+                return .registrationRecoveryPassword(phoneNumber: phoneNumber, password: password)
             }
             if let credential = inMemoryState.svrAuthCredential {
                 // If we have a validated SVR auth credential, try using that
                 // to recover the SVR master key to register.
                 // Once again, to get off this path and fall back to session (if it fails)
                 // or proceed to reg recovery pw (if it succeeds) we must wipe this state.
-                return .svrAuthCredential(credential)
+                return .svrAuthCredential(phoneNumber: phoneNumber, authCredential: credential)
             }
             if
                 let svr2AuthCredentialCandidates = inMemoryState.svr2AuthCredentialCandidates,
@@ -1991,7 +1991,8 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
                 // If we have un-vetted candidates, try checking those first
                 // and then going to the svrAuthCredential path if one is valid.
                 return .svrAuthCredentialCandidates(
-                    svr2AuthCredentialCandidates,
+                    phoneNumber: phoneNumber,
+                    authCredentials: svr2AuthCredentialCandidates,
                 )
             }
         }
@@ -2012,13 +2013,14 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             return nextStepForQuickRestore()
         case .manualRestore:
             return nextStepForManualRestore()
-        case .registrationRecoveryPassword(let password):
-            return await nextStepForRegRecoveryPasswordPath(regRecoveryPw: password)
-        case .svrAuthCredential(let credential):
+        case .registrationRecoveryPassword(let phoneNumber, let password):
+            return await nextStepForRegRecoveryPasswordPath(phoneNumber: phoneNumber, regRecoveryPw: password)
+        case .svrAuthCredential(phoneNumber: _, let credential):
             return await nextStepForSVRAuthCredentialPath(svrAuthCredential: credential)
-        case .svrAuthCredentialCandidates(let svr2Candidates):
+        case .svrAuthCredentialCandidates(let phoneNumber, let credentials):
             return await nextStepForSVRAuthCredentialCandidatesPath(
-                svr2AuthCredentialCandidates: svr2Candidates,
+                phoneNumber: phoneNumber,
+                authCredentials: credentials,
             )
         case .session(let session):
             return await nextStepForSessionPath(session)
@@ -2167,12 +2169,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
     /// "Registration Recovery Password" from it, which we can use as an alternative to a verified SMS code session
     /// to register. This path returns the steps to complete that flow.
     @MainActor
-    private func nextStepForRegRecoveryPasswordPath(regRecoveryPw: RegistrationRecoveryPassword) async -> RegistrationStep {
-        // We need a phone number to proceed; ask the user if unavailable.
-        guard let e164 = persistedState.e164 else {
-            return .phoneNumberEntry(phoneNumberEntryState())
-        }
-
+    private func nextStepForRegRecoveryPasswordPath(phoneNumber e164: E164, regRecoveryPw: RegistrationRecoveryPassword) async -> RegistrationStep {
         if let askForPinStep = askForUserPINIfNeeded() {
             return askForPinStep
         }
@@ -2583,13 +2580,9 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
 
     @MainActor
     private func nextStepForSVRAuthCredentialCandidatesPath(
-        svr2AuthCredentialCandidates: [SVR2AuthCredential],
+        phoneNumber e164: E164,
+        authCredentials: [SVR2AuthCredential],
     ) async -> RegistrationStep {
-        guard let e164 = persistedState.e164 else {
-            // If we haven't entered a phone number but we have auth
-            // credential candidates to check, enter it now.
-            return .phoneNumberEntry(phoneNumberEntryState())
-        }
         // Regardless of whether this succeeds or fails, we want to move on to the
         // next step, so wipe the candidates so we don't re-check them.
         self.inMemoryState.svr2AuthCredentialCandidates = nil
@@ -2598,7 +2591,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             isRetryable: { $0.isNetworkFailureOrTimeout },
             block: {
                 return try await makeSVR2AuthCredentialCheckRequest(
-                    svr2AuthCredentialCandidates: svr2AuthCredentialCandidates,
+                    svr2AuthCredentialCandidates: authCredentials,
                     e164: e164,
                 )
             },
