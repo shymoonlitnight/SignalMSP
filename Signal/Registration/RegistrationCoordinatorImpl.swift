@@ -3065,7 +3065,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             return await nextStep()
         case .deviceTransferPossible:
             inMemoryState.needsToAskForDeviceTransfer = true
-            return .chooseRestoreMethod(.unspecified)
+            return await nextStep()
         }
     }
 
