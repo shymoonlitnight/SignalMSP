@@ -8,8 +8,8 @@ use_frameworks!
 
 source 'https://cdn.cocoapods.org/'
 
-ENV['LIBSIGNAL_FFI_PREBUILD_CHECKSUM'] = '379b79aab2d1ef3563bea8ac39968ddd40a12e25ce2e108f7c3a8da2f3d56b9c'
-pod 'LibSignalClient', git: 'https://github.com/signalapp/libsignal.git', tag: 'v0.105.4', testspecs: ["Tests"]
+ENV['LIBSIGNAL_FFI_PREBUILD_CHECKSUM'] = 'ddfa5ac6fd6e0da9ebe4eb23890af048140aec1a3e916d3eccadc1036627152f'
+pod 'LibSignalClient', git: 'https://github.com/signalapp/libsignal.git', tag: 'v0.106.0', testspecs: ["Tests"]
 # pod 'LibSignalClient', path: '../libsignal', testspecs: ["Tests"]
 
 ENV['RINGRTC_PREBUILD_CHECKSUM'] = 'eb2579b7507ad206bec3b582e6d289793c77cdf2393722c96e1f61123040f88a'
