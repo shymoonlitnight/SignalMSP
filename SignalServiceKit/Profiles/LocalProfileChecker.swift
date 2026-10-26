@@ -143,6 +143,12 @@ final class LocalProfileChecker {
             if localPhoneNumberSharing != (try? decryptedProfile.phoneNumberSharing.get()) {
                 mismatchedProperties.append("phoneNumberSharing")
             }
+            do {
+                // Ensure our own payment address can be successfully decrypted.
+                _ = try decryptedProfile.paymentAddress()
+            } catch {
+                mismatchedProperties.append("paymentAddress")
+            }
 
             if mismatchedProperties.isEmpty {
                 return false

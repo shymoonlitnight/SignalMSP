@@ -637,7 +637,8 @@ public struct FetchedProfile {
             try OWSUserProfile.decrypt(profileStringData: $0, profileKey: profileKey)
         }}
         let paymentAddressData = Result { try profile.paymentAddressEncrypted.map {
-            try OWSUserProfile.decrypt(profileData: $0, profileKey: profileKey)
+            owsAssertDebug(!$0.isEmpty, "encrypted payment address shouldn't be empty")
+            return try OWSUserProfile.decrypt(profileData: $0, profileKey: profileKey)
         }}
         let phoneNumberSharing = Result { try profile.phoneNumberSharingEncrypted.map {
             try OWSUserProfile.decrypt(profileBooleanData: $0, profileKey: profileKey)
