@@ -77,6 +77,7 @@ enum DeviceTransfer {
         case assertion
         case backgroundedDevice
         case certificateMismatch
+        case connectionTimeout
         case modeMismatch
         case notEnoughSpace
         case unsupportedVersion

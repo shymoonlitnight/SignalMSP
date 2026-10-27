@@ -21,7 +21,7 @@ class WADeviceTransferOutgoingConnection: DeviceTransfer.OutgoingConnection {
         ///
         /// It stays there until the other device publishes its service, which can take a few seconds
         /// The OS seems to have an internal timeout of around 120s, but we should fail sooner.
-        static let readyTimeout: TimeInterval = 45
+        static let readyTimeout: TimeInterval = 30
     }
 
     let selectedPeer: (any DeviceTransfer.Peer)? = nil
@@ -79,19 +79,24 @@ class WADeviceTransferOutgoingConnection: DeviceTransfer.OutgoingConnection {
         // never returns, which can wedge the whole flow silently. Instead, wait for
         // a set period of time, and try again.
         logger.info("Waiting for endpoint")
-        let endpoint = try await withCooperativeTimeout(seconds: Constants.endpointTimeout) { [weak self] in
-            try await browser.run { [weak self] waEndpoints in
-                for endpoint in waEndpoints {
-                    let discoveredPeer = WADeviceTransferPeer(pairedDevice: endpoint.device)
-                    if discoveredPeer.id == peer.id {
-                        self?.logger.info("Found endpoint to connect to: \(discoveredPeer)")
-                        return .finish(endpoint)
-                    } else {
-                        self?.logger.info("Found endpoint other than the selected one: \(discoveredPeer) != \(peer)")
+        let endpoint: WAEndpoint
+        do {
+            endpoint = try await withCooperativeTimeout(seconds: Constants.endpointTimeout) { [weak self] in
+                try await browser.run { [weak self] waEndpoints in
+                    for endpoint in waEndpoints {
+                        let discoveredPeer = WADeviceTransferPeer(pairedDevice: endpoint.device)
+                        if discoveredPeer.id == peer.id {
+                            self?.logger.info("Found endpoint to connect to: \(discoveredPeer)")
+                            return .finish(endpoint)
+                        } else {
+                            self?.logger.info("Found endpoint other than the selected one: \(discoveredPeer) != \(peer)")
+                        }
                     }
+                    return .continue
                 }
-                return .continue
             }
+        } catch is CooperativeTimeoutError {
+            throw DeviceTransfer.Error.connectionTimeout
         }
 
         guard let secIdentity = sec_identity_create(identity) else {
@@ -167,6 +172,10 @@ class WADeviceTransferOutgoingConnection: DeviceTransfer.OutgoingConnection {
             try await withCooperativeTimeout(seconds: Constants.readyTimeout) {
                 try await connectionReadyContinuation.wait()
             }
+        } catch is CooperativeTimeoutError {
+            logger.error("Connection timed out waiting")
+            await session.disconnect(error: DeviceTransfer.Error.connectionTimeout)
+            throw DeviceTransfer.Error.connectionTimeout
         } catch {
             logger.error("Connection never became ready: \(error)")
             await session.disconnect(error: error)

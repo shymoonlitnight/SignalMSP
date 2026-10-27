@@ -389,6 +389,16 @@ class OutgoingDeviceRestorePresenter: OutgoingDeviceRestoreInitialPresenter {
                     comment: "Body of prompt notifying restore failed.",
                 ),
             )
+        case DeviceTransfer.Error.connectionTimeout: (
+                OWSLocalizedString(
+                    "OUTGOING_DEVICE_REGISTRATION_FAILED_CONNECTION_TITLE",
+                    comment: "Title of prompt notifying connection failure during restore.",
+                ),
+                OWSLocalizedString(
+                    "OUTGOING_DEVICE_REGISTRATION_FAILED_CONNECTION_BODY",
+                    comment: "Body of prompt notifying connection failure during restore.",
+                ),
+            )
         case is CancellationError: (
                 OWSLocalizedString(
                     "OUTGOING_DEVICE_REGISTRATION_CANCELLED_RESTORE_TITLE",
