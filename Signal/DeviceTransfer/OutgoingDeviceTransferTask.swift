@@ -181,6 +181,7 @@ class OutgoingDeviceTransferTask {
                     try await sendManifest(manifest: manifest, session: session)
                     try await sendAllFiles(manifest: manifest, session: session)
                 } catch where error is CancellationError {
+                    logger.info("Send task cancelled")
                     throw error
                 } catch {
                     if Task.isCancelled {
@@ -220,6 +221,7 @@ class OutgoingDeviceTransferTask {
     }
 
     private func didEnterBackground(_ notification: Notification) {
+        logger.info("App backgrounded; stopping transfer")
         // MCSession automatically disconnects when the app is backgrounded.
         // Send an explicit message to the peer (if connected) telling them
         // that's what happened.
@@ -354,6 +356,7 @@ class OutgoingDeviceTransferTask {
     }
 
     private func stopTransfer(error: Error? = nil, notifyRegState: Bool = true) async {
+        logger.info("Stopping transfer: \(error.map { "\($0)" } ?? "no error")")
         if let error {
             switch error {
             case DeviceTransfer.Error.otherDeviceTerminated:

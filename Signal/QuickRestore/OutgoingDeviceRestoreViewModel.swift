@@ -186,6 +186,7 @@ class OutgoingDeviceRestoreViewModel: ObservableObject {
 
     @MainActor
     private func cancelTransfer() async {
+        logger.info("User cancelled transfer")
         self.pairedPeersListenerTask.take()?.cancel()
         self.discoveredPeersListenerTask.take()?.cancel()
         self.waitForPeerContinuation.swap(nil)?.resume(throwing: CancellationError())
