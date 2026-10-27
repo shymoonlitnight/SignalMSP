@@ -339,7 +339,6 @@ public class LocalFileBackupManager: NSObject, UIDocumentPickerDelegate {
             localFileBackupStore.totalUnencryptedByteCountOfQueuedExports(tx: tx)
         }
         let source = progressSink?.addSource(withLabel: ProgressLabel.writeQueuedAttachment, unitCount: totalByteCount)
-        var skippedAttachmentCount = 0
 
         while true {
             try Task.checkCancellation()
@@ -413,9 +412,7 @@ public class LocalFileBackupManager: NSObject, UIDocumentPickerDelegate {
                     )
                     attachmentKey = try AttachmentKey(combinedKey: localKey)
                 } catch {
-                    // One unreadable attachment must not fail every backup; skip it.
-                    logger.error("Skipping attachment id \(attachmentWithMetadata.attachment.id), error: \(error)")
-                    skippedAttachmentCount += 1
+                    logger.error("Error writing attachment ID \(attachmentWithMetadata.attachment.id) to disk, error: \(error)")
                     source?.incrementCompletedUnitCount(by: attachmentByteCount)
                     continue
                 }
@@ -460,9 +457,6 @@ public class LocalFileBackupManager: NSObject, UIDocumentPickerDelegate {
                     }
                 }
             }
-        }
-        if skippedAttachmentCount > 0 {
-            logger.warn("Skipped \(skippedAttachmentCount) unreadable attachments")
         }
         source?.complete()
     }

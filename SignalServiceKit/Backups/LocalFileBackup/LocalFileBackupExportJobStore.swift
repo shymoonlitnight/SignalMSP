@@ -8,8 +8,8 @@ public struct LocalFileBackupExportJobStore {
     private enum Keys {
         static let resumptionPoint = "resumptionPoint"
         static let currentBackupDirectoryName = "currentBackupDirectoryName"
-        static let backupDate = "backupDate"
-        static let backupSizeBytes = "backupSizeBytes"
+        static let inProgressBackupDate = "inProgressBackupDate"
+        static let inProgressBackupSizeBytes = "inProgressBackupSizeBytes"
     }
 
     private let kvStore: NewKeyValueStore
@@ -23,8 +23,8 @@ public struct LocalFileBackupExportJobStore {
     public func wipe(tx: DBWriteTransaction) {
         kvStore.removeValue(forKey: Keys.resumptionPoint, tx: tx)
         kvStore.removeValue(forKey: Keys.currentBackupDirectoryName, tx: tx)
-        kvStore.removeValue(forKey: Keys.backupDate, tx: tx)
-        kvStore.removeValue(forKey: Keys.backupSizeBytes, tx: tx)
+        kvStore.removeValue(forKey: Keys.inProgressBackupDate, tx: tx)
+        kvStore.removeValue(forKey: Keys.inProgressBackupSizeBytes, tx: tx)
     }
 
     // MARK: -
@@ -33,7 +33,8 @@ public struct LocalFileBackupExportJobStore {
     /// resumed. If nil, the job should be resumed from the beginning.
     public enum ResumptionPoint {
         /// The job should be resumed after backup file was copied to disk.
-        /// Carries the details to record as the last backup once the job completes.
+        /// The backup date & size are calculated at the start of the backup,
+        /// but not stored until it completes, so we pass them with resumption.
         case postBackupFileCopy(directoryName: String, backupDate: Date, backupSizeBytes: UInt64)
     }
 
@@ -45,10 +46,10 @@ public struct LocalFileBackupExportJobStore {
         case 0:
             guard
                 let name = kvStore.fetchValue(String.self, forKey: Keys.currentBackupDirectoryName, tx: tx),
-                let backupDate = kvStore.fetchValue(Date.self, forKey: Keys.backupDate, tx: tx),
-                let backupSizeBytes = kvStore.fetchValue(UInt64.self, forKey: Keys.backupSizeBytes, tx: tx)
+                let backupDate = kvStore.fetchValue(Date.self, forKey: Keys.inProgressBackupDate, tx: tx),
+                let backupSizeBytes = kvStore.fetchValue(UInt64.self, forKey: Keys.inProgressBackupSizeBytes, tx: tx)
             else {
-                owsFailDebug("postBackupFileCopy checkpoint missing directory name or backup details")
+                Logger.warn("postBackupFileCopy checkpoint missing directory name or backup details")
                 return nil
             }
             return .postBackupFileCopy(directoryName: name, backupDate: backupDate, backupSizeBytes: backupSizeBytes)
@@ -63,13 +64,13 @@ public struct LocalFileBackupExportJobStore {
         case nil:
             kvStore.removeValue(forKey: Keys.resumptionPoint, tx: tx)
             kvStore.removeValue(forKey: Keys.currentBackupDirectoryName, tx: tx)
-            kvStore.removeValue(forKey: Keys.backupDate, tx: tx)
-            kvStore.removeValue(forKey: Keys.backupSizeBytes, tx: tx)
+            kvStore.removeValue(forKey: Keys.inProgressBackupDate, tx: tx)
+            kvStore.removeValue(forKey: Keys.inProgressBackupSizeBytes, tx: tx)
         case .postBackupFileCopy(let name, let backupDate, let backupSizeBytes):
             kvStore.writeValue(Int64(0), forKey: Keys.resumptionPoint, tx: tx)
             kvStore.writeValue(name, forKey: Keys.currentBackupDirectoryName, tx: tx)
-            kvStore.writeValue(backupDate, forKey: Keys.backupDate, tx: tx)
-            kvStore.writeValue(backupSizeBytes, forKey: Keys.backupSizeBytes, tx: tx)
+            kvStore.writeValue(backupDate, forKey: Keys.inProgressBackupDate, tx: tx)
+            kvStore.writeValue(backupSizeBytes, forKey: Keys.inProgressBackupSizeBytes, tx: tx)
         }
     }
 
