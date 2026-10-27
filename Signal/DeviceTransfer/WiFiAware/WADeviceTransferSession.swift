@@ -39,27 +39,36 @@ class WADeviceTransferSession: DeviceTransfer.Session {
     init(connection: WiFiAwareConnection) {
         self.connection = connection
         (self.messages, self.messageSink) = AsyncThrowingStream.makeStream(of: DeviceTransfer.SessionMessage.self)
-        self.receiverTask = Task {
-            for try await (event, _) in connection.messages {
-                switch event {
-                case .done:
-                    self.messageSink.yield(.message(.done))
-                case .appBackgrounded:
-                    self.messageSink.yield(.message(.backgroundApp))
-                case .resourceBegin(file: let file, size: let size):
-                    // Reserve file
-                    let progress = try await self.startReceive(file: file, size: size)
-                    self.messageSink.yield(.startResource(file, size, progress))
-                case .resourceData(file: let file, data: let data):
-                    // Write file
-                    try await writeData(file: file, data: data)
-                case .resourceEnd(file: let file):
-                    // Finish file
-                    let fileUrl = try await finishReceive(file: file)
-                    self.messageSink.yield(.finishResource(file, fileUrl))
-                case .transferFailed:
-                    self.messageSink.yield(.message(.transferFailed))
+        self.receiverTask = Task { [weak self] in
+            do {
+                var receivedDoneMessage = false
+                for try await (event, _) in connection.messages {
+                    guard let self else { return }
+                    switch event {
+                    case .done:
+                        receivedDoneMessage = true
+                        self.messageSink.yield(.message(.done))
+                    case .appBackgrounded:
+                        self.messageSink.yield(.message(.backgroundApp))
+                    case .resourceBegin(file: let file, size: let size):
+                        // Reserve file
+                        let progress = try await self.startReceive(file: file, size: size)
+                        self.messageSink.yield(.startResource(file, size, progress))
+                    case .resourceData(file: let file, data: let data):
+                        // Write file
+                        try await writeData(file: file, data: data)
+                    case .resourceEnd(file: let file):
+                        // Finish file
+                        let fileUrl = try await finishReceive(file: file)
+                        self.messageSink.yield(.finishResource(file, fileUrl))
+                    case .transferFailed:
+                        self.messageSink.yield(.message(.transferFailed))
+                    }
                 }
+                // If .done is never sent, treat this as an error
+                await self?.disconnect(error: receivedDoneMessage ? nil : DeviceTransfer.Error.otherDeviceTerminated)
+            } catch {
+                await self?.disconnect(error: error)
             }
         }
     }
