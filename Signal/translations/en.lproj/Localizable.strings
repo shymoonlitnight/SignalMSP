@@ -6760,6 +6760,9 @@
 /* Title for action to verify with a passkey as a 2fa method. */
 "ONBOARDING_TWO_FACTOR_AUTH_METHOD_PASSKEY_TITLE" = "Passkey";
 
+/* Description for the screen asking the user to verify their account with a passkey during registration. */
+"ONBOARDING_TWO_FACTOR_AUTH_PASSKEY_BODY" = "To continue, verify your account with your passkey.";
+
 /* Title for the 2fa screens shown during registration. */
 "ONBOARDING_TWO_FACTOR_AUTH_TITLE" = "Two-Factor Authentication";
 

@@ -2025,6 +2025,7 @@
 		C16AFACB2BE9CA6F00838FFB /* HmacStreamTransform.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16AFACA2BE9CA6F00838FFB /* HmacStreamTransform.swift */; };
 		C16B8B752B8940D40030BA24 /* OutgoingSentMessageTranscript.swift in Sources */ = {isa = PBXBuildFile; fileRef = C16B8B742B8940D40030BA24 /* OutgoingSentMessageTranscript.swift */; };
 		C172D54F30462D0F002AF55F /* RegistrationSignalLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C172D54E30462D02002AF55F /* RegistrationSignalLoginViewController.swift */; };
+		D9A0C2002F00000200000002 /* RegistrationTwoFactorPasskeyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A0C2002F00000200000001 /* RegistrationTwoFactorPasskeyViewController.swift */; };
 		C17310A72BD9D45400B7A151 /* BackupServiceAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17310A62BD9D45400B7A151 /* BackupServiceAuth.swift */; };
 		C17345BB2A5E000300C6426D /* PreKeyTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17345BA2A5E000300C6426D /* PreKeyTarget.swift */; };
 		C17586642E2AC3CE008B3A13 /* MediaRootBackupKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17586632E2AC3CE008B3A13 /* MediaRootBackupKey.swift */; };
@@ -6491,6 +6492,7 @@
 		C16AFACA2BE9CA6F00838FFB /* HmacStreamTransform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HmacStreamTransform.swift; sourceTree = "<group>"; };
 		C16B8B742B8940D40030BA24 /* OutgoingSentMessageTranscript.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutgoingSentMessageTranscript.swift; sourceTree = "<group>"; };
 		C172D54E30462D02002AF55F /* RegistrationSignalLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationSignalLoginViewController.swift; sourceTree = "<group>"; };
+		D9A0C2002F00000200000001 /* RegistrationTwoFactorPasskeyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTwoFactorPasskeyViewController.swift; sourceTree = "<group>"; };
 		C17310A62BD9D45400B7A151 /* BackupServiceAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupServiceAuth.swift; sourceTree = "<group>"; };
 		C17345BA2A5E000300C6426D /* PreKeyTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreKeyTarget.swift; sourceTree = "<group>"; };
 		C17586632E2AC3CE008B3A13 /* MediaRootBackupKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRootBackupKey.swift; sourceTree = "<group>"; };
@@ -11237,6 +11239,7 @@
 				F933FC3E2992E77300D78DB0 /* RegistrationSplashViewController.swift */,
 				C1A979882EE38D1F005EC945 /* RegistrationTransferStatusPresenter.swift */,
 				C11657CA30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift */,
+				D9A0C2002F00000200000001 /* RegistrationTwoFactorPasskeyViewController.swift */,
 				C18DB09E2DA6B9D40084CFD6 /* RegistrationUIStyles.swift */,
 				F9EC3FE9299DA4BB00177BF7 /* RegistrationVerificationCodeView.swift */,
 				F9E3006B299D76C3000323F8 /* RegistrationVerificationViewController.swift */,
@@ -19599,6 +19602,7 @@
 				6600F39029918CBF00B1EDB7 /* RegistrationStep.swift in Sources */,
 				C1A979892EE38D1F005EC945 /* RegistrationTransferStatusPresenter.swift in Sources */,
 				C11657CB30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift in Sources */,
+				D9A0C2002F00000200000002 /* RegistrationTwoFactorPasskeyViewController.swift in Sources */,
 				C18DB09F2DA6B9D40084CFD6 /* RegistrationUIStyles.swift in Sources */,
 				3440426B273AB186008C9FA4 /* RegistrationUtils.swift in Sources */,
 				F9EC3FEA299DA4BB00177BF7 /* RegistrationVerificationCodeView.swift in Sources */,
