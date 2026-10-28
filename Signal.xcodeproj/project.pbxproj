@@ -976,6 +976,15 @@
 		5F0FCB3F9BC04E7EB4B5A9DA /* ContactSharingRowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25C97A48E040D913B54956AB /* ContactSharingRowCell.swift */; };
 		61475E7AED76A77DD11F9968 /* RegistrationSignalLoginDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE4F92E120FC707A4CBFF39 /* RegistrationSignalLoginDetailsViewController.swift */; };
 		616577F953D77424E32C7438 /* Pods_SignalUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 675486AB8F0612FF2C717BAE /* Pods_SignalUI.framework */; };
+		631759F830921F6000C98C98 /* LibSignalFfi in Frameworks */ = {isa = PBXBuildFile; productRef = 631759F730921F6000C98C98 /* LibSignalFfi */; };
+		631759FB30921FA700C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 631759FA30921FA700C98C98 /* LibSignalClient */; };
+		631759FD30921FBA00C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 631759FC30921FBA00C98C98 /* LibSignalClient */; };
+		631759FF30921FC400C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 631759FE30921FC400C98C98 /* LibSignalClient */; };
+		63175A0130921FCC00C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 63175A0030921FCC00C98C98 /* LibSignalClient */; };
+		63175A0330921FD400C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 63175A0230921FD400C98C98 /* LibSignalClient */; };
+		63175A0530921FDE00C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 63175A0430921FDE00C98C98 /* LibSignalClient */; };
+		63175A0730921FE500C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 63175A0630921FE500C98C98 /* LibSignalClient */; };
+		63175A0930921FED00C98C98 /* LibSignalClient in Frameworks */ = {isa = PBXBuildFile; productRef = 63175A0830921FED00C98C98 /* LibSignalClient */; };
 		631CB51D307EDA1300EA5851 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB51C307EDA1300EA5851 /* Logging */; };
 		631CB51F307EDA1C00EA5851 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB51E307EDA1C00EA5851 /* Logging */; };
 		631CB522307EDA7800EA5851 /* SwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = 631CB521307EDA7800EA5851 /* SwiftProtobuf */; };
@@ -8797,6 +8806,7 @@
 				638C27C3308A51D200EE57E0 /* GRDB in Frameworks */,
 				342FFEA227245A07000AC89F /* Intents.framework in Frameworks */,
 				63DC4561307EA32800119464 /* libPhoneNumber in Frameworks */,
+				63175A0130921FCC00C98C98 /* LibSignalClient in Frameworks */,
 				63DC4552307E7D7700119464 /* libwebp in Frameworks */,
 				46B99B83D9513F2B8641EAB1 /* Pods_SignalNSE.framework in Frameworks */,
 				63DC4548307E7D4E00119464 /* SDWebImage in Frameworks */,
@@ -8813,6 +8823,7 @@
 				631CB52F307EDB1400EA5851 /* CocoaLumberjack in Frameworks */,
 				638C27C7308A51E500EE57E0 /* GRDB in Frameworks */,
 				63DC455F307EA31400119464 /* libPhoneNumber in Frameworks */,
+				631759FD30921FBA00C98C98 /* LibSignalClient in Frameworks */,
 				63DC4550307E7D7000119464 /* libwebp in Frameworks */,
 				631CB51F307EDA1C00EA5851 /* Logging in Frameworks */,
 				63DC45303079AF9100119464 /* Lottie in Frameworks */,
@@ -8830,6 +8841,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63DAB2A0308A5E0000764C31 /* GRDB in Frameworks */,
+				63175A0730921FE500C98C98 /* LibSignalClient in Frameworks */,
 				EC7A9D369AF9724FEEE5B653 /* Pods_SignalUITests.framework in Frameworks */,
 				34A954B2271A471300B05242 /* SignalUI.framework in Frameworks */,
 			);
@@ -8842,6 +8854,7 @@
 				631CB535307EDB3500EA5851 /* CocoaLumberjack in Frameworks */,
 				638C27C5308A51DD00EE57E0 /* GRDB in Frameworks */,
 				63DC4563307EA45C00119464 /* libPhoneNumber in Frameworks */,
+				63175A0330921FD400C98C98 /* LibSignalClient in Frameworks */,
 				63DC4558307E7DBB00119464 /* libwebp in Frameworks */,
 				63DC45393079BCC100119464 /* PureLayout in Frameworks */,
 				63DC4556307E7DBB00119464 /* SDWebImage in Frameworks */,
@@ -8870,6 +8883,7 @@
 				638C27C1308A51C100EE57E0 /* GRDB in Frameworks */,
 				45847E871E4283C30080EAB3 /* Intents.framework in Frameworks */,
 				63DC4565307EA5DA00119464 /* libPhoneNumber in Frameworks */,
+				631759FF30921FC400C98C98 /* LibSignalClient in Frameworks */,
 				63DC453F307E7CAA00119464 /* libwebp in Frameworks */,
 				631CB51D307EDA1300EA5851 /* Logging in Frameworks */,
 				63DC45323079AF9C00119464 /* Lottie in Frameworks */,
@@ -8909,6 +8923,7 @@
 				D202868316DBE0FC009068E9 /* CoreTelephony.framework in Frameworks */,
 				D221A0AE169C9E5F00537ABF /* Foundation.framework in Frameworks */,
 				63DAB29C308A5DEC00764C31 /* GRDB in Frameworks */,
+				63175A0530921FDE00C98C98 /* LibSignalClient in Frameworks */,
 				A10FDF79184FB4BB007FF963 /* MediaPlayer.framework in Frameworks */,
 				E1368CBE18A1C36B00109378 /* MessageUI.framework in Frameworks */,
 				636E636630893058008905CF /* MobileCoinCore in Frameworks */,
@@ -8930,6 +8945,8 @@
 				631CB52D307EDB0000EA5851 /* CocoaLumberjack in Frameworks */,
 				638C27C9308A51ED00EE57E0 /* GRDB in Frameworks */,
 				63DC455D307EA24D00119464 /* libPhoneNumber in Frameworks */,
+				631759FB30921FA700C98C98 /* LibSignalClient in Frameworks */,
+				631759F830921F6000C98C98 /* LibSignalFfi in Frameworks */,
 				63DC4554307E7D8700119464 /* libwebp in Frameworks */,
 				C26296B4BDCEDADBDA01DDD2 /* Pods_SignalServiceKit.framework in Frameworks */,
 				63DC4544307E7D0300119464 /* SDWebImage in Frameworks */,
@@ -8945,6 +8962,7 @@
 			files = (
 				631CB53F307FEFD600EA5851 /* CocoaLumberjack in Frameworks */,
 				63DAB29E308A5DF800764C31 /* GRDB in Frameworks */,
+				63175A0930921FED00C98C98 /* LibSignalClient in Frameworks */,
 				259D4DF2486F14DB112B3999 /* Pods_SignalServiceKitTests.framework in Frameworks */,
 				F9C5C89F289451B900548EEE /* SignalServiceKit.framework in Frameworks */,
 				631CB541307FEFDB00EA5851 /* SwiftProtobuf in Frameworks */,
@@ -16536,6 +16554,7 @@
 			name = SignalNSE;
 			packageProductDependencies = (
 				638C27C2308A51D200EE57E0 /* GRDB */,
+				63175A0030921FCC00C98C98 /* LibSignalClient */,
 			);
 			productName = SignalNSE;
 			productReference = 342FFE8827245850000AC89F /* SignalNSE.appex */;
@@ -16559,6 +16578,7 @@
 			name = SignalUI;
 			packageProductDependencies = (
 				638C27C6308A51E500EE57E0 /* GRDB */,
+				631759FC30921FBA00C98C98 /* LibSignalClient */,
 			);
 			productName = SignalUI;
 			productReference = 34A954A8271A471200B05242 /* SignalUI.framework */;
@@ -16582,6 +16602,7 @@
 			name = SignalUITests;
 			packageProductDependencies = (
 				63DAB29F308A5E0000764C31 /* GRDB */,
+				63175A0630921FE500C98C98 /* LibSignalClient */,
 			);
 			productName = SignalUITests;
 			productReference = 34A954B1271A471300B05242 /* SignalUITests.xctest */;
@@ -16604,6 +16625,7 @@
 			name = SignalShareExtension;
 			packageProductDependencies = (
 				638C27C4308A51DD00EE57E0 /* GRDB */,
+				63175A0230921FD400C98C98 /* LibSignalClient */,
 			);
 			productName = SignalShareExtension;
 			productReference = 453518681FC635DD00210559 /* SignalShareExtension.appex */;
@@ -16634,6 +16656,7 @@
 			packageProductDependencies = (
 				638C27C0308A51C100EE57E0 /* GRDB */,
 				63DAB299308A59AD00764C31 /* SQLCipher */,
+				631759FE30921FC400C98C98 /* LibSignalClient */,
 			);
 			productName = RedPhone;
 			productReference = D221A089169C9E5E00537ABF /* Signal.app */;
@@ -16658,6 +16681,7 @@
 			name = SignalTests;
 			packageProductDependencies = (
 				63DAB29B308A5DEC00764C31 /* GRDB */,
+				63175A0430921FDE00C98C98 /* LibSignalClient */,
 			);
 			productName = RedPhoneTests;
 			productReference = D221A0AA169C9E5F00537ABF /* SignalTests.xctest */;
@@ -16681,6 +16705,8 @@
 			packageProductDependencies = (
 				638C27C8308A51ED00EE57E0 /* GRDB */,
 				63DAB297308A59A000764C31 /* SQLCipher */,
+				631759F730921F6000C98C98 /* LibSignalFfi */,
+				631759FA30921FA700C98C98 /* LibSignalClient */,
 			);
 			productName = SignalServiceKit;
 			productReference = F9C5C897289451B900548EEE /* SignalServiceKit.framework */;
@@ -16704,6 +16730,7 @@
 			name = SignalServiceKitTests;
 			packageProductDependencies = (
 				63DAB29D308A5DF800764C31 /* GRDB */,
+				63175A0830921FED00C98C98 /* LibSignalClient */,
 			);
 			productName = SignalServiceKitTests;
 			productReference = F9C5C89E289451B900548EEE /* SignalServiceKitTests.xctest */;
@@ -16871,6 +16898,7 @@
 				636E635E30892FEF008905CF /* XCRemoteSwiftPackageReference "MobileCoin-Swift" */,
 				638C27BF308A51C100EE57E0 /* XCRemoteSwiftPackageReference "GRDB" */,
 				63DAB296308A59A000764C31 /* XCRemoteSwiftPackageReference "sqlcipher" */,
+				631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */,
 			);
 			productRefGroup = D221A08A169C9E5E00537ABF /* Products */;
 			projectDirPath = "";
@@ -18408,13 +18436,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Signal/Pods-Signal-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
@@ -18430,13 +18456,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-SignalTests/Pods-SignalTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/LibSignalClient/LibSignalClient.framework",
 				"${BUILT_PRODUCTS_DIR}/SignalRingRTC/SignalRingRTC.framework",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/SignalRingRTC/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LibSignalClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SignalRingRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 			);
@@ -22516,7 +22540,6 @@
 					"-fobjc-arc-exceptions",
 				);
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"$(inherited)",
 				);
@@ -22776,7 +22799,6 @@
 					"-fobjc-arc-exceptions",
 				);
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"$(inherited)",
 				);
@@ -23187,7 +23209,6 @@
 					"-fobjc-arc-exceptions",
 				);
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"$(inherited)",
 				);
@@ -23245,7 +23266,6 @@
 					"-fobjc-arc-exceptions",
 				);
 				OTHER_LDFLAGS = (
-					"-all_load",
 					"-ObjC",
 					"$(inherited)",
 				);
@@ -23738,6 +23758,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/signalapp/libsignal";
+			requirement = {
+				kind = exactVersion;
+				version = 0.106.1;
+			};
+		};
 		631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-log";
@@ -23845,6 +23873,50 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		631759F730921F6000C98C98 /* LibSignalFfi */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LibSignalFfi;
+		};
+		631759FA30921FA700C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		631759FC30921FBA00C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		631759FE30921FC400C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		63175A0030921FCC00C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		63175A0230921FD400C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		63175A0430921FDE00C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		63175A0630921FE500C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
+		63175A0830921FED00C98C98 /* LibSignalClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 631759F930921FA700C98C98 /* XCRemoteSwiftPackageReference "libsignal" */;
+			productName = LibSignalClient;
+		};
 		631CB51C307EDA1300EA5851 /* Logging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 631CB51B307EDA1300EA5851 /* XCRemoteSwiftPackageReference "swift-log" */;

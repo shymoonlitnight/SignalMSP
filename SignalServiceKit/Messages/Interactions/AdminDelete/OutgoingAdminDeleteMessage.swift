@@ -4,7 +4,7 @@
 //
 
 import Foundation
-public import LibSignalClient
+import LibSignalClient
 
 public final class OutgoingAdminDeleteMessage: TransientOutgoingMessage {
     let originalMessageTimestamp: UInt64

@@ -3,9 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import LibSignalClient
+import LibSignalClient
 import SignalServiceKit
 import SignalUI
+public import UIKit
 
 protocol MemberLabelViewControllerPresenter: UIViewController {
     func reloadMemberLabelIfNeeded()

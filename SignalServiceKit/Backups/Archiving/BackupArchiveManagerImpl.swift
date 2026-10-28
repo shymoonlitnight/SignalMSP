@@ -4,7 +4,7 @@
 //
 
 import GRDB
-public import LibSignalClient
+import LibSignalClient
 
 public enum BackupImportError: Error {
     case unsupportedVersion

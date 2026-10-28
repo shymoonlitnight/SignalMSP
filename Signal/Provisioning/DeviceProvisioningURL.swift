@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+public import Foundation
 public import LibSignalClient
 import SignalServiceKit
 

@@ -32,7 +32,7 @@ POD_TARGETS = [
 ]
 
 
-def get_pod_acknowledgements_paths():
+def get_pod_acknowledgements_paths(source_packages_path):
     paths = [
         PODS_PATH
         / "Target Support Files"
@@ -41,7 +41,7 @@ def get_pod_acknowledgements_paths():
         for target in POD_TARGETS
     ]
     paths += [
-        PODS_PATH / "LibSignalClient/acknowledgments/acknowledgments-ios.plist",
+        source_packages_path / "checkouts/libsignal/acknowledgments/acknowledgments-ios.plist",
         PODS_PATH / "SignalRingRTC/acknowledgments/acknowledgments.plist",
         PODS_PATH / "SignalRingRTC/out/release/acknowledgments-webrtc-ios.plist",
     ]
@@ -135,11 +135,10 @@ def get_swift_package_name(checkout_path):
     return json.loads(output)["name"]
 
 
-def get_swift_package_specifiers():
+def get_swift_package_specifiers(source_packages_path):
     with open(PACKAGE_RESOLVED_PATH, "r", encoding="utf8") as file:
         pins = json.load(file)["pins"]
 
-    source_packages_path = get_source_packages_path()
     workspace_state_path = source_packages_path / "workspace-state.json"
     with open(workspace_state_path, "r", encoding="utf8") as file:
         dependencies = {
@@ -204,14 +203,17 @@ def group_by_license(specifiers):
 
 
 def main():
-    specifier_groups = get_specifier_groups(get_pod_acknowledgements_paths())
+    source_packages_path = get_source_packages_path()
+    specifier_groups = get_specifier_groups(
+        get_pod_acknowledgements_paths(source_packages_path)
+    )
 
     header_specifier = specifier_groups[0][0]
     footer_specifier = specifier_groups[0][-1]
 
     specifiers = [s for group in specifier_groups for s in group[1:-1]]
     specifiers += get_third_party_specifiers()
-    specifiers += get_swift_package_specifiers()
+    specifiers += get_swift_package_specifiers(source_packages_path)
 
     final_specifiers = (
         [header_specifier] + group_by_license(specifiers) + [footer_specifier]
