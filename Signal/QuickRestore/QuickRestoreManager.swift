@@ -322,7 +322,7 @@ public class QuickRestoreManager {
                 // the other device to initiate device transfer. Note that server enforces a
                 // 4096 bytes limit on this field.
                 deviceTransferBootstrap.map {
-                    parameters["deviceTransferBootstrap"] = $0.absoluteString.data(using: .utf8)!.base64EncodedStringWithoutPadding()
+                    parameters["deviceTransferBootstrap"] = Data($0.absoluteString.utf8).base64EncodedStringWithoutPadding()
                 }
 
                 let urlComponents = URLComponents(string: "v1/devices/restore_account/\(token)")!
