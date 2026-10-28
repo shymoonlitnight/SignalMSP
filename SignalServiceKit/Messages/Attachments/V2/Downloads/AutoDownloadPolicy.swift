@@ -21,8 +21,8 @@ public enum AutoDownloadPolicy {
     }
 
     public enum Constants {
-        public static let alwaysLimit = 100 * UInt64.kilobyte
-        public static let neverLimit = 200 * UInt64.megabyte
+        public static let alwaysLimit = 100 * UInt64.kibibyte
+        public static let neverLimit = 200 * UInt64.mebibyte
     }
 
     public static func build(

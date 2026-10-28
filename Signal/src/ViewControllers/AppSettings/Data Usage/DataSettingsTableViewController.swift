@@ -47,7 +47,7 @@ class DataSettingsTableViewController: OWSTableViewController2 {
                 "SETTINGS_DATA_MEDIA_AUTO_DOWNLOAD_FOOTER",
                 comment: "Footer for the 'media auto-download' section in the data settings. The replacement will be a formatted file size, such as '100 KB'.",
             ),
-            AutoDownloadPolicy.Constants.alwaysLimit.formatted(.owsByteCount(zeroPadFractionDigits: false)),
+            AutoDownloadPolicy.Constants.alwaysLimit.formatted(.owsByteCount(fudgeBase2ToBase10: true, zeroPadFractionDigits: false)),
         ))
         if AutoDownloadPolicy.Constants.neverLimit < self.attachmentLimits.maxEncryptedBytes {
             footerStrings.append(String.nonPluralLocalizedStringWithFormat(
@@ -55,7 +55,7 @@ class DataSettingsTableViewController: OWSTableViewController2 {
                     "SETTINGS_DATA_MEDIA_AUTO_DOWNLOAD_NEVER_FOOTER",
                     comment: "Footer for the 'media auto-download' section in the data settings. The replacement will be a formatted file size, such as '200 MB'.",
                 ),
-                AutoDownloadPolicy.Constants.neverLimit.formatted(.owsByteCount(zeroPadFractionDigits: false)),
+                AutoDownloadPolicy.Constants.neverLimit.formatted(.owsByteCount(fudgeBase2ToBase10: true, zeroPadFractionDigits: false)),
             ))
         }
         autoDownloadSection.footerTitle = footerStrings.joined(separator: " ")
