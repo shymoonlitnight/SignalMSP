@@ -263,10 +263,9 @@ public class TSConstantsStaging: TSConstantsProtocol {
 
     public let svr2Enclaves = [
         MrEnclave("0ff2d7d4efbe7cfc24ac069a16fba898928dbe6c40d500c8b6da55733c727d6e"),
-        MrEnclave("3c699f4975aaa3d172c0aad042f94f031b2b03e10b9c19a45116a01693d83302"),
     ]
 
-    public let activeSvr2EnclaveCount: Int = 2
+    public let activeSvr2EnclaveCount: Int = 1
 
     public let applicationGroup = "group." + Bundle.main.bundleIdPrefix + ".signal.group.staging"
 
