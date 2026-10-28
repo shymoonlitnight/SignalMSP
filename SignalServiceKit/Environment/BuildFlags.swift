@@ -89,7 +89,7 @@ public enum BuildFlags {
     /// ACI share.
     public static let accountIdentifierSharingSend = build <= .internal
 
-    public static let phoneNumberlessCanLinkNewDevices = false
+    public static let phoneNumberlessCanLinkNewDevices = true
     public static let phoneNumberlessCanBeLinkedDevice = true
 
     public static let phoneNumberlessRegistration = build <= .dev

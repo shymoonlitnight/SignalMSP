@@ -41,6 +41,10 @@ public class ProvisioningManager {
         self.tsAccountManager = tsAccountManager
     }
 
+    struct MustUpdateLinkedDeviceError: Error {
+        fileprivate init() {}
+    }
+
     public func provision(
         with deviceProvisioningUrl: DeviceProvisioningURL,
         shouldLinkNSync: Bool,
@@ -102,6 +106,9 @@ public class ProvisioningManager {
         case .phoneNumberless(let authCredentialSalt):
             guard BuildFlags.phoneNumberlessCanLinkNewDevices else {
                 owsFail("can't provision without phone number state")
+            }
+            guard deviceProvisioningUrl.capabilities.contains(.nopni) else {
+                throw MustUpdateLinkedDeviceError()
             }
             accountType = .phoneNumberless(authCredentialSalt)
         }

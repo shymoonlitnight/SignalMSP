@@ -202,6 +202,22 @@ class LinkDeviceViewController: OWSViewController {
             ))
             return actionSheet
 
+        case is ProvisioningManager.MustUpdateLinkedDeviceError:
+            let actionSheet = ActionSheetController(
+                title: OWSLocalizedString("LINKING_DEVICE_FAILED_TITLE", comment: "Alert Title"),
+                message: OWSLocalizedString(
+                    "LINKING_DEVICE_OUT_OF_DATE",
+                    comment: "Shown when trying to link a device to an account but that device is out of date and must first update its version of Signal.",
+                ),
+            )
+            actionSheet.addAction(ActionSheetAction(
+                title: CommonStrings.okButton,
+                handler: { [weak self] _ in
+                    self?.popToLinkedDeviceList()
+                },
+            ))
+            return actionSheet
+
         default:
             let actionSheet = ActionSheetController(
                 title: OWSLocalizedString("LINKING_DEVICE_FAILED_TITLE", comment: "Alert Title"),

@@ -5540,7 +5540,10 @@
 "LINKED_DEVICES_TITLE" = "Linked Devices";
 
 /* Alert Title */
-"LINKING_DEVICE_FAILED_TITLE" = "Linking Device Failed";
+"LINKING_DEVICE_FAILED_TITLE" = "Couldn’t Link Device";
+
+/* Shown when trying to link a device to an account but that device is out of date and must first update its version of Signal. */
+"LINKING_DEVICE_OUT_OF_DATE" = "Your other device is running an old version of Signal. You need to update Signal on that device before you can link it.";
 
 /* Progress label when the message loading has nearly completed during the device linking process */
 "LINKING_SYNCING_FINALIZING" = "Finalizing message transfer…";
