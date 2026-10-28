@@ -266,8 +266,6 @@ extension ThreadContextualActionProvider where Self: UIViewController {
     // MARK: -
 
     func toggleThreadIsArchived(threadViewModel: ThreadViewModel) {
-        AssertIsOnMainThread()
-
         let databaseStorage = SSKEnvironment.shared.databaseStorageRef
         let pinnedThreadManager = DependenciesBridge.shared.pinnedThreadManager
 
@@ -294,7 +292,6 @@ extension ThreadContextualActionProvider where Self: UIViewController {
     }
 
     func deleteThreadWithConfirmation(threadViewModel: ThreadViewModel) {
-        AssertIsOnMainThread()
         let db = DependenciesBridge.shared.db
         let threadDeletionManager = DependenciesBridge.shared.threadDeletionManager
         let tsAccountManager = DependenciesBridge.shared.tsAccountManager

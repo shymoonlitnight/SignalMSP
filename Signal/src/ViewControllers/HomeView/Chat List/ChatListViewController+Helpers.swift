@@ -6,11 +6,9 @@
 import SignalServiceKit
 import SignalUI
 
-public extension ChatListViewController {
+extension ChatListViewController {
 
     var presentedChatListViewController: ChatListViewController? {
-        AssertIsOnMainThread()
-
         guard
             let topViewController = navigationController?.topViewController as? ChatListViewController,
             topViewController != self
@@ -18,16 +16,6 @@ public extension ChatListViewController {
             return nil
         }
         return topViewController
-    }
-
-    func isConversationActive(threadUniqueId: String) -> Bool {
-        AssertIsOnMainThread()
-
-        guard let conversationSplitViewController = splitViewController as? ConversationSplitViewController else {
-            owsFailDebug("Missing conversationSplitViewController.")
-            return false
-        }
-        return conversationSplitViewController.selectedThread?.uniqueId == threadUniqueId
     }
 
     func updateLastViewedThreadUniqueId(_ threadUniqueId: String, animated: Bool) {
@@ -80,18 +68,21 @@ public extension ChatListViewController {
     // MARK: Archive
 
     func archiveSelectedConversation() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         let databaseStorage = SSKEnvironment.shared.databaseStorageRef
         let pinnedThreadManager = DependenciesBridge.shared.pinnedThreadManager
 
-        guard let selectedThread = conversationSplitViewController?.selectedThread else { return }
+        guard
+            let homeTabBarController,
+            let selectedThread = homeTabBarController.selectedThread
+        else {
+            return
+        }
 
         guard !selectedThread.isArchived else { return }
 
-        conversationSplitViewController?.closeSelectedConversation(animated: true)
+        homeTabBarController.closeSelectedConversation(animated: true)
 
         databaseStorage.write { transaction in
             pinnedThreadManager.unpinThread(selectedThread, updateStorageService: true, tx: transaction)
@@ -102,17 +93,20 @@ public extension ChatListViewController {
     }
 
     func unarchiveSelectedConversation() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         let databaseStorage = SSKEnvironment.shared.databaseStorageRef
 
-        guard let selectedThread = conversationSplitViewController?.selectedThread else { return }
+        guard
+            let homeTabBarController,
+            let selectedThread = homeTabBarController.selectedThread
+        else {
+            return
+        }
 
         guard selectedThread.isArchived else { return }
 
-        conversationSplitViewController?.closeSelectedConversation(animated: true)
+        homeTabBarController.closeSelectedConversation(animated: true)
 
         databaseStorage.write { transaction in
             selectedThread.updateWith(isArchived: false, updateStorageService: true, transaction: transaction)
@@ -122,8 +116,6 @@ public extension ChatListViewController {
     }
 
     func showArchivedConversations(offerMultiSelectMode: Bool = true) {
-        AssertIsOnMainThread()
-
         owsAssertDebug(viewState.chatListMode == .inbox)
 
         // When showing archived conversations, we want to use a conventional "back" button
@@ -132,7 +124,6 @@ public extension ChatListViewController {
 
         // Push a separate instance of this view using "archive" mode.
         let chatList = ChatListViewController(chatListMode: .archive)
-        chatList.hidesBottomBarWhenPushed = true
 
         if offerMultiSelectMode {
             chatList.navigationItem.rightBarButtonItem = .button(
@@ -163,7 +154,7 @@ extension ChatListViewController {
 
         switch renderState.sections[indexPath.section].type {
         case .pinned, .unpinned:
-            let currentSelectedThreadId = conversationSplitViewController?.selectedThread?.uniqueId
+            let currentSelectedThreadId = homeTabBarController?.selectedThread?.uniqueId
             // Currently, no previewing the currently selected thread.
             // Though, in a scene-aware, multiwindow world, we may opt to permit this.
             // If only to allow the user to pick up and drag a conversation to a new window.

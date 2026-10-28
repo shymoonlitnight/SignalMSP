@@ -540,7 +540,7 @@ public class ChatListViewController: OWSViewController, HomeTabViewController {
                                 ),
                                 image: image,
                                 handler: { [weak self] _ in
-                                    let backupSettingPageType: ShowAppSettingsMode.BackupSettingsPage = db.read { tx in
+                                    let backupSettingPageType: HomeTabBarController.ShowAppSettingsMode.BackupSettingsPage = db.read { tx in
                                         if failureStateManager.hasFailedRemoteBackup(tx: tx) {
                                             return .remote()
                                         } else if failureStateManager.hasFailedLocalBackup(tx: tx) {
@@ -819,12 +819,10 @@ public class ChatListViewController: OWSViewController, HomeTabViewController {
     }
 
     func showNewConversationView() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         // Dismiss any message actions if they're presented
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
+        homeTabBarController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
 
         let viewController = ComposeViewController()
         SSKEnvironment.shared.contactManagerImplRef.requestSystemContactsOnce { error in
@@ -843,12 +841,10 @@ public class ChatListViewController: OWSViewController, HomeTabViewController {
     }
 
     func showNewGroupView() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         // Dismiss any message actions if they're presented
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
+        homeTabBarController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
 
         let newGroupViewController = NewGroupMembersViewController()
         SSKEnvironment.shared.contactManagerImplRef.requestSystemContactsOnce { error in
@@ -864,6 +860,10 @@ public class ChatListViewController: OWSViewController, HomeTabViewController {
             let modal = OWSNavigationController(rootViewController: newGroupViewController)
             self.navigationController?.presentFormSheet(modal, animated: true)
         }
+    }
+
+    func showAppSettings(mode: HomeTabBarController.ShowAppSettingsMode? = nil, completion: (() -> Void)? = nil) {
+        homeTabBarController?.showAppSettingsWithMode(mode, completion: completion)
     }
 
     @objc
@@ -958,8 +958,9 @@ public class ChatListViewController: OWSViewController, HomeTabViewController {
 
     func isChatListTopmostViewController() -> Bool {
         guard
-            UIApplication.shared.frontmostViewController == self.conversationSplitViewController,
-            conversationSplitViewController?.selectedThread == nil,
+            UIApplication.shared.frontmostViewController == homeTabBarController,
+            homeTabBarController?.selectedHomeTab == .chatList,
+            homeTabBarController?.selectedThread == nil,
             presentedViewController == nil
         else { return false }
 
@@ -1366,199 +1367,16 @@ extension ChatListViewController: ChatListProxyButtonDelegate {
     }
 }
 
-// MARK: -
-
-extension ChatListViewController {
-    enum ShowAppSettingsMode {
-        enum BackupSettingsPage {
-            case landingPage
-            case remote(onAppearAction: BackupSettingsViewController.OnAppearAction? = nil)
-            case local
-        }
-
-        case payments
-        case payment(paymentsHistoryItem: PaymentsHistoryItem)
-        case paymentsTransferIn
-        case appearance
-        case avatarBuilder
-        case backups(
-            page: BackupSettingsPage = BuildFlags.LocalFileBackups.settingsUI ? .landingPage : .remote(),
-        )
-        case corruptedUsernameResolution
-        case corruptedUsernameLinkResolution
-        case donate(donateMode: DonateViewController.DonateMode)
-        case linkedDevices
-        case proxy
-        case accountSettings
-    }
-
-    func showAppSettings(mode: ShowAppSettingsMode? = nil, completion: (() -> Void)? = nil) {
-        AssertIsOnMainThread()
-
-        Logger.info("")
-
-        // Dismiss any message actions if they're presented
-        conversationSplitViewController?.selectedConversationViewController?
-            .dismissMessageContextMenu(animated: true)
-
-        let navigationController = OWSNavigationController()
-        let appSettingsViewController = AppSettingsViewController()
-
-        var internalCompletion: (() -> Void)?
-        var viewControllers: [UIViewController] = [appSettingsViewController]
-
-        switch mode {
-        case nil:
-            break
-
-        case .payments:
-            let paymentsSettings = PaymentsSettingsViewController(mode: .inAppSettings)
-            viewControllers += [paymentsSettings]
-
-        case .payment(let paymentsHistoryItem):
-            let paymentsSettings = PaymentsSettingsViewController(mode: .inAppSettings)
-            let paymentsDetail = PaymentsDetailViewController(paymentItem: paymentsHistoryItem)
-            viewControllers += [paymentsSettings, paymentsDetail]
-
-        case .paymentsTransferIn:
-            let paymentsSettings = PaymentsSettingsViewController(mode: .inAppSettings)
-            let paymentsTransferIn = PaymentsTransferInViewController()
-            viewControllers += [paymentsSettings, paymentsTransferIn]
-
-        case .appearance:
-            let appearance = AppearanceSettingsTableViewController()
-            viewControllers += [appearance]
-
-        case .avatarBuilder:
-            let profile = ProfileSettingsViewController(
-                usernameChangeDelegate: appSettingsViewController,
-                usernameLinkScanDelegate: appSettingsViewController,
-            )
-            viewControllers += [profile]
-            internalCompletion = { profile.presentAvatarSettingsView() }
-
-        case .backups(let page):
-            let backupSettingsVC: UIViewController
-            switch page {
-            case .landingPage:
-                backupSettingsVC = BackupSettingsLandingPageViewController()
-            case .remote(let onAppearAction):
-                let shouldSkipOnboarding = DependenciesBridge.shared.db.read { tx in
-                    if BackupSettingsStore().shouldOverrideShowBackupsOnboarding(tx: tx) {
-                        return false
-                    }
-                    return BackupSettingsStore().haveBackupsEverBeenEnabled(tx: tx)
-                }
-
-                backupSettingsVC = BackupOnboardingCoordinator(
-                    backupType: .remote,
-                ).prepareForPresentation(
-                    inNavController: navigationController,
-                    onAppearAction: onAppearAction,
-                    shouldSkipOnboarding: shouldSkipOnboarding,
-                )
-            case .local:
-                let shouldSkipOnboarding = DependenciesBridge.shared.db.read { tx in
-                    if LocalFileBackupStore().shouldOverrideShowLocalBackupsOnboarding(tx: tx) {
-                        return false
-                    }
-                    return LocalFileBackupStore().localBackupsEnabled(tx: tx)
-                }
-
-                backupSettingsVC = BackupOnboardingCoordinator(
-                    backupType: .local,
-                ).prepareForPresentation(
-                    inNavController: navigationController,
-                    shouldSkipOnboarding: shouldSkipOnboarding,
-                )
-            }
-
-            viewControllers += [
-                backupSettingsVC,
-            ]
-
-        case .corruptedUsernameResolution:
-            let profile = ProfileSettingsViewController(
-                usernameChangeDelegate: appSettingsViewController,
-                usernameLinkScanDelegate: appSettingsViewController,
-            )
-            viewControllers += [profile]
-            internalCompletion = { profile.presentUsernameCorruptedResolution() }
-
-        case .corruptedUsernameLinkResolution:
-            let profile = ProfileSettingsViewController(
-                usernameChangeDelegate: appSettingsViewController,
-                usernameLinkScanDelegate: appSettingsViewController,
-            )
-            viewControllers += [profile]
-            internalCompletion = { profile.presentUsernameLinkCorruptedResolution() }
-
-        case let .donate(donateMode):
-            let tsAccountManager = DependenciesBridge.shared.tsAccountManager
-            guard
-                let registeredState = try? tsAccountManager.registeredStateWithMaybeSneakyTransaction(),
-                let donationAllowedToken = DonationAllowedToken(registeredState: registeredState, remoteConfig: .current),
-                donationAllowedToken.canDonate(inMode: donateMode.asDonationMode)
-            else {
-                DonationViewsUtil.openDonateWebsite()
-                return
-            }
-            let donate = DonateViewController(preferredDonateMode: donateMode, donationAllowedToken: donationAllowedToken) { [weak self] finishResult in
-                switch finishResult {
-                case let .completedDonation(donateSheet, receiptCredentialSuccessMode):
-                    donateSheet.dismiss(animated: true) { [weak self] in
-                        guard
-                            let self,
-                            let badgeThanksSheetPresenter = BadgeThanksSheetPresenter.fromGlobalsWithSneakyTransaction(
-                                successMode: receiptCredentialSuccessMode,
-                            )
-                        else { return }
-
-                        Task {
-                            await badgeThanksSheetPresenter.presentAndRecordBadgeThanks(
-                                fromViewController: self,
-                            )
-                        }
-                    }
-                case let .monthlySubscriptionCancelled(donateSheet, toastText):
-                    donateSheet.dismiss(animated: true) { [weak self] in
-                        guard let self else { return }
-                        self.view.presentToast(text: toastText, fromViewController: self)
-                    }
-                }
-            }
-            viewControllers += [donate]
-
-        case .linkedDevices:
-            viewControllers += [LinkedDevicesHostingController()]
-
-        case .proxy:
-            viewControllers += [PrivacySettingsViewController(), AdvancedPrivacySettingsViewController(), ProxySettingsViewController()]
-
-        case .accountSettings:
-            viewControllers += [AccountSettingsViewController()]
-        }
-
-        navigationController.setViewControllers(viewControllers, animated: false)
-        DispatchQueue.main.async { [weak self] in
-            self?.presentFormSheet(navigationController, animated: true) {
-                completion?()
-                internalCompletion?()
-            }
-        }
-    }
-}
-
 // MARK: - ThreadContextualActionProvider
 
 extension ChatListViewController: ThreadContextualActionProvider {
     func threadContextualActionShouldCloseThreadIfActive(threadViewModel: ThreadViewModel) {
-        if
-            let conversationSplitViewController,
-            conversationSplitViewController.selectedThread?.uniqueId == threadViewModel.threadUniqueId
-        {
-            conversationSplitViewController.closeSelectedConversation(animated: true)
-        }
+        guard
+            let homeTabBarController,
+            homeTabBarController.selectedThread?.uniqueId == threadViewModel.threadUniqueId
+        else { return }
+
+        homeTabBarController.closeSelectedConversation(animated: true)
     }
 
     func threadContextualActionDidComplete() {

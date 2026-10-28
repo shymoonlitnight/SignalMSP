@@ -499,7 +499,7 @@ class ChatListFYISheetCoordinator {
         let sheet = BackupSubscriptionExpiringSoonWithPendingDownloadsHeroSheet(
             iapSubscriptionExpiringSoonWarning: warning,
             onDownloadBackupNow: {
-                chatListViewController.showAppSettings(mode: .backups(page: .remote(onAppearAction: .disableOptimizeLocalStorage)))
+                SignalApp.shared.showAppSettings(mode: .backups(page: .remote(onAppearAction: .disableOptimizeLocalStorage)))
             },
         )
         chatListViewController.present(sheet, animated: true) { [self] in

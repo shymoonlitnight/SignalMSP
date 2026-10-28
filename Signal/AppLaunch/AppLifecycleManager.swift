@@ -1659,7 +1659,7 @@ final class AppLifecycleManager: NSObject, UNUserNotificationCenterDelegate {
             self.backgroundFetchHandle?.interrupt()
             let cronTask = self.cronTask.take()
             let startDate = MonotonicDate()
-            let isPastRegistration = SignalApp.shared.conversationSplitViewController != nil
+            let isPastRegistration = SignalApp.shared.homeTabBarController != nil
             let expirationJobTask = self.expirationJobTask
             self.backgroundFetchHandle = UIApplication.shared.beginBackgroundTask(
                 backgroundBlock: {

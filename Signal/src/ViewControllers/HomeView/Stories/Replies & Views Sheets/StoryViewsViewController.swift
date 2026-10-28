@@ -182,7 +182,7 @@ class StoryViewsViewController: OWSViewController, DatabaseChangeDelegate, UIAda
                     let privacySettings = OWSNavigationController(rootViewController: StoryPrivacySettingsViewController())
 
                     // Dismiss the story view and present the privacy settings screen
-                    owsAssertDebug(self.presentingViewController?.presentingViewController is ConversationSplitViewController)
+                    owsAssertDebug(self.presentingViewController?.presentingViewController is HomeTabBarController)
                     self.presentingViewController?.presentingViewController?.dismiss(animated: true, completion: {
                         CurrentAppContext().frontmostViewController()?.present(privacySettings, animated: true)
                     })

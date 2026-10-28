@@ -1702,7 +1702,6 @@
 		880B969B2880C23E00718C6D /* PrivateStorySettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880B969A2880C23E00718C6D /* PrivateStorySettingsViewController.swift */; };
 		880B969D2880D90600718C6D /* PrivateStoryAddRecipientsSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880B969C2880D90600718C6D /* PrivateStoryAddRecipientsSettingsViewController.swift */; };
 		880B969F2880DFDF00718C6D /* PrivateStoryNameSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880B969E2880DFDF00718C6D /* PrivateStoryNameSettingsViewController.swift */; };
-		880BFFEA234590FA00F6FAB1 /* ConversationSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880BFFE82345907600F6FAB1 /* ConversationSplitViewController.swift */; };
 		880C0FF7233D3F7C00386FB8 /* playPauseButton.json in Resources */ = {isa = PBXBuildFile; fileRef = 880C0FF6233D3F7C00386FB8 /* playPauseButton.json */; };
 		880D902A2480887F003D2B14 /* EmojiPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880D90292480887F003D2B14 /* EmojiPickerSheet.swift */; };
 		880D902C2480889B003D2B14 /* EmojiPickerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 880D902B2480889B003D2B14 /* EmojiPickerCollectionView.swift */; };
@@ -6083,7 +6082,6 @@
 		880B969A2880C23E00718C6D /* PrivateStorySettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateStorySettingsViewController.swift; sourceTree = "<group>"; };
 		880B969C2880D90600718C6D /* PrivateStoryAddRecipientsSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateStoryAddRecipientsSettingsViewController.swift; sourceTree = "<group>"; };
 		880B969E2880DFDF00718C6D /* PrivateStoryNameSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivateStoryNameSettingsViewController.swift; sourceTree = "<group>"; };
-		880BFFE82345907600F6FAB1 /* ConversationSplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSplitViewController.swift; sourceTree = "<group>"; };
 		880C0FF6233D3F7C00386FB8 /* playPauseButton.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = playPauseButton.json; sourceTree = "<group>"; };
 		880C2E01262A19DE006650B6 /* InteractiveSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveSheetViewController.swift; sourceTree = "<group>"; };
 		880D90292480887F003D2B14 /* EmojiPickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiPickerSheet.swift; sourceTree = "<group>"; };
@@ -9355,7 +9353,6 @@
 			children = (
 				8852572A27DD3A590032073C /* Chat List */,
 				8852572727DD365D0032073C /* Stories */,
-				880BFFE82345907600F6FAB1 /* ConversationSplitViewController.swift */,
 				8852572B27DD40870032073C /* HomeTabBarController.swift */,
 				B9A080792B07D76A000FDB5B /* HomeTabViewController.swift */,
 			);
@@ -19131,7 +19128,6 @@
 				34E20D4E2425672B002C011E /* ConversationSettingsViewController+Contents.swift in Sources */,
 				34A17D81253F7237009F8C02 /* ConversationSettingsViewController+LegacyGroups.swift in Sources */,
 				34235F3824213550008C74CB /* ConversationSettingsViewController.swift in Sources */,
-				880BFFEA234590FA00F6FAB1 /* ConversationSplitViewController.swift in Sources */,
 				3405C06E25435048008B24EF /* ConversationViewController+Banners.swift in Sources */,
 				8851DB4524CCFB93001EACD2 /* ConversationViewController+BodyRangesTextViewDelegate.swift in Sources */,
 				34E93F9226668F7500CE6FA5 /* ConversationViewController+BodyTextItems.swift in Sources */,

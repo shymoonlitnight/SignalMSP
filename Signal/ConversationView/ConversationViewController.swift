@@ -180,7 +180,6 @@ final class ConversationViewController: OWSViewController, OWSNavigationChildCon
 
         self.viewState.delegate = self
         self.viewState.selectionState.delegate = self
-        self.hidesBottomBarWhenPushed = true
 
         SUIEnvironment.shared.contactsViewHelperRef.addObserver(self)
 

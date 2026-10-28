@@ -272,11 +272,6 @@ class StoriesViewController: OWSViewController, StoryListDataSourceDelegate, Hom
     }
 
     private func showCameraView() {
-        AssertIsOnMainThread()
-
-        // Dismiss any message actions if they're presented
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
-
         let attachmentLimits = OutgoingAttachmentLimits.currentLimits()
 
         ows_askForCameraPermissions { cameraGranted in
@@ -306,15 +301,10 @@ class StoriesViewController: OWSViewController, StoryListDataSourceDelegate, Hom
     }
 
     func showAppSettings() {
-        AssertIsOnMainThread()
-
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
-        presentFormSheet(AppSettingsViewController.inModalNavigationController(), animated: true)
+        homeTabBarController?.showAppSettings()
     }
 
     func showPrivacySettings() {
-        AssertIsOnMainThread()
-
         let vc = StoryPrivacySettingsViewController()
         presentFormSheet(OWSNavigationController(rootViewController: vc), animated: true)
     }

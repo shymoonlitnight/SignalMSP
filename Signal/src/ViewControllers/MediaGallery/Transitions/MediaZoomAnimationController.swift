@@ -48,9 +48,12 @@ extension MediaZoomAnimationController: UIViewControllerAnimatedTransitioning {
                 return
             }
             fromContextProvider = contextProvider
-        case let splitViewController as ConversationSplitViewController:
-            guard let contextProvider = splitViewController.topViewController as? MediaPresentationContextProvider else {
-                owsFailDebug("unexpected contextProvider: \(String(describing: splitViewController.topViewController))")
+        case let homeTabBarController as HomeTabBarController:
+            guard
+                let splitViewController = homeTabBarController.selectedViewController as? UISplitViewController,
+                let contextProvider = splitViewController.topViewController as? MediaPresentationContextProvider
+            else {
+                owsFailDebug("unexpected contextProvider: \(String(describing: homeTabBarController.selectedViewController))")
                 transitionContext.completeTransition(false)
                 return
             }

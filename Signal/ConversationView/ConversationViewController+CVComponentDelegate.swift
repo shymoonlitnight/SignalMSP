@@ -445,7 +445,7 @@ extension ConversationViewController: CVComponentDelegate {
         )
         actionSheet.addAction(.okay)
         actionSheet.isCancelable = true
-        (conversationSplitViewController ?? self).present(actionSheet, animated: true)
+        present(actionSheet, animated: true)
     }
 
     func didTapUndownloadableOversizeText() {
@@ -465,7 +465,7 @@ extension ConversationViewController: CVComponentDelegate {
         )
         actionSheet.addAction(.okay)
         actionSheet.isCancelable = true
-        (conversationSplitViewController ?? self).present(actionSheet, animated: true)
+        present(actionSheet, animated: true)
     }
 
     func didTapUndownloadableAudio() {
@@ -485,7 +485,7 @@ extension ConversationViewController: CVComponentDelegate {
         )
         actionSheet.addAction(.okay)
         actionSheet.isCancelable = true
-        (conversationSplitViewController ?? self).present(actionSheet, animated: true)
+        present(actionSheet, animated: true)
     }
 
     func didTapUndownloadableSticker() {
@@ -505,7 +505,7 @@ extension ConversationViewController: CVComponentDelegate {
         )
         actionSheet.addAction(.okay)
         actionSheet.isCancelable = true
-        (conversationSplitViewController ?? self).present(actionSheet, animated: true)
+        present(actionSheet, animated: true)
     }
 
     func didTapBrokenVideo() {

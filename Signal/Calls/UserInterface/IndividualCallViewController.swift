@@ -1234,7 +1234,7 @@ extension IndividualCallViewController: CallViewControllerWindowReference {
             return owsFailDebug("unexpectedly returned to call while we own the video views")
         }
 
-        guard let splitViewSnapshot = SignalApp.shared.snapshotSplitViewController(afterScreenUpdates: false) else {
+        guard let homeViewSnapshot = SignalApp.shared.snapshotHomeTabBarController(afterScreenUpdates: false) else {
             return owsFailDebug("failed to snapshot rootViewController")
         }
 
@@ -1258,7 +1258,7 @@ extension IndividualCallViewController: CallViewControllerWindowReference {
 
         bottomSheetState = .callControls
 
-        animateReturnFromPip(pipSnapshot: pipSnapshot, pipFrame: pipWindow.frame, splitViewSnapshot: splitViewSnapshot)
+        animateReturnFromPip(pipSnapshot: pipSnapshot, pipFrame: pipWindow.frame, homeViewSnapshot: homeViewSnapshot)
     }
 
     func willMoveToPip(pipWindow: UIWindow) {
@@ -1274,10 +1274,10 @@ extension IndividualCallViewController: CallViewControllerWindowReference {
         }
     }
 
-    private func animateReturnFromPip(pipSnapshot: UIView, pipFrame: CGRect, splitViewSnapshot: UIView) {
+    private func animateReturnFromPip(pipSnapshot: UIView, pipFrame: CGRect, homeViewSnapshot: UIView) {
         guard let window = view.window else { return owsFailDebug("missing window") }
-        view.superview?.insertSubview(splitViewSnapshot, belowSubview: view)
-        splitViewSnapshot.autoPinEdgesToSuperviewEdges()
+        view.superview?.insertSubview(homeViewSnapshot, belowSubview: view)
+        homeViewSnapshot.autoPinEdgesToSuperviewEdges()
 
         view.frame = pipFrame
         view.addSubview(pipSnapshot)
@@ -1291,7 +1291,7 @@ extension IndividualCallViewController: CallViewControllerWindowReference {
             self.view.layoutIfNeeded()
         }) { _ in
             self.updateCallUI()
-            splitViewSnapshot.removeFromSuperview()
+            homeViewSnapshot.removeFromSuperview()
             pipSnapshot.removeFromSuperview()
         }
     }

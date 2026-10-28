@@ -209,9 +209,15 @@ class ConversationSettingsViewController: OWSTableViewController2, BadgeCollecti
     }
 
     func updateNavigationBar() {
-        // (X) close button on the left.
-        navigationItem.leftBarButtonItem = .closeButton { [weak self] in
-            self?.dismiss(animated: true)
+        // Show (X) in the top left corner if presented modally.
+        let top = navigationController ?? self
+        let isPresentedModally = top.presentingViewController?.presentedViewController === top
+        if isPresentedModally {
+            navigationItem.leftBarButtonItem = .closeButton { [weak self] in
+                self?.dismiss(animated: true)
+            }
+        } else {
+            navigationItem.leftBarButtonItem = nil
         }
 
         // Edit button on the right for active groups that are editable by user.

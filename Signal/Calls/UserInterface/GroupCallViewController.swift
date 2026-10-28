@@ -612,9 +612,9 @@ final class GroupCallViewController: UIViewController {
 
         callService.sendInitialPhoneOrientationNotification()
 
-        if let splitViewSnapshot = SignalApp.shared.snapshotSplitViewController(afterScreenUpdates: false) {
-            view.superview?.insertSubview(splitViewSnapshot, belowSubview: view)
-            splitViewSnapshot.autoPinEdgesToSuperviewEdges()
+        if let homeViewSnapshot = SignalApp.shared.snapshotHomeTabBarController(afterScreenUpdates: false) {
+            view.superview?.insertSubview(homeViewSnapshot, belowSubview: view)
+            homeViewSnapshot.autoPinEdgesToSuperviewEdges()
 
             view.transform = .scale(1.5)
             view.alpha = 0
@@ -623,7 +623,7 @@ final class GroupCallViewController: UIViewController {
                 self.view.alpha = 1
                 self.view.transform = .identity
             }) { _ in
-                splitViewSnapshot.removeFromSuperview()
+                homeViewSnapshot.removeFromSuperview()
             }
         }
     }
@@ -1259,19 +1259,19 @@ final class GroupCallViewController: UIViewController {
         self.callLinkApprovalViewModel.requests.removeAll()
 
         guard
-            let splitViewSnapshot = SignalApp.shared.snapshotSplitViewController(afterScreenUpdates: false),
-            view.superview?.insertSubview(splitViewSnapshot, belowSubview: view) != nil
+            let homeViewSnapshot = SignalApp.shared.snapshotHomeTabBarController(afterScreenUpdates: false),
+            view.superview?.insertSubview(homeViewSnapshot, belowSubview: view) != nil
         else {
             // This can happen if we're in the background when the call is dismissed (say, from CallKit).
             AppEnvironment.shared.windowManagerRef.endCall(viewController: self)
             return
         }
 
-        splitViewSnapshot.autoPinEdgesToSuperviewEdges()
+        homeViewSnapshot.autoPinEdgesToSuperviewEdges()
 
         bottomSheet.cancelAnimationAndUpdateConstraints()
         bottomSheet.dismiss(animated: true) { [self] in
-            dismissSelf(splitViewSnapshot: splitViewSnapshot)
+            dismissSelf(splitViewSnapshot: homeViewSnapshot)
         }
     }
 
@@ -1514,7 +1514,7 @@ extension GroupCallViewController: CallViewControllerWindowReference {
             return owsFailDebug("unexpectedly returned to call while we own the video views")
         }
 
-        guard let splitViewSnapshot = SignalApp.shared.snapshotSplitViewController(afterScreenUpdates: false) else {
+        guard let homeViewSnapshot = SignalApp.shared.snapshotHomeTabBarController(afterScreenUpdates: false) else {
             return owsFailDebug("failed to snapshot rootViewController")
         }
 
@@ -1526,7 +1526,7 @@ extension GroupCallViewController: CallViewControllerWindowReference {
 
         showCallControlsIfHidden()
 
-        animateReturnFromPip(pipSnapshot: pipSnapshot, pipFrame: pipWindow.frame, splitViewSnapshot: splitViewSnapshot)
+        animateReturnFromPip(pipSnapshot: pipSnapshot, pipFrame: pipWindow.frame, homeViewSnapshot: homeViewSnapshot)
     }
 
     func willMoveToPip(pipWindow: UIWindow) {
@@ -1540,10 +1540,10 @@ extension GroupCallViewController: CallViewControllerWindowReference {
         }
     }
 
-    private func animateReturnFromPip(pipSnapshot: UIView, pipFrame: CGRect, splitViewSnapshot: UIView) {
+    private func animateReturnFromPip(pipSnapshot: UIView, pipFrame: CGRect, homeViewSnapshot: UIView) {
         guard let window = view.window else { return owsFailDebug("missing window") }
-        view.superview?.insertSubview(splitViewSnapshot, belowSubview: view)
-        splitViewSnapshot.autoPinEdgesToSuperviewEdges()
+        view.superview?.insertSubview(homeViewSnapshot, belowSubview: view)
+        homeViewSnapshot.autoPinEdgesToSuperviewEdges()
 
         let originalContentOffset = scrollView.contentOffset
 
@@ -1561,7 +1561,7 @@ extension GroupCallViewController: CallViewControllerWindowReference {
             self.scrollView.contentOffset = originalContentOffset
             self.view.layoutIfNeeded()
         }) { _ in
-            splitViewSnapshot.removeFromSuperview()
+            homeViewSnapshot.removeFromSuperview()
             pipSnapshot.removeFromSuperview()
 
             if self.hasUnresolvedSafetyNumberMismatch {

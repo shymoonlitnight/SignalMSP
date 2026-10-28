@@ -7,8 +7,6 @@ import SignalServiceKit
 
 extension ChatListViewController {
     func selectPreviousConversation() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         // If we have presented a conversation list (the archive) navigate through that instead.
@@ -17,7 +15,7 @@ extension ChatListViewController {
             return
         }
 
-        let currentThread = self.conversationSplitViewController?.selectedThread
+        let currentThread = homeTabBarController?.selectedThread
         if
             let previousIndexPath = renderState.indexPath(beforeThread: currentThread),
             let threadUniqueId = renderState.threadUniqueId(forIndexPath: previousIndexPath)
@@ -27,8 +25,6 @@ extension ChatListViewController {
     }
 
     func selectNextConversation() {
-        AssertIsOnMainThread()
-
         Logger.info("")
 
         // If we have presented a conversation list (the archive) navigate through that instead.
@@ -37,7 +33,7 @@ extension ChatListViewController {
             return
         }
 
-        let currentThread = self.conversationSplitViewController?.selectedThread
+        let currentThread = homeTabBarController?.selectedThread
         if
             let nextIndexPath = renderState.indexPath(afterThread: currentThread),
             let threadUniqueId = renderState.threadUniqueId(forIndexPath: nextIndexPath)
@@ -52,7 +48,7 @@ extension ChatListViewController {
         focusMessageId: String? = nil,
         animated: Bool,
     ) {
-        conversationSplitViewController?.presentThread(
+        homeTabBarController?.presentThread(
             threadUniqueId: threadUniqueId,
             action: action,
             focusMessageId: focusMessageId,

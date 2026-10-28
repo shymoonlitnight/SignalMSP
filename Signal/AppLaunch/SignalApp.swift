@@ -15,22 +15,18 @@ enum LaunchInterface {
 
 public class SignalApp {
     public static let shared = SignalApp()
-    private(set) weak var conversationSplitViewController: ConversationSplitViewController?
+    private(set) weak var homeTabBarController: HomeTabBarController?
 
     private init() {}
 
-    var hasSelectedThread: Bool {
-        return conversationSplitViewController?.selectedThread != nil
-    }
-
-    func showConversationSplitView(in window: UIWindow? = nil) {
+    func showHomeTabBarController(in window: UIWindow? = nil) {
         guard let window = window ?? CurrentAppContext().mainWindow else {
             owsFailDebug("Missing window.")
             return
         }
-        let splitViewController = ConversationSplitViewController()
-        window.rootViewController = splitViewController
-        self.conversationSplitViewController = splitViewController
+        let tabBarController = HomeTabBarController()
+        window.rootViewController = tabBarController
+        self.homeTabBarController = tabBarController
     }
 
     func dismissAllModals(animated: Bool, completion: (() -> Void)?) {
@@ -76,7 +72,7 @@ public class SignalApp {
         case .secondaryProvisioning:
             showSecondaryProvisioning(skipOnboarding: false)
         case .chatList:
-            showConversationSplitView(in: window)
+            showHomeTabBarController(in: window)
         }
         appReadiness.setUIIsReady()
 
@@ -124,53 +120,49 @@ public class SignalApp {
 
         window.rootViewController = navController
 
-        conversationSplitViewController = nil
+        homeTabBarController = nil
     }
 
     @MainActor
     func showSecondaryProvisioning(skipOnboarding: Bool) {
         ProvisioningController.presentProvisioningFlow(skipOnboarding: skipOnboarding)
-        conversationSplitViewController = nil
+        homeTabBarController = nil
     }
 
     // MARK: -
 
-    func showAppSettings(mode: ChatListViewController.ShowAppSettingsMode, completion: (() -> Void)? = nil) {
-        guard let conversationSplitViewController else {
-            owsFailDebug("Missing conversationSplitViewController.")
+    func showAppSettings(mode: HomeTabBarController.ShowAppSettingsMode, completion: (() -> Void)? = nil) {
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController.")
             return
         }
 
-        conversationSplitViewController.showAppSettingsWithMode(mode, completion: completion)
+        homeTabBarController.showAppSettingsWithMode(mode, completion: completion)
     }
 
     func showCameraCaptureView(completion: ((UINavigationController) -> Void)? = nil) {
-        guard let conversationSplitViewController else {
-            owsFailDebug("Missing conversationSplitViewController.")
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController.")
             return
         }
-        conversationSplitViewController.showCameraView(completion: completion)
+        homeTabBarController.showCameraView(completion: completion)
     }
 
     func showNewConversationView() {
-        AssertIsOnMainThread()
-        guard let conversationSplitViewController else {
-            owsFailDebug("No conversationSplitViewController")
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController")
             return
         }
-        conversationSplitViewController.showNewConversationView()
+        homeTabBarController.showNewConversationView()
     }
 
     func showMyStories(animated: Bool) {
-        AssertIsOnMainThread()
-
-        guard let conversationSplitViewController else {
-            owsFailDebug("No conversationSplitViewController")
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController")
             return
         }
-
         Logger.info("")
-        conversationSplitViewController.showMyStoriesController(animated: animated)
+        homeTabBarController.showMyStoriesController(animated: animated)
     }
 
     // MARK: -
@@ -196,10 +188,8 @@ public class SignalApp {
         focusMessageId: String? = nil,
         animated: Bool,
     ) {
-        AssertIsOnMainThread()
-
-        guard let conversationSplitViewController else {
-            owsFailDebug("No conversationSplitViewController")
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController")
             return
         }
 
@@ -208,9 +198,9 @@ public class SignalApp {
         DispatchMainThreadSafe {
             if
                 focusMessageId == nil,
-                let visibleThread = conversationSplitViewController.visibleThread,
+                let visibleThread = homeTabBarController.visibleThread,
                 visibleThread.uniqueId == threadUniqueId,
-                let conversationViewController = conversationSplitViewController.selectedConversationViewController
+                let conversationViewController = homeTabBarController.selectedConversationViewController
             {
                 conversationViewController.popKeyBoard()
                 if case .updateDraft = action {
@@ -218,7 +208,7 @@ public class SignalApp {
                 }
                 return
             }
-            conversationSplitViewController.presentThread(
+            homeTabBarController.presentThread(
                 threadUniqueId: threadUniqueId,
                 action: action,
                 focusMessageId: focusMessageId,
@@ -229,26 +219,26 @@ public class SignalApp {
 
     @MainActor
     func presentConversationAndScrollToFirstUnreadMessage(threadUniqueId: String, animated: Bool) {
-        guard let conversationSplitViewController else {
-            owsFailDebug("No conversationSplitViewController")
+        guard let homeTabBarController else {
+            owsFailDebug("No homeTabBarController")
             return
         }
 
         Logger.info("")
 
-        if let visibleThread = conversationSplitViewController.visibleThread, visibleThread.uniqueId == threadUniqueId {
+        if let visibleThread = homeTabBarController.visibleThread, visibleThread.uniqueId == threadUniqueId {
             AppEnvironment.shared.windowManagerRef.minimizeCallIfNeeded()
-            conversationSplitViewController.selectedConversationViewController?.scrollToInitialPosition(animated: animated)
+            homeTabBarController.selectedConversationViewController?.scrollToInitialPosition(animated: animated)
             return
         }
 
-        if let sendMediaNavigationController = conversationSplitViewController.selectedConversationViewController?.presentedViewController as? SendMediaNavigationController {
+        if let sendMediaNavigationController = homeTabBarController.selectedConversationViewController?.presentedViewController as? SendMediaNavigationController {
             if sendMediaNavigationController.hasUnsavedChanges {
                 return
             }
 
             AppEnvironment.shared.windowManagerRef.minimizeCallIfNeeded()
-            conversationSplitViewController.presentThread(
+            homeTabBarController.presentThread(
                 threadUniqueId: threadUniqueId,
                 action: .none,
                 focusMessageId: nil,
@@ -259,7 +249,7 @@ public class SignalApp {
         }
 
         AppEnvironment.shared.windowManagerRef.minimizeCallIfNeeded()
-        conversationSplitViewController.presentThread(
+        homeTabBarController.presentThread(
             threadUniqueId: threadUniqueId,
             action: .none,
             focusMessageId: nil,
@@ -269,8 +259,8 @@ public class SignalApp {
 
     // MARK: -
 
-    func snapshotSplitViewController(afterScreenUpdates: Bool) -> UIView? {
-        return conversationSplitViewController?.view?.snapshotView(afterScreenUpdates: afterScreenUpdates)
+    func snapshotHomeTabBarController(afterScreenUpdates: Bool) -> UIView? {
+        return homeTabBarController?.view?.snapshotView(afterScreenUpdates: afterScreenUpdates)
     }
 
     // MARK: -

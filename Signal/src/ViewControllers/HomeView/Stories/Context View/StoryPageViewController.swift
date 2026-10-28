@@ -530,14 +530,17 @@ extension StoryPageViewController: UIViewControllerTransitioningDelegate {
 
     private func storyTransitionContext(presentingViewController: UIViewController, isPresenting: Bool) throws -> StoryTransitionContext? {
         // If we're not presenting from the stories tab, use a default animation
-        guard let splitViewController = presentingViewController as? ConversationSplitViewController else { return nil }
-        guard splitViewController.homeVC.selectedHomeTab == .stories else { return nil }
+        guard
+            let homeTabBarController = presentingViewController as? HomeTabBarController,
+            homeTabBarController.selectedHomeTab == .stories
+        else { return nil }
 
         let thumbnailView: UIView
         let storyMessage: StoryMessage
         let thumbnailRepresentsStoryView: Bool
 
-        switch splitViewController.homeVC.storiesNavController.topViewController {
+        // Check which list story is being presented from: Stories or My Stories.
+        switch homeTabBarController.storiesSplitViewController.viewController(for: .primary)?.navigationController?.topViewController {
         case let storiesVC as StoriesViewController:
             // If the story cell isn't visible, use a default animation
             guard let storyCell = storiesVC.cell(for: currentContext) else { return nil }

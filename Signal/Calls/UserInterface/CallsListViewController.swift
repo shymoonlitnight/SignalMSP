@@ -207,10 +207,7 @@ class CallsListViewController: OWSViewController, HomeTabViewController, CallSer
     }
 
     private func showAppSettings() {
-        AssertIsOnMainThread()
-
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
-        presentFormSheet(AppSettingsViewController.inModalNavigationController(), animated: true)
+        homeTabBarController?.showAppSettings()
     }
 
     private func startMultiselect() {
@@ -235,7 +232,7 @@ class CallsListViewController: OWSViewController, HomeTabViewController, CallSer
     private func showToolbar() {
         if #available(iOS 26, *) {
             navigationController?.setToolbarHidden(false, animated: true)
-            (tabBarController as? HomeTabBarController)?.setTabBarHidden(true)
+            tabBarController?.setTabBarHidden(true, animated: true)
             return
         }
 
@@ -256,7 +253,7 @@ class CallsListViewController: OWSViewController, HomeTabViewController, CallSer
         self.tableView.contentInset.bottom = bottomInset
         self.tableView.verticalScrollIndicatorInsets.bottom = bottomInset
 
-        tabController.setTabBarHidden(true, animated: true, duration: 0.1) { [weak self] _ in
+        tabController.setTabBar(hidden: true, animated: true) { [weak self] _ in
             guard let self else { return }
             // See ChatListViewController.showToolbar for why this is async
             DispatchQueue.main.async {
@@ -348,8 +345,8 @@ class CallsListViewController: OWSViewController, HomeTabViewController, CallSer
 
     private func hideToolbar() {
         if #available(iOS 26, *) {
-            self.navigationController?.setToolbarHidden(true, animated: true)
-            (self.tabBarController as? HomeTabBarController)?.setTabBarHidden(false)
+            navigationController?.setToolbarHidden(true, animated: true)
+            tabBarController?.setTabBarHidden(false, animated: true)
             return
         }
 
@@ -360,7 +357,7 @@ class CallsListViewController: OWSViewController, HomeTabViewController, CallSer
             multiselectToolbarContainer.removeFromSuperview()
             self.multiselectToolbarContainer = nil
             guard let tabController = self.tabBarController as? HomeTabBarController else { return }
-            tabController.setTabBarHidden(false, animated: true, duration: 0.1) { _ in
+            tabController.setTabBar(hidden: false, animated: true) { _ in
                 self.tableView.contentInset.bottom = 0
                 self.tableView.verticalScrollIndicatorInsets.bottom = 0
             }
@@ -2188,8 +2185,6 @@ extension CallsListViewController: CallCellDelegate, NewCallViewControllerDelega
     }
 
     fileprivate func showCallInfo(from viewModel: CallViewModel) {
-        AssertIsOnMainThread()
-
         switch viewModel.recipientType {
         case .individual(type: _, let thread):
             showCallInfo(forThread: thread, callRecords: viewModel.callRecords, callExpirations: viewModel.callExpirations)
@@ -2228,8 +2223,7 @@ extension CallsListViewController: CallCellDelegate, NewCallViewControllerDelega
             callExpirations: callExpirations,
             memberLabelCoordinator: nil,
         )
-        let navigationController = UINavigationController(rootViewController: callDetailsView)
-        presentFormSheet(navigationController, animated: true)
+        showDetailViewController(callDetailsView, sender: self)
     }
 
     private func showCallInfo(forRootKey rootKey: CallLinkRootKey, callRecords: [CallRecord]) {
@@ -2241,8 +2235,7 @@ extension CallsListViewController: CallCellDelegate, NewCallViewControllerDelega
             callLinkRecord: callLinkRecord,
             callRecords: callRecords,
         )
-        callLinkViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(callLinkViewController, animated: true)
+        showDetailViewController(callLinkViewController, sender: self)
     }
 
     // MARK: NewCallViewControllerDelegate

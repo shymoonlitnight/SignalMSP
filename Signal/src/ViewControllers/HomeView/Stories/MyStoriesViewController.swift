@@ -35,7 +35,6 @@ class MyStoriesViewController: OWSViewController, FailedStorySendDisplayControll
     init(spoilerState: SpoilerRenderState) {
         self.spoilerState = spoilerState
         super.init()
-        hidesBottomBarWhenPushed = true
         DependenciesBridge.shared.databaseChangeObserver.appendDatabaseChangeDelegate(self)
     }
 

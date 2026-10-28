@@ -14,7 +14,7 @@ extension ChatListViewController: CameraFirstCaptureDelegate {
 
     func presentCameraView(completion: ((UINavigationController) -> Void)? = nil) {
         // Dismiss any message actions if they're presented
-        conversationSplitViewController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
+        homeTabBarController?.selectedConversationViewController?.dismissMessageContextMenu(animated: true)
 
         let attachmentLimits = OutgoingAttachmentLimits.currentLimits()
 

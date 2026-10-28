@@ -74,20 +74,14 @@ class CallQualitySurveyManager {
         guard deps.db.read(block: shouldShowSurvey(tx:)) else { return }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let vc = UIApplication.shared.frontmostViewControllerIgnoringAlerts
-            let conversationSplitVC = (vc as? ConversationSplitViewController)
-                ?? (vc?.splitViewController as? ConversationSplitViewController)
-            let currentlyVisibleConversationThreadId = conversationSplitVC?.selectedThread?.uniqueId
+            guard let homeTabBarController = CurrentAppContext().frontmostViewController() as? HomeTabBarController else { return }
 
             // Don't present a survey for one chat's call when a different chat is visible to avoid confusion
-            if
-                currentlyVisibleConversationThreadId != nil,
-                currentlyVisibleConversationThreadId != self.threadUniqueId
-            {
+            if let selectedThreadId = homeTabBarController.selectedThread?.uniqueId, selectedThreadId != self.threadUniqueId {
                 return
             }
 
-            UIApplication.shared.frontmostViewController?.present(
+            homeTabBarController.present(
                 CallQualitySurveyNavigationController(callQualitySurveyManager: self),
                 animated: true,
             )

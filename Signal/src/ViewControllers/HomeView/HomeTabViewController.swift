@@ -9,8 +9,9 @@ import SignalUI
 protocol HomeTabViewController: UIViewController { }
 
 extension HomeTabViewController {
-    var conversationSplitViewController: ConversationSplitViewController? {
-        return splitViewController as? ConversationSplitViewController
+
+    var homeTabBarController: HomeTabBarController? {
+        tabBarController as? HomeTabBarController
     }
 
     /// - Parameter badgeColor

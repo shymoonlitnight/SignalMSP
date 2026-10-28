@@ -63,7 +63,7 @@ class BadgeGiftingConfirmationViewController: OWSTableViewController2, DatabaseC
             animated: false,
         )
         dismiss(animated: true) {
-            SignalApp.shared.conversationSplitViewController?.present(
+            SignalApp.shared.homeTabBarController?.present(
                 BadgeGiftingThanksSheet(thread: self.thread, badge: self.badge),
                 animated: true,
             )

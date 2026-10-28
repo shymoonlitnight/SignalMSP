@@ -138,10 +138,10 @@ extension ConversationViewController {
             responseType: responseType,
         )
         if responseType.shouldDeleteThread {
-            self.conversationSplitViewController?.closeSelectedConversation(animated: true)
+            homeTabBarController?.closeSelectedConversation(animated: true)
         }
         if responseType.shouldReportSpam {
-            self.presentToastCVC(
+            presentToastCVC(
                 ReportSpamUIUtils.successfulReportText(didBlock: responseType.shouldBlockThread),
             )
         }
@@ -405,7 +405,7 @@ extension ConversationViewController {
             // This may have already been closed (e.g. if the user requested deletion), but
             // it's not guaranteed (e.g. the user blocked the request). Let's close it just
             // to be safe.
-            self.conversationSplitViewController?.closeSelectedConversation(animated: false)
+            homeTabBarController?.closeSelectedConversation(animated: false)
         } else {
             // Conversation view is being kept around. Update the banner state to account for any changes
             ensureBannerState()

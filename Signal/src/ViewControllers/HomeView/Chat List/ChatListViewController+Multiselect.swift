@@ -15,8 +15,6 @@ extension ChatListViewController {
     }
 
     func willEnterMultiselectMode(cancelCurrentEditAction: Bool) {
-        AssertIsOnMainThread()
-
         guard !viewState.multiSelectState.isActive else {
             return
         }
@@ -43,8 +41,6 @@ extension ChatListViewController {
     }
 
     func leaveMultiselectMode() {
-        AssertIsOnMainThread()
-
         guard viewState.multiSelectState.isActive else {
             return
         }
@@ -62,21 +58,19 @@ extension ChatListViewController {
         viewState.multiSelectState.toolbarButtons = nil
         loadCoordinator.loadIfNecessary(shouldForceLoad: true)
 
-        if let lastViewedThreadUniqueId, isConversationActive(threadUniqueId: lastViewedThreadUniqueId) {
+        if let lastViewedThreadUniqueId, homeTabBarController?.selectedThread?.uniqueId == lastViewedThreadUniqueId {
             ensureSelectedThreadUniqueId(lastViewedThreadUniqueId, animated: false)
         }
     }
 
     func showToolbar() {
-        AssertIsOnMainThread()
-
         if #available(iOS 26, *) {
             self.setToolbarItems(toolbarButtons.items, animated: false)
             self.updateCaptions()
             self.navigationController?.setToolbarHidden(false, animated: true)
             switch viewState.chatListMode {
             case .inbox:
-                (self.tabBarController as? HomeTabBarController)?.setTabBarHidden(true)
+                tabBarController?.setTabBarHidden(true, animated: true)
             case .archive:
                 // The tab bar is already hidden
                 break
@@ -112,7 +106,7 @@ extension ChatListViewController {
                 viewState.chatListMode == .inbox,
                 let tabController = self.tabBarController as? HomeTabBarController
             {
-                tabController.setTabBarHidden(true, animated: true, duration: 0.1) { _ in
+                tabController.setTabBar(hidden: true, animated: true) { _ in
                     animateToolbar()
                 }
             } else {
@@ -123,8 +117,6 @@ extension ChatListViewController {
     }
 
     func switchMultiSelectState() {
-        AssertIsOnMainThread()
-
         if viewState.multiSelectState.isActive {
             leaveMultiselectMode()
         } else {
@@ -266,12 +258,10 @@ extension ChatListViewController {
     }
 
     private func hideToolbar() {
-        AssertIsOnMainThread()
-
         if #available(iOS 26, *) {
             switch viewState.chatListMode {
             case .inbox:
-                (self.tabBarController as? HomeTabBarController)?.setTabBarHidden(false)
+                self.tabBarController?.setTabBarHidden(false, animated: true)
             case .archive:
                 // The tab bar should stay hidden in the archive
                 break
@@ -294,15 +284,13 @@ extension ChatListViewController {
                     self?.viewState.chatListMode == .inbox,
                     let tabController = self?.tabBarController as? HomeTabBarController
                 {
-                    tabController.setTabBarHidden(false, animated: true, duration: 0.1)
+                    tabController.setTabBar(hidden: false, animated: true)
                 }
             }
         }
     }
 
     public func updateCaptions() {
-        AssertIsOnMainThread()
-
         let count = tableView.indexPathsForSelectedRows?.count ?? 0
         if count == 0 {
             title = viewState.multiSelectState.title
@@ -369,8 +357,6 @@ extension ChatListViewController {
     }
 
     func performDelete() {
-        AssertIsOnMainThread()
-
         guard !(tableView.indexPathsForSelectedRows ?? []).isEmpty else {
             return
         }
