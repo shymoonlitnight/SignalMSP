@@ -368,7 +368,6 @@ public class GRDBSchemaMigrator {
         case addAciContactShareNameTable
         case addAciContactShareNamesToSearchableName
         case addShouldNotifyForUnreadRemindersWhenMutedColumn
-        case disableUnreadRemindersForExistingUsers
         case migrateBlocked
         case addBlockedAt
         case migrateLegacyMentionNotificationMode
@@ -502,6 +501,9 @@ public class GRDBSchemaMigrator {
 
         // Obsoleted by moveFromThreadAssociatedData
         case dataMigration_moveToThreadAssociatedData
+
+        // Obsoleted by disabling by default for all users.
+        case disableUnreadRemindersForExistingUsers
 #endif
     }
 
@@ -5691,12 +5693,6 @@ public class GRDBSchemaMigrator {
 
         migrator.registerMigration(.addShouldNotifyForUnreadRemindersWhenMutedColumn) { tx in
             try addShouldNotifyForUnreadRemindersWhenMutedColumn(tx: tx)
-            return .success(())
-        }
-
-        migrator.registerMigration(.disableUnreadRemindersForExistingUsers) { tx in
-            // This used to disable unread reminders for existing installs,
-            // but now it's disabled by default for all users.
             return .success(())
         }
 
