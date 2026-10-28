@@ -18,7 +18,19 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
     }
 
     private var discoveredPeerTask: Task<Void, Never>?
-    private let listenerTask = AtomicValue<Task<Void, any Error>?>(nil, lock: .init())
+
+    private enum ListenerPhase {
+        case waiting // No connection yet, peer changes can restart the listener
+        case connected // Connected, ignore any peer changes
+        case restarting // Peer change encountered, don't accept connections while restarting
+    }
+
+    private struct ListenerState {
+        var task: Task<Void, any Error>?
+        var isStopped = false
+    }
+
+    private let listenerState = AtomicValue<ListenerState>(ListenerState(), lock: .init())
 
     let discoveredPeerStream: AsyncThrowingStream<[any DeviceTransfer.Peer], any Error>
 
@@ -55,7 +67,7 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
     }
 
     deinit {
-        listenerTask.swap(nil)?.cancel()
+        listenerState.update { $0.task.take()?.cancel() }
         discoveredPeerTask.take()?.cancel()
     }
 
@@ -98,9 +110,10 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
                 logger.info("No paired devices yet, listening for the first pairing")
             }
 
+            let phase = AtomicValue<ListenerPhase>(.waiting, lock: .init())
             // Set up two tasks - one to open a connection, and one to listen for any new peers.
             let session = try await withThrowingTaskGroup(of: (any DeviceTransfer.Session)?.self) { group in
-                group.addTask { [weak self] in
+                group.addTask { [weak self, logger] in
                     // This feels a little hacky, but it seems that newly peered devices take a
                     // little bit to show up at the NetworkListener layer.  If the listener is
                     // opened too quickly, the new peer won't be in the list of allowable connections
@@ -110,15 +123,16 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
 
                     try Task.checkCancellation()
                     do {
-                        // Try to connect and build a session
-                        return try await self?.listenForConnection(allowedDevices: allowedConnections)
+                        logger.info("Begin listening for connection")
+                        return try await self?.listenForConnection(
+                            allowedDevices: allowedConnections,
+                            phase: phase,
+                        )
                     } catch is CancellationError {
                         throw CancellationError()
                     } catch {
-                        // Before anything is paired there may be nothing for the listener
-                        // to bind to and an error is expected. Returning nil drops back to the
-                        // loop above to wait for a pairing and try again, rather than failing the transfer.
                         guard peerList.isEmpty else { throw error }
+                        logger.info("Listener failed (\(error)); waiting for peer")
                         return nil
                     }
                 }
@@ -131,8 +145,16 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
                         let nextSet = Set(next.map(\.id))
                         let peerListSet = Set(peerList.map(\.id))
                         if !nextSet.symmetricDifference(peerListSet).isEmpty {
-                            self.logger.info("New peer discovered, restarting listener")
-                            return nil
+                            let shouldRestart = phase.update {
+                                guard $0 == .waiting else { return false }
+                                $0 = .restarting
+                                return true
+                            }
+                            if shouldRestart {
+                                self.logger.info("New peer discovered, restarting listener")
+                                return nil
+                            }
+                            self.logger.info("Ignored peer list changed after connection; keeping current connection.")
                         }
                     }
                     return nil
@@ -152,9 +174,14 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
 
     private func listenForConnection(
         allowedDevices: WAPublisherListener.Devices,
+        phase: AtomicValue<ListenerPhase>,
     ) async throws -> DeviceTransfer.Session {
+
+        // Ensure that any existing task is cleaned up before starting a new one
+        await tearDownListener(task: listenerState.update { $0.task.take() })
+
         let continuation = CancellableContinuation<DeviceTransfer.Session>()
-        listenerTask.swap(Task { [logger, secIdentity] in
+        let newTask = Task { [logger, secIdentity] in
             logger.info("Open connection")
             try await NetworkListener(
                 for: .wifiAware(
@@ -187,8 +214,10 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
                     logger.info("Connection: ready")
                 case .failed(let error):
                     logger.info("Connection: failed: \(error)")
+                    continuation.resume(with: .failure(error))
                 case .cancelled:
                     logger.info("Connection: cancelled")
+                    continuation.resume(with: .failure(CancellationError()))
                 case .waiting(let error):
                     logger.info("Connection: waiting: \(error)")
                 @unknown default:
@@ -204,37 +233,74 @@ class WADeviceTransferIncomingConnection: DeviceTransfer.IncomingConnection {
                     logger.warn("Connection: unhandled service registration: \(change)")
                 }
             }.run { connection in
+                let accepted = phase.update {
+                    guard $0 == .waiting else { return false }
+                    $0 = .connected
+                    return true
+                }
+                guard accepted else {
+                    // Only allow one connection to this endpoint at a time, and reject
+                    // any connections during a restart due to peer change
+                    logger.info("Rejected additional connection")
+                    return
+                }
                 logger.info("Connection from endpoint")
                 let session = WADeviceTransferSession(connection: connection)
                 continuation.resume(with: .success(session))
                 try await session.waitForCompletion()
             }
-        })?.cancel()
-
-        let session = try await withTaskCancellationHandler {
-            try await continuation.wait()
-        } onCancel: {
-            listenerTask.swap(nil)?.cancel()
         }
-        logger.info("Returning new session")
-        return session
+
+        let setNewTask = listenerState.update { state in
+            guard !state.isStopped else { return false }
+            state.task = newTask
+            return true
+        }
+        guard setNewTask else {
+            newTask.cancel()
+            throw CancellationError()
+        }
+
+        do {
+            let session = try await continuation.wait()
+            logger.info("Returning new session")
+            return session
+        } catch {
+            await tearDownListener(task: listenerState.update { $0.task.take() })
+            phase.update { if $0 == .connected { $0 = .waiting } }
+            throw error
+        }
     }
 
     func stop(error: Error?) async {
-        guard let task = listenerTask.swap(nil) else {
+        let task = listenerState.update {
+            // Mark as stopped, so any attempts to start a new listener are immediately cancelled
+            $0.isStopped = true
+            return $0.task.take()
+        }
+        await tearDownListener(task: task)
+    }
+
+    private func tearDownListener(task: Task<Void, any Error>?) async {
+        guard let task else {
             logger.info("Stop: no listener to tear down")
             return
         }
         logger.info("Stop: cancelling listener")
         task.cancel()
-        do {
-            try await withCooperativeTimeout(seconds: Constants.listenerStopTimeout) {
-                _ = await task.result
+        // Since this may execute in an already cancelled task, run this in an unstrucutured
+        // task that doesn't inherit cancelled state.  Without this, the timeout may not fire
+        // and the cancellation could block longer than intended.
+        await Task {
+            do {
+                try await withCooperativeTimeout(seconds: Constants.listenerStopTimeout) {
+                    _ = await task.result
+                }
+                logger.info("Stop: listener torn down")
+            } catch {
+                logger.warn("Stop: listener still running after \(Constants.listenerStopTimeout)s: \(error)")
             }
-            logger.info("Stop: listener torn down")
-        } catch {
-            logger.warn("Stop: listener still running after \(Constants.listenerStopTimeout)s: \(error)")
-        }
+        }.value
     }
 }
 
