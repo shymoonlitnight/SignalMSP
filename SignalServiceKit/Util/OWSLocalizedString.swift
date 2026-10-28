@@ -56,3 +56,24 @@ extension String {
         return result
     }
 }
+
+extension NSAttributedString {
+    public static func nonPluralLocalizedStringWithFormat(
+        _ format: String,
+        _ args: NSAttributedString...,
+        baseAttributes: [NSAttributedString.Key: Any] = [:],
+    ) -> NSAttributedString {
+        // Use tokens that can't plausibly appear in real text
+        let tokens = args.indices.map { "\u{FFFC}ARG\($0)\u{FFFC}" }
+        let formatted = String.nonPluralLocalizedStringWithFormat(format, arguments: tokens)
+
+        let result = NSMutableAttributedString(string: formatted, attributes: baseAttributes)
+        for (token, arg) in zip(tokens, args) {
+            let range = (result.string as NSString).range(of: token)
+            if range.location != NSNotFound {
+                result.replaceCharacters(in: range, with: arg)
+            }
+        }
+        return result
+    }
+}

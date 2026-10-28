@@ -88,25 +88,53 @@ class HomeTabBarController: UITabBarController, UINavigationControllerDelegate, 
 
         // MARK: Detail Placeholder
 
-        fileprivate var detailPlaceholderImage: UIImage {
-            switch self {
-            case .chatList: UIImage(resource: .chat)
-            case .calls: UIImage(resource: .phone)
-            case .stories: UIImage(resource: .stories)
+        fileprivate var detailPlaceholderTitle: NSAttributedString {
+            let symbol: SignalSymbol = switch self {
+            case .chatList: .message
+            case .calls: .phone
+            case .stories: .stories
             }
+            return symbol.attributedString(staticFontSize: 64)
         }
 
-        fileprivate var detailPlaceholderText: NSAttributedString {
+        fileprivate var detailPlaceholderBody: NSAttributedString {
+            let baseAttributes: [NSAttributedString.Key: Any] = [.font: UIFont.dynamicTypeBody]
             switch self {
-            case .chatList: NSAttributedString("Select a chat")
-            case .calls: NSAttributedString("Click to start a new voice or video call")
-            case .stories: NSAttributedString("Click to view a story")
+            case .chatList:
+                let newChatIcon = SignalSymbol.compose.attributedString(for: .body)
+                return .nonPluralLocalizedStringWithFormat(
+                    OWSLocalizedString(
+                        "HOME_CHATS_TAB_PLACEHOLDER",
+                        comment: "Displayed on Chats tab when the screen is large (eg iPad) and is split into two columns and no chat is selected.",
+                    ),
+                    newChatIcon,
+                    baseAttributes: baseAttributes,
+                )
+
+            case .calls:
+                let callIcon = SignalSymbol.phonePlus.attributedString(for: .body)
+                return .nonPluralLocalizedStringWithFormat(
+                    OWSLocalizedString(
+                        "HOME_CALLS_TAB_PLACEHOLDER",
+                        comment: "Displayed on Calls tab when the screen is large (eg iPad) and is split into two columns and nothing is selected.",
+                    ),
+                    callIcon,
+                    baseAttributes: baseAttributes,
+                )
+
+            case .stories:
+                return NSAttributedString(
+                    string: OWSLocalizedString(
+                        "HOME_STORIES_TAB_PLACEHOLDER",
+                        comment: "Displayed on Stories tab when screen is large (eg iPad) and is split into two columns.",
+                    ),
+                    attributes: baseAttributes,
+                )
             }
         }
 
         fileprivate var detailPlaceholderViewContentConfiguration: SplitViewDetailPlaceholderViewController.ContentConfiguration {
-            .init(image: detailPlaceholderImage, attributedText: detailPlaceholderText)
-
+            .init(title: detailPlaceholderTitle, body: detailPlaceholderBody)
         }
     }
 
@@ -1137,8 +1165,8 @@ public class OWSTabBar: UITabBar {
 private class SplitViewDetailPlaceholderViewController: OWSViewController {
 
     struct ContentConfiguration {
-        let image: UIImage
-        let attributedText: NSAttributedString
+        let title: NSAttributedString
+        let body: NSAttributedString
     }
 
     private let contentConfiguration: ContentConfiguration
@@ -1153,17 +1181,16 @@ private class SplitViewDetailPlaceholderViewController: OWSViewController {
 
         view.backgroundColor = UIColor.Signal.background
 
-        let imageView = UIImageView(image: contentConfiguration.image)
-        imageView.tintColor = .Signal.secondaryLabel
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        let titleLabel = UILabel()
+        titleLabel.attributedText = contentConfiguration.title
+            .styled(with: .color(.Signal.secondaryLabel))
+        titleLabel.isAccessibilityElement = false
 
-        let label = UILabel()
-        label.font = .dynamicTypeBody
-        label.attributedText = contentConfiguration.attributedText
+        let bodyLabel = UILabel()
+        bodyLabel.attributedText = contentConfiguration.body
             .styled(with: .color(.Signal.secondaryLabel))
 
-        let stackView = UIStackView(arrangedSubviews: [imageView, label])
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, bodyLabel])
         stackView.axis = .vertical
         stackView.spacing = 12
         stackView.alignment = .center
@@ -1171,9 +1198,6 @@ private class SplitViewDetailPlaceholderViewController: OWSViewController {
 
         view.addSubview(stackView)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 64),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 1),
-
             stackView.topAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.topAnchor),
             stackView.centerYAnchor.constraint(equalTo: contentLayoutGuide.centerYAnchor),
             stackView.leadingAnchor.constraint(greaterThanOrEqualTo: contentLayoutGuide.leadingAnchor),
