@@ -182,12 +182,12 @@ public class RegistrationSessionManagerTest: XCTestCase {
             bodyJson: responseBody,
         ))
         do {
-            let result = await registrationSessionManager.beginOrRestoreSession(
+            let result = try await registrationSessionManager.beginOrRestoreSession(
                 e164: e164,
                 apnsToken: apnsToken,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, .success(responseSession))
+            XCTAssertEqual(result, responseSession)
         }
 
         // The session should be in storage.
@@ -216,12 +216,12 @@ public class RegistrationSessionManagerTest: XCTestCase {
             bodyJson: responseBody,
         ))
         do {
-            let result = await registrationSessionManager.beginOrRestoreSession(
+            let result = try await registrationSessionManager.beginOrRestoreSession(
                 e164: e164,
                 apnsToken: apnsToken,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, .success(responseSession))
+            XCTAssertEqual(result, responseSession)
         }
 
         // The new (shuffled id) session should be in storage.
@@ -254,12 +254,12 @@ public class RegistrationSessionManagerTest: XCTestCase {
             bodyJson: responseBody,
         ))
         do {
-            let result = await registrationSessionManager.beginOrRestoreSession(
+            let result = try await registrationSessionManager.beginOrRestoreSession(
                 e164: e164,
                 apnsToken: apnsToken,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, .success(responseSession))
+            XCTAssertEqual(result, responseSession)
         }
 
         // The new (shuffled id) session should be in storage.
@@ -294,12 +294,12 @@ public class RegistrationSessionManagerTest: XCTestCase {
             bodyJson: responseBody,
         ))
         do {
-            let result = await registrationSessionManager.beginOrRestoreSession(
+            let result = try await registrationSessionManager.beginOrRestoreSession(
                 e164: e164,
                 apnsToken: apnsToken,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, .success(responseSession))
+            XCTAssertEqual(result, responseSession)
         }
 
         // The session should be in storage.
@@ -322,12 +322,12 @@ public class RegistrationSessionManagerTest: XCTestCase {
             bodyJson: responseBody,
         ))
         do {
-            let result = await registrationSessionManager.beginOrRestoreSession(
+            let result = try await registrationSessionManager.beginOrRestoreSession(
                 e164: newE164,
                 apnsToken: apnsToken,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, .success(responseSession))
+            XCTAssertEqual(result, responseSession)
         }
 
         // The session should be in storage.

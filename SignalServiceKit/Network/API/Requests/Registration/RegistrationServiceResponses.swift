@@ -10,19 +10,6 @@ public enum RegistrationServiceResponses {
 
     // MARK: - Registration Session Endpoints
 
-    public enum BeginSessionResponseCodes: Int, UnknownEnumCodable {
-        /// Success. Response body has `RegistrationSession` object.
-        case success = 200
-        case missingArgument = 400
-        case invalidArgument = 422
-        /// The caller is not permitted to create a verification session and must wait before trying again.
-        /// Response will include a 'retry-after' header.
-        case retry = 429
-        case unexpectedError = -1
-
-        public static var unknown: Self { .unexpectedError }
-    }
-
     public enum FetchSessionResponseCodes: Int, UnknownEnumCodable {
         /// Success. Response body has `RegistrationSession` object.
         case success = 200

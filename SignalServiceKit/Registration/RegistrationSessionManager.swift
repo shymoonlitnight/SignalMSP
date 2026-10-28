@@ -13,7 +13,7 @@ public protocol RegistrationSessionManager {
 
     /// Begins a new session, first attempting to restore any existing valid session for the same number.
     /// See `Registration.BeginSessionResponse` for possible responses, including errors.
-    func beginOrRestoreSession(e164: E164, apnsToken: String?, logger: PrefixedLogger) async -> Registration.BeginSessionResponse
+    func beginOrRestoreSession(e164: E164, apnsToken: String?, logger: PrefixedLogger) async throws -> RegistrationSession
 
     /// Fulfill a challenge for the session (e.g. a captcha).
     /// See `Registration.UpdateSessionResponse` for possible responses, including errors.
@@ -44,18 +44,6 @@ public enum Registration {
     public enum ChallengeFulfillment: Equatable {
         case captcha(String)
         case pushChallenge(String)
-    }
-
-    public enum BeginSessionResponse: Equatable {
-        case success(RegistrationSession)
-        /// Typically, invalid e164.
-        case invalidArgument
-        /// The server indicated the client should retry after at least this much time has passed.
-        case retryAfter(TimeInterval?)
-        /// A network failure.
-        case networkFailure
-        /// Some other generic unknown error.
-        case genericError
     }
 
     /// Collapses a few different error responses possible from the server down to only those

@@ -617,7 +617,8 @@ public class RegistrationCoordinatorTest {
         ))
 
         // Once the first request fails, it should try an start a session. Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Before requesting a session, it should ask for push tokens to give the session.
         // This was set up above.
@@ -739,7 +740,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Then when it gets back the session, it should immediately ask for
         // a verification code to be sent.
@@ -999,7 +1001,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Then when it gets back the session, it should immediately ask for
         // a verification code to be sent.
@@ -1337,7 +1340,8 @@ public class RegistrationCoordinatorTest {
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(nextVerificationAttempt: 0)))
 
         // Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once the request fails, we should try again with the reglock
         // token, this time.
@@ -1572,7 +1576,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Then when it gets back the session, it should immediately ask for
         // a verification code to be sent.
@@ -1634,7 +1639,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Resolve with a session.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(e164: originalE164)))
+        let expectedSession = stubs.session(e164: originalE164)
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Then when it gets back the session, it should immediately ask for a verification code to be sent.
         // Resolve with an updated session.
@@ -1817,7 +1823,12 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: .registering)
 
         // Reject for invalid argument (the e164).
-        sessionManager.addBeginSessionResponseMock(.invalidArgument)
+        sessionManager.addBeginSessionResponseMock({
+            throw HTTPResponse(
+                requestUrl: URL(string: "v1/verification/session")!,
+                status: 422,
+            ).asError()
+        })
 
         // Give it a phone number, which should cause it to start a session.
         // It should put us on the phone number entry screen again
@@ -1846,7 +1857,13 @@ public class RegistrationCoordinatorTest {
         let retryTimeInterval: TimeInterval = 5
 
         // Reject with a rate limit.
-        sessionManager.addBeginSessionResponseMock(.retryAfter(retryTimeInterval))
+        sessionManager.addBeginSessionResponseMock({
+            throw HTTPResponse(
+                requestUrl: URL(string: "v1/verification/session")!,
+                status: 429,
+                headers: ["Retry-After": "\(retryTimeInterval)"],
+            ).asError()
+        })
 
         // Give it a phone number, which should cause it to start a session.
         // It should put us on the phone number entry screen again
@@ -1881,9 +1898,8 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session, but with SMS code rate limiting already.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
-            nextSMS: 10,
-        )))
+        let expectedSession = stubs.session(nextSMS: 10)
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give it a phone number, which should cause it to start a session.
         // It should put us on the verification code entry screen with an error.
@@ -1906,9 +1922,10 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session that's ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             nextCall: nil, /* initially calling unavailable */
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a code.
         // Resolve with a transport error
@@ -1958,7 +1975,8 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session that's ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a code.
 
@@ -2028,9 +2046,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Give back a session that's ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
-            receivedDate: self.date,
-        )))
+        let expectedSession = stubs.session(receivedDate: self.date)
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a code.
 
@@ -2082,9 +2099,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Give back a session that's ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
-            e164: originalE164,
-        )))
+        let expectedSession = stubs.session(e164: originalE164)
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a code.
         // Give back a session with a sent code.
@@ -2104,9 +2120,8 @@ public class RegistrationCoordinatorTest {
 
         // Give back a session that's ready to go.
         // TODO: allow mocking multiple responses
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
-            e164: changedE164,
-        )))
+        let expectedSession2 = stubs.session(e164: changedE164)
+        sessionManager.addBeginSessionResponseMock({ expectedSession2 })
 
         // Once we get that session, we should try and send a code.
         // Give back a session with a sent code.
@@ -2159,10 +2174,11 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session with a captcha challenge.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.captcha],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give back a session without the challenge.
         sessionManager.addFulfillChallengeResponseMock(.success(stubs.session()))
@@ -2241,10 +2257,11 @@ public class RegistrationCoordinatorTest {
         pushRegistrationManagerMock.setReceivePreAuthChallengeTokenMock({ "a pre-auth challenge token" })
 
         // Give back a session with a push challenge.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
             nextVerificationAttempt: 0,
@@ -2298,10 +2315,11 @@ public class RegistrationCoordinatorTest {
         }
 
         // Give back a session with a push challenge.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Take too long to resolve with the challenge token.
         timeoutProviderMock.pushTokenMinWaitTime = 0.5
@@ -2342,10 +2360,11 @@ public class RegistrationCoordinatorTest {
         })
 
         // Give back a session with a push challenge.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         timeoutProviderMock.pushTokenMinWaitTime = 0.5
         timeoutProviderMock.pushTokenTimeout = 2
@@ -2376,10 +2395,11 @@ public class RegistrationCoordinatorTest {
         await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Require a push challenge, which we won't be able to answer.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
@@ -2404,10 +2424,11 @@ public class RegistrationCoordinatorTest {
         pushRegistrationManagerMock.setReceivePreAuthChallengeTokenMock({ "a pre-auth challenge token" })
 
         // Give back a session with multiple challenges.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.captcha, .pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Be ready to handle push challenges as soon as we can.
         sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
@@ -2445,10 +2466,11 @@ public class RegistrationCoordinatorTest {
         })
 
         // Give back a session with multiple challenges.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge, .captcha],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         timeoutProviderMock.pushTokenMinWaitTime = 0.5
         timeoutProviderMock.pushTokenTimeout = 2
@@ -2479,10 +2501,11 @@ public class RegistrationCoordinatorTest {
         pushRegistrationManagerMock.setReceivePreAuthChallengeTokenMock({ await challengeTokenPromise.awaitable() })
 
         // Give back a session with multiple challenges.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.pushChallenge, .captcha],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Also prep for the token's submission.
         sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
@@ -2530,10 +2553,11 @@ public class RegistrationCoordinatorTest {
         await goThroughOpeningHappyPath(coordinator: coordinator, mode: mode)
 
         // Give back a session with multiple challenges.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.captcha, .pushChallenge],
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
@@ -2553,11 +2577,12 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session with a captcha challenge and an unknown challenge.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session(
+        let expectedSession = stubs.session(
             allowedToRequestCode: false,
             requestedInformation: [.captcha],
             hasUnknownChallengeRequiringAppUpdate: true,
-        )))
+        )
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give back a session without the captcha but still with the unknown challenge
         sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
@@ -2754,7 +2779,8 @@ public class RegistrationCoordinatorTest {
         await setUpSessionPath(coordinator: coordinator, mode: mode)
 
         // Give back a session thats ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a verification code.
         // Have that ready to go.
@@ -3149,7 +3175,8 @@ public class RegistrationCoordinatorTest {
         })
 
         // Give back a session that's ready to go.
-        sessionManager.addBeginSessionResponseMock(.success(stubs.session()))
+        let expectedSession = stubs.session()
+        sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Once we get that session, we should try and send a code.
         // Resolve with a session thats ready for code submission.

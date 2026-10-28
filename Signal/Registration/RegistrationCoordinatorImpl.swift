@@ -2044,7 +2044,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             return .permissions
         }
         if inMemoryState.hasEnteredE164, let e164 = persistedState.e164 {
-            return await startSession(e164: e164, failureCount: 0)
+            return await startSession(e164: e164)
         }
         return .phoneNumberEntry(phoneNumberEntryState())
     }
@@ -2226,7 +2226,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
                 // accounts) is best effort.
                 logger.error("Rate limited when registering via recovery password; falling back to session.")
                 wipeInMemoryStateToPreventSVRPathAttempts()
-                return await startSession(e164: e164, failureCount: 0)
+                return await startSession(e164: e164)
             }
         } catch where error.isNetworkFailureOrTimeout {
             return .showErrorSheet(.networkError)
@@ -2354,7 +2354,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
 
                 // Start a session so we go down that path to recovery, challenging
                 // the reglock we just failed so we can eventually get in.
-                return await startSession(e164: e164, failureCount: 0)
+                return await startSession(e164: e164)
             }
 
         case .rejectedVerificationMethod:
@@ -3072,10 +3072,46 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
     @MainActor
     private func startSession(
         e164: E164,
-        failureCount: Int,
     ) async -> RegistrationStep {
-        let maxAutomaticRetries = Constants.networkErrorRetries
+        do {
+            try await Retry.performWithMinimumBackoff(
+                maxAttempts: Constants.networkErrorRetries + 1,
+                block: {
+                    return try await _startSession(e164: e164)
+                },
+                onError: {
+                    if $0.isNetworkFailureOrTimeout {
+                        return .retryAfterBackoff()
+                    }
+                    if let retryAfter = autoRetryableAfter($0) {
+                        return .retryAfterAtLeast(retryAfter)
+                    }
+                    throw $0
+                },
+            )
+            return await nextStep()
+        } catch where error.httpStatusCode == 400 || error.httpStatusCode == 422 {
+            return .phoneNumberEntry(phoneNumberEntryState(
+                validationError: .invalidE164(.init(invalidE164: e164)),
+            ))
+        } catch where error.httpStatusCode == 429 {
+            let timeInterval = error.httpResponseHeaders?.retryAfterTimeInterval
+            return .phoneNumberEntry(phoneNumberEntryState(
+                validationError: .rateLimited(.init(
+                    expiration: deps.dateProvider().addingTimeInterval(max(timeInterval ?? 15, 15)),
+                    e164: e164,
+                )),
+            ))
+        } catch is SessionCanNeverRequestVerificationCodeError {
+            return .showErrorSheet(.sessionCanNeverRequestVerificationCode)
+        } catch where error.isNetworkFailureOrTimeout {
+            return .showErrorSheet(.networkError)
+        } catch {
+            return .showErrorSheet(.genericError)
+        }
+    }
 
+    private func _startSession(e164: E164) async throws {
         let tokenResult = await deps.pushRegistrationManager.requestPushToken()
         let apnsToken: String?
         switch tokenResult {
@@ -3084,63 +3120,30 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
         case .pushUnsupported, .timeout, .genericError:
             apnsToken = nil
         }
-        let response = await deps.sessionManager.beginOrRestoreSession(
+
+        let session = try await deps.sessionManager.beginOrRestoreSession(
             e164: e164,
             apnsToken: apnsToken,
             logger: logger,
         )
 
-        switch response {
-        case .success(let session):
-            if sessionCanNeverRequestVerificationCode(session) {
-                db.write { resetSession($0) }
-                return .showErrorSheet(.sessionCanNeverRequestVerificationCode)
-            }
+        if sessionCanNeverRequestVerificationCode(session) {
+            db.write { resetSession($0) }
+            throw SessionCanNeverRequestVerificationCodeError()
+        }
 
-            db.write { transaction in
-                self.processSession(session, transaction)
+        db.write { tx in
+            self.processSession(session, tx)
 
-                if apnsToken == nil {
-                    self.noPreAuthChallengeTokenWillArrive(
-                        session: session,
-                        transaction: transaction,
-                    )
-                } else {
-                    self.prepareToReceivePreAuthChallengeToken(
-                        session: session,
-                        transaction: transaction,
-                    )
-                }
+            if apnsToken == nil {
+                self.noPreAuthChallengeTokenWillArrive(session: session, transaction: tx)
+            } else {
+                self.prepareToReceivePreAuthChallengeToken(session: session, transaction: tx)
             }
-
-            return await nextStep()
-        case .invalidArgument:
-            return .phoneNumberEntry(phoneNumberEntryState(
-                validationError: .invalidE164(.init(invalidE164: e164)),
-            ))
-        case .retryAfter(let timeInterval):
-            if failureCount < maxAutomaticRetries, let timeInterval, timeInterval < Constants.autoRetryInterval {
-                let minimumBackoff = OWSOperation.retryIntervalForExponentialBackoff(failureCount: failureCount + 1)
-                try? await Task.sleep(nanoseconds: max(timeInterval, minimumBackoff).clampedNanoseconds)
-                return await startSession(e164: e164, failureCount: failureCount + 1)
-            }
-            return .phoneNumberEntry(phoneNumberEntryState(
-                validationError: .rateLimited(.init(
-                    expiration: deps.dateProvider().addingTimeInterval(max(timeInterval ?? 15, 15)),
-                    e164: e164,
-                )),
-            ))
-        case .networkFailure:
-            if failureCount < maxAutomaticRetries {
-                let minimumBackoff = OWSOperation.retryIntervalForExponentialBackoff(failureCount: failureCount + 1)
-                try? await Task.sleep(nanoseconds: minimumBackoff.clampedNanoseconds)
-                return await startSession(e164: e164, failureCount: failureCount + 1)
-            }
-            return .showErrorSheet(.networkError)
-        case .genericError:
-            return .showErrorSheet(.genericError)
         }
     }
+
+    private struct SessionCanNeverRequestVerificationCodeError: Error {}
 
     @MainActor
     private func requestSessionCode(

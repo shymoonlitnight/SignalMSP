@@ -25,14 +25,14 @@ public class RegistrationSessionManagerMock: RegistrationSessionManager {
 
     // MARK: - BeginOrRestoreSession
 
-    private var beginSessionResponseMocks = [Registration.BeginSessionResponse]()
-    public func addBeginSessionResponseMock(_ mock: Registration.BeginSessionResponse) {
+    private var beginSessionResponseMocks = [() async throws -> RegistrationSession]()
+    public func addBeginSessionResponseMock(_ mock: @escaping () async throws -> RegistrationSession) {
         beginSessionResponseMocks.append(mock)
     }
 
-    public func beginOrRestoreSession(e164: E164, apnsToken: String?, logger: PrefixedLogger) async -> Registration.BeginSessionResponse {
+    public func beginOrRestoreSession(e164: E164, apnsToken: String?, logger: PrefixedLogger) async throws -> RegistrationSession {
         // TODO: Append step to known steps
-        return beginSessionResponseMocks.removeFirst()
+        return try await beginSessionResponseMocks.removeFirst()()
     }
 
     // MARK: - FulfillChallenge

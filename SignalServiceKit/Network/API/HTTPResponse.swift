@@ -14,8 +14,8 @@ public struct HTTPResponse {
     init(
         requestUrl: URL,
         status: Int,
-        headers: HttpHeaders,
-        bodyData: Data?,
+        headers: HttpHeaders = [:],
+        bodyData: Data? = nil,
         stringEncoding: String.Encoding? = nil,
     ) {
         self.requestUrl = requestUrl
