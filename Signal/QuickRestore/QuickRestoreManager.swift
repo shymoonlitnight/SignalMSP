@@ -10,14 +10,6 @@ import SignalServiceKit
 public class QuickRestoreManager {
     public typealias RestoreMethodToken = String
 
-    public enum Error: Swift.Error {
-        case errorWaitingForNewDevice
-        case invalidRegistrationMessage
-        case unsupportedRestoreMethod
-        case missingRestoreInformation
-        case unknown
-    }
-
     private let accountKeyStore: AccountKeyStore
     private let backupNonceStore: BackupNonceMetadataStore
     private let backupSettingsStore: BackupSettingsStore
@@ -61,22 +53,18 @@ public class QuickRestoreManager {
             nextBackupSecretData,
         ) = try db.read { tx in
             guard let localIdentifiers = tsAccountManager.localIdentifiers(tx: tx) else {
-                owsFailDebug("Can't quick restore without local identifiers")
-                throw Error.missingRestoreInformation
+                throw OWSAssertionError("Can't quick restore without local identifiers")
             }
             guard let accountEntropyPool = accountKeyStore.getAccountEntropyPool(tx: tx) else {
                 // This should be impossible; the only times you don't have
                 // a AEP are during registration.
-                owsFailDebug("Can't quick restore without AccountEntropyPool")
-                throw Error.missingRestoreInformation
+                throw OWSAssertionError("Can't quick restore without AccountEntropyPool")
             }
             guard let aciIdentityKeyPair = identityManager.identityKeyPair(for: .aci, tx: tx) else {
-                owsFailDebug("Can't quick restore without local identity key")
-                throw Error.missingRestoreInformation
+                throw OWSAssertionError("Can't quick restore without local identity key")
             }
             guard let pniIdentityKeyPair = identityManager.identityKeyPair(for: .pni, tx: tx) else {
-                owsFailDebug("Can't quick restore without local identity key")
-                throw Error.missingRestoreInformation
+                throw OWSAssertionError("Can't quick restore without local identity key")
             }
             let pinCode = SSKEnvironment.shared.ows2FAManagerRef.pinCode(transaction: tx)
 
@@ -128,14 +116,12 @@ public class QuickRestoreManager {
         let myE164: E164
         if let phoneNumber = localIdentifiers.phoneNumber {
             guard let _myE164 = E164(phoneNumber) else {
-                owsFailDebug("can't quick restore without e164")
-                throw Error.missingRestoreInformation
+                throw OWSAssertionError("can't quick restore without e164")
             }
             myE164 = _myE164
         } else {
             // TODO: [#less] Add support for Quick Restore.
-            owsFailDebug("can't quick restore without e164")
-            throw Error.missingRestoreInformation
+            throw OWSAssertionError("can't quick restore without e164")
         }
 
         let restoreMethodToken = UUID().uuidString
@@ -207,69 +193,71 @@ public class QuickRestoreManager {
     }
 
     public func reportRestoreMethodChoice(method: RestoreMethodType, restoreMethodToken: RestoreMethodToken) async throws {
-        whileLoop: while true {
-            let response = try await networkManager.asyncRequest(
-                Requests.ChooseRestoreMethod.buildRequest(
-                    token: restoreMethodToken,
-                    method: method,
-                ),
-            )
-            switch response.responseStatusCode {
-            case 200, 204:
-                return
-            case 429:
-                try await Task.sleep(
-                    nanoseconds: HTTPUtils.retryDelayNanoSeconds(response, defaultRetryTime: Constants.defaultRetryTime),
+        try await Retry.performWithMinimumBackoff(
+            maxAttempts: .max,
+            block: {
+                let response = try await networkManager.asyncRequest(
+                    Requests.ChooseRestoreMethod.buildRequest(
+                        token: restoreMethodToken,
+                        method: method,
+                    ),
                 )
-                continue whileLoop
-            default:
-                owsFailDebug("Unexpected response")
-                throw Error.unknown
-            }
-        }
+                guard response.responseStatusCode == 200 || response.responseStatusCode == 204 else {
+                    throw response.asError()
+                }
+            },
+            onError: {
+                if $0.httpStatusCode == 429 {
+                    return .retryAfterAtLeast($0.httpResponseHeaders?.retryAfterTimeInterval ?? Constants.defaultRetryTime)
+                }
+                throw $0
+            },
+        )
     }
 
     public func waitForRestoreMethodChoice(restoreMethodToken: RestoreMethodToken) async throws -> RestoreMethodType {
-        whileLoop: while true {
-            do {
-                let response = try await networkManager.asyncRequest(
-                    Requests.WaitForRestoreMethodChoice.buildRequest(token: restoreMethodToken),
-                )
-                switch response.responseStatusCode {
-                case 200:
-                    guard
-                        let data = response.responseBodyData,
-                        let response = try? JSONDecoder().decode(
+        // The outer "Retry" is for 204 handling where we want to immediately try
+        // again without any backoff. It means our polling timeout expired, and we
+        // need to issue a new request.
+        return try await Retry.performRepeatedly(
+            block: {
+                // The inner "Retry" is for general-purpose retries and includes
+                // exponential backoff. (Note: The exponential backoff gets reset each time
+                // the outer "Retry" loop iterates because we invoke
+                // performWithMinimumBackoff with fresh state. This is intentional.)
+                return try await Retry.performWithMinimumBackoff(
+                    maxAttempts: .max,
+                    block: {
+                        let request = Requests.WaitForRestoreMethodChoice.buildRequest(token: restoreMethodToken)
+                        let response = try await networkManager.asyncRequest(request)
+                        guard response.responseStatusCode == 200 else {
+                            throw response.asError()
+                        }
+                        let parsedResponse = try JSONDecoder().decode(
                             Requests.WaitForRestoreMethodChoice.Response.self,
-                            from: data,
+                            from: response.responseBodyData ?? Data(),
                         )
-                    else {
-                        throw Error.errorWaitingForNewDevice
-                    }
-
-                    guard let responseType = RestoreMethodType(response: response) else {
-                        throw Error.unsupportedRestoreMethod
-                    }
-                    return responseType
-                case 400:
-                    throw Error.invalidRegistrationMessage
-                case 204:
-                    /// The timeout elapsed without the device linking; clients can request again.
-                    continue whileLoop
-                case 429:
-                    try await Task.sleep(
-                        nanoseconds: HTTPUtils.retryDelayNanoSeconds(response, defaultRetryTime: Constants.defaultRetryTime),
-                    )
-                    continue whileLoop
-                default:
-                    owsFailDebug("Unexpected response")
-                    throw Error.unknown
+                        guard let restoreType = RestoreMethodType(response: parsedResponse) else {
+                            throw OWSGenericError("unsupported restore method")
+                        }
+                        return restoreType
+                    },
+                    onError: {
+                        if $0.httpStatusCode == 429 {
+                            return .retryAfterAtLeast($0.httpResponseHeaders?.retryAfterTimeInterval ?? Constants.defaultRetryTime)
+                        }
+                        throw $0
+                    },
+                )
+            },
+            onError: { error, _ in
+                /// The timeout elapsed without the device linking; clients can request again.
+                if error.httpStatusCode == 204 {
+                    return
                 }
-            } catch {
-                owsFailDebug("Unexpected exception")
-                throw Error.unknown
-            }
-        }
+                throw error
+            },
+        )
     }
 
     private enum Constants {
