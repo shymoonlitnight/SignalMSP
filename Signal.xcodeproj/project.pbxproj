@@ -1983,6 +1983,7 @@
 		C10E9FAF2BB778E100A609B9 /* BackupArchiveManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10E9FAE2BB778E100A609B9 /* BackupArchiveManagerMock.swift */; };
 		C113994B2CA1B32C00D4D90C /* BackupStickerPackDownloadStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C113994A2CA1B32400D4D90C /* BackupStickerPackDownloadStore.swift */; };
 		C113994D2CA1B3E200D4D90C /* QueuedBackupStickerPackDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = C113994C2CA1B3DA00D4D90C /* QueuedBackupStickerPackDownload.swift */; };
+		C11657CB30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11657CA30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift */; };
 		C116A1D42C8F961000E6BDE3 /* ContactAccessLimitedReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C116A1D32C8F961000E6BDE3 /* ContactAccessLimitedReminderView.swift */; };
 		C11C278129F2D2CD006779B4 /* EditHistoryTableSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C11C278029F2D2CD006779B4 /* EditHistoryTableSheetViewController.swift */; };
 		C12DB5E72DD39051005039FE /* DeviceTransferCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C12DB5E62DD39051005039FE /* DeviceTransferCoordinator.swift */; };
@@ -6448,6 +6449,7 @@
 		C10E9FAE2BB778E100A609B9 /* BackupArchiveManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupArchiveManagerMock.swift; sourceTree = "<group>"; };
 		C113994A2CA1B32400D4D90C /* BackupStickerPackDownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStickerPackDownloadStore.swift; sourceTree = "<group>"; };
 		C113994C2CA1B3DA00D4D90C /* QueuedBackupStickerPackDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueuedBackupStickerPackDownload.swift; sourceTree = "<group>"; };
+		C11657CA30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTwoFactorAuthMethodViewController.swift; sourceTree = "<group>"; };
 		C116A1D32C8F961000E6BDE3 /* ContactAccessLimitedReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactAccessLimitedReminderView.swift; sourceTree = "<group>"; };
 		C11C278029F2D2CD006779B4 /* EditHistoryTableSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditHistoryTableSheetViewController.swift; sourceTree = "<group>"; };
 		C12DB5E62DD39051005039FE /* DeviceTransferCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTransferCoordinator.swift; sourceTree = "<group>"; };
@@ -11234,6 +11236,7 @@
 				C172D54E30462D02002AF55F /* RegistrationSignalLoginViewController.swift */,
 				F933FC3E2992E77300D78DB0 /* RegistrationSplashViewController.swift */,
 				C1A979882EE38D1F005EC945 /* RegistrationTransferStatusPresenter.swift */,
+				C11657CA30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift */,
 				C18DB09E2DA6B9D40084CFD6 /* RegistrationUIStyles.swift */,
 				F9EC3FE9299DA4BB00177BF7 /* RegistrationVerificationCodeView.swift */,
 				F9E3006B299D76C3000323F8 /* RegistrationVerificationViewController.swift */,
@@ -19595,6 +19598,7 @@
 				F933FC3F2992E77300D78DB0 /* RegistrationSplashViewController.swift in Sources */,
 				6600F39029918CBF00B1EDB7 /* RegistrationStep.swift in Sources */,
 				C1A979892EE38D1F005EC945 /* RegistrationTransferStatusPresenter.swift in Sources */,
+				C11657CB30914D3300D1F711 /* RegistrationTwoFactorAuthMethodViewController.swift in Sources */,
 				C18DB09F2DA6B9D40084CFD6 /* RegistrationUIStyles.swift in Sources */,
 				3440426B273AB186008C9FA4 /* RegistrationUtils.swift in Sources */,
 				F9EC3FEA299DA4BB00177BF7 /* RegistrationVerificationCodeView.swift in Sources */,

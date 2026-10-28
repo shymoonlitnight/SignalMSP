@@ -67,6 +67,7 @@ extension UIButton {
         title: String,
         subtitle: String,
         iconName: String,
+        imageSize: CGFloat? = nil,
         primaryAction: UIAction? = nil,
     ) -> Self {
         let button = UIButton(configuration: .gray(), primaryAction: primaryAction)
@@ -84,6 +85,7 @@ extension UIButton {
             title: title,
             subtitle: subtitle,
             iconName: iconName,
+            imageSize: imageSize,
         )
         let contentView = contentConfiguration.makeContentView()
         button.addSubview(contentView)
@@ -126,8 +128,9 @@ private class RegistrationChoiceButtonContentView: UIView, UIContentView {
 
     init(configuration: RegistrationChoiceButtonContentConfiguration) {
         super.init(frame: .zero)
+        self.currentConfiguration = configuration
         setupViews()
-        self.configuration = configuration
+        apply(configuration: configuration)
     }
 
     required init?(coder: NSCoder) {
@@ -149,6 +152,7 @@ private class RegistrationChoiceButtonContentView: UIView, UIContentView {
         titleLabel.text = configuration.title
         subtitleLabel.text = configuration.subtitle
         iconView.image = UIImage(named: configuration.iconName)?.withRenderingMode(.alwaysTemplate)
+        iconView.translatesAutoresizingMaskIntoConstraints = false
         iconView.sizeToFit()
     }
 
@@ -161,14 +165,22 @@ private class RegistrationChoiceButtonContentView: UIView, UIContentView {
         iconView.tintColor = .Signal.ultramarine
         iconContainer.addSubview(iconView)
         iconContainer.translatesAutoresizingMaskIntoConstraints = false
+        var widthConstraint: NSLayoutConstraint?
+        var heightConstraint: NSLayoutConstraint?
+        if let size = currentConfiguration.imageSize {
+            widthConstraint = iconView.widthAnchor.constraint(equalToConstant: size)
+            heightConstraint = iconView.heightAnchor.constraint(equalToConstant: size)
+        }
         NSLayoutConstraint.activate([
             iconContainer.widthAnchor.constraint(equalToConstant: 48),
             iconContainer.heightAnchor.constraint(equalToConstant: 48),
             iconView.centerXAnchor.constraint(equalTo: iconContainer.centerXAnchor),
             iconView.centerYAnchor.constraint(equalTo: iconContainer.centerYAnchor),
-            iconView.trailingAnchor.constraint(greaterThanOrEqualTo: iconContainer.trailingAnchor),
+            iconView.trailingAnchor.constraint(lessThanOrEqualTo: iconContainer.trailingAnchor),
             iconView.topAnchor.constraint(greaterThanOrEqualTo: iconContainer.topAnchor),
-        ])
+            widthConstraint,
+            heightConstraint,
+        ].compacted())
 
         // Labels
         titleLabel.font = .dynamicTypeHeadline
