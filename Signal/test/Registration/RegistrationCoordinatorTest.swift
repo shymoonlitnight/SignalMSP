@@ -2181,7 +2181,8 @@ public class RegistrationCoordinatorTest {
         sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give back a session without the challenge.
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session()))
+        let expectedSession2 = stubs.session()
+        sessionManager.addFulfillChallengeResponseMock({ session, _ in session = expectedSession2 })
 
         // That means it should try and send a code;
         // Resolve with a session.
@@ -2194,9 +2195,8 @@ public class RegistrationCoordinatorTest {
         )))
 
         // Give back a session without the challenge.
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
-            nextVerificationAttempt: 0,
-        )))
+        let expectedSession3 = stubs.session(nextVerificationAttempt: 0)
+        sessionManager.addFulfillChallengeResponseMock({ session, _ in session = expectedSession3 })
 
         // Give it a phone number, which should cause it to start a session.
         coordinator.submitE164(Stubs.e164)
@@ -2263,9 +2263,12 @@ public class RegistrationCoordinatorTest {
         )
         sessionManager.addBeginSessionResponseMock({ expectedSession })
 
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
-            nextVerificationAttempt: 0,
-        )))
+        let expectedSession2 = stubs.session(nextVerificationAttempt: 0)
+        var latestChallengeFulfillment: Registration.ChallengeFulfillment?
+        sessionManager.addFulfillChallengeResponseMock({ session, fulfillment in
+            session = expectedSession2
+            latestChallengeFulfillment = fulfillment
+        })
 
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(
             nextVerificationAttempt: 0,
@@ -2286,10 +2289,7 @@ public class RegistrationCoordinatorTest {
             Issue.record("must be verificationCodeEntry")
             return
         }
-        #expect(
-            sessionManager.latestChallengeFulfillment ==
-                .pushChallenge("a pre-auth challenge token"),
-        )
+        #expect(latestChallengeFulfillment == .pushChallenge("a pre-auth challenge token"))
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2408,7 +2408,6 @@ public class RegistrationCoordinatorTest {
             Issue.record("must be phoneNumberEntry")
             return
         }
-        #expect(sessionManager.latestChallengeFulfillment == nil)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2431,9 +2430,12 @@ public class RegistrationCoordinatorTest {
         sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Be ready to handle push challenges as soon as we can.
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
-            nextVerificationAttempt: 0,
-        )))
+        let expectedSession2 = stubs.session(nextVerificationAttempt: 0)
+        var latestChallengeFulfillment: Registration.ChallengeFulfillment?
+        sessionManager.addFulfillChallengeResponseMock({ session, fulfillment in
+            session = expectedSession2
+            latestChallengeFulfillment = fulfillment
+        })
 
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(
             nextVerificationAttempt: 0,
@@ -2446,8 +2448,7 @@ public class RegistrationCoordinatorTest {
             Issue.record("must be verificationCodeEntry")
             return
         }
-        let fulfillment = sessionManager.latestChallengeFulfillment
-        #expect(fulfillment == .pushChallenge("a pre-auth challenge token"))
+        #expect(latestChallengeFulfillment == .pushChallenge("a pre-auth challenge token"))
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2508,9 +2509,8 @@ public class RegistrationCoordinatorTest {
         sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Also prep for the token's submission.
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
-            nextVerificationAttempt: 0,
-        )))
+        let expectedSession2 = stubs.session(nextVerificationAttempt: 0)
+        sessionManager.addFulfillChallengeResponseMock({ session, _ in session = expectedSession2 })
 
         sessionManager.addRequestCodeResponseMock(.success(stubs.session(
             nextVerificationAttempt: 0,
@@ -2566,7 +2566,6 @@ public class RegistrationCoordinatorTest {
             Issue.record("must be captchaChallenge")
             return
         }
-        #expect(sessionManager.latestChallengeFulfillment == nil)
     }
 
     @MainActor @Test(arguments: Self.testCases())
@@ -2585,10 +2584,11 @@ public class RegistrationCoordinatorTest {
         sessionManager.addBeginSessionResponseMock({ expectedSession })
 
         // Give back a session without the captcha but still with the unknown challenge
-        sessionManager.addFulfillChallengeResponseMock(.success(stubs.session(
+        let expectedSession2 = stubs.session(
             allowedToRequestCode: false,
             hasUnknownChallengeRequiringAppUpdate: true,
-        )))
+        )
+        sessionManager.addFulfillChallengeResponseMock({ session, _ in session = expectedSession2 })
 
         // Once we get that session, we should get a captcha step back.
         // We have an unknown challenge, but we should do known challenges first!

@@ -51,12 +51,18 @@ public class RegistrationSessionManagerImpl: RegistrationSessionManager {
     }
 
     public func fulfillChallenge(
-        for session: RegistrationSession,
+        for session: inout RegistrationSession,
         fulfillment: Registration.ChallengeFulfillment,
         logger: PrefixedLogger,
-    ) async -> Registration.UpdateSessionResponse {
-        let response = await makeFulfillChallengeRequest(session, fulfillment, logger: logger)
-        return await persistSessionFromResponse(response)
+    ) async throws {
+        try await updatingSession(&session) { session, updatedSession in
+            try await makeFulfillChallengeRequest(
+                forSession: session,
+                updatedSession: &updatedSession,
+                fulfillment: fulfillment,
+                logger: logger,
+            )
+        }
     }
 
     public func requestVerificationCode(for session: RegistrationSession, transport: Registration.CodeTransport, logger: PrefixedLogger) async -> Registration.UpdateSessionResponse {
@@ -123,6 +129,19 @@ public class RegistrationSessionManagerImpl: RegistrationSessionManager {
         return response
     }
 
+    private func updatingSession(
+        _ session: inout RegistrationSession,
+        block: (_ session: RegistrationSession, _ updatedSession: inout RegistrationSession?) async throws -> Void,
+    ) async throws {
+        var updatedSession: RegistrationSession?
+        let result = await Result(catching: { try await block(session, &updatedSession) })
+        if let updatedSession {
+            session = updatedSession
+            await db.awaitableWrite { tx in self.persist(session: session, tx) }
+        }
+        try result.get()
+    }
+
     // MARK: - MCC/MNC
 
     private static func getMccMnc() -> (mcc: String?, mnc: String?) {
@@ -186,10 +205,11 @@ public class RegistrationSessionManagerImpl: RegistrationSessionManager {
     // MARK: Fulfill Challenge
 
     private func makeFulfillChallengeRequest(
-        _ session: RegistrationSession,
-        _ fulfillment: Registration.ChallengeFulfillment,
+        forSession session: RegistrationSession,
+        updatedSession: inout RegistrationSession?,
+        fulfillment: Registration.ChallengeFulfillment,
         logger: PrefixedLogger,
-    ) async -> Registration.UpdateSessionResponse {
+    ) async throws {
         let captchaToken: String?
         let pushChallengeToken: String?
         switch fulfillment {
@@ -206,39 +226,15 @@ public class RegistrationSessionManagerImpl: RegistrationSessionManager {
             pushChallengeToken: pushChallengeToken,
             logger: logger,
         )
-        return await makeUpdateRequest(
-            request,
-            session: session,
-            handler: self.handleFulfillChallengeResponse(sessionAtSendTime:statusCode:retryAfterHeader:bodyData:),
-        )
-    }
-
-    private func handleFulfillChallengeResponse(
-        sessionAtSendTime: RegistrationSession,
-        statusCode: Int,
-        retryAfterHeader: TimeInterval?,
-        bodyData: Data?,
-    ) -> Registration.UpdateSessionResponse {
-        let e164 = sessionAtSendTime.e164
-        let statusCode = RegistrationServiceResponses.FulfillChallengeResponseCodes(rawValue: statusCode)
-        switch statusCode {
-        case .success:
-            return (try? registrationSession(
-                fromResponseBody: bodyData,
-                e164: e164,
-            )).map { .success($0) } ?? .genericError
-        case .notAccepted:
-            return (try? registrationSession(
-                fromResponseBody: bodyData,
-                e164: e164,
-            )).map { .rejectedArgument($0) } ?? .genericError
-        case .missingSession:
-            return .invalidSession
-        case .malformedRequest:
-            Logger.error("Malformed fulfill challenge request")
-            return .genericError
-        case .unexpectedError, .none:
-            return .genericError
+        do {
+            let response = try await networkManager.asyncRequest(request)
+            updatedSession = try registrationSession(fromResponseBody: response.responseBodyData, e164: session.e164)
+        } catch where error.httpStatusCode == Registration.challengeRejectedErrorCode {
+            // the challenge token provided did not match
+            updatedSession = try registrationSession(fromResponseBody: error.httpResponseData, e164: session.e164)
+            throw error
+        } catch where error.httpStatusCode == 404 {
+            throw Registration.MissingSessionError()
         }
     }
 

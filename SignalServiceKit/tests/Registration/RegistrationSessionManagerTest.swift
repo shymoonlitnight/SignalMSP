@@ -341,72 +341,78 @@ public class RegistrationSessionManagerTest: XCTestCase {
         XCTAssertEqual(savedSession, responseSession)
     }
 
-    public func testFulfillChallenge() async {
+    public func testFulfillChallenge() async throws {
         let captchaToken = "1234"
         let pushChallengeToken = "ABCD"
         let oldSession = stubSession()
-        let expectedRequest = RegistrationRequestFactory.fulfillChallengeRequest(
-            sessionId: oldSession.id,
-            captchaToken: captchaToken, // Put both, doesn't matter cuz we just match the url.
-            pushChallengeToken: pushChallengeToken,
-            logger: .empty(),
-        )
 
         // will have a new id, which is fine cuz it lets us differentiate.
         let responseBody = stubWireSession()
         let responseSession = sessionConverter(responseBody)
 
-        let statusCodeResponsePairs: [(
-            RegistrationServiceResponses.FulfillChallengeResponseCodes,
-            Registration.UpdateSessionResponse,
-            Bool, // expects session in response
-        )] = [
-            (.success, .success(responseSession), true),
-            (.notAccepted, .rejectedArgument(responseSession), true),
-            (.missingSession, .invalidSession, false),
-            (.notAccepted, .rejectedArgument(responseSession), true),
-            (.unexpectedError, .genericError, false),
-        ]
-        for (statusCode, expectedResponse, sessionInBody) in statusCodeResponsePairs {
+        func mockResponse(statusCode: Int, hasSession: Bool) {
             networkManager.asyncRequestHandlers.append(MockNetworkManager.mockResponse(
-                matchingRequest: { $0.url.relativeString.hasSuffix(expectedRequest.url.relativeString) },
-                statusCode: statusCode.rawValue,
-                bodyJson: sessionInBody ? responseBody : nil,
+                matchingRequest: { $0.method == "PATCH" && $0.url.relativeString.hasPrefix("v1/verification/session/") },
+                statusCode: statusCode,
+                bodyJson: hasSession ? responseBody : nil,
             ))
-            let result = await registrationSessionManager.fulfillChallenge(
-                for: oldSession,
+        }
+
+        var session = oldSession
+        func fulfillChallenge() async throws {
+            session = oldSession
+            try await registrationSessionManager.fulfillChallenge(
+                for: &session,
                 fulfillment: [
                     Registration.ChallengeFulfillment.captcha(captchaToken),
                     .pushChallenge(pushChallengeToken),
                 ].randomElement()!,
                 logger: .empty(),
             )
-            XCTAssertEqual(result, expectedResponse)
         }
-    }
 
-    public func testFulfillChallenge_sucessResponseWithoutBody() async {
-        let captchaToken = "1234"
-        let oldSession = stubSession()
-        let expectedRequest = RegistrationRequestFactory.fulfillChallengeRequest(
-            sessionId: oldSession.id,
-            captchaToken: captchaToken,
-            pushChallengeToken: nil,
-            logger: .empty(),
-        )
-
-        networkManager.asyncRequestHandlers.append(MockNetworkManager.mockResponse(
-            matchingRequest: { $0.url.relativeString.hasSuffix(expectedRequest.url.relativeString) },
-            statusCode: RegistrationServiceResponses.FulfillChallengeResponseCodes.success.rawValue,
-            bodyJson: nil, /* empty json */
-        ))
+        // Happy path
         do {
-            let result = await registrationSessionManager.fulfillChallenge(
-                for: oldSession,
-                fulfillment: .captcha(captchaToken),
-                logger: .empty(),
-            )
-            XCTAssertEqual(result, Registration.UpdateSessionResponse.genericError)
+            mockResponse(statusCode: 200, hasSession: true)
+            try await fulfillChallenge()
+            XCTAssertEqual(session, responseSession)
+        }
+
+        // Throw an error if the server doesn't provide a body
+        do {
+            mockResponse(statusCode: 200, hasSession: false)
+            try await fulfillChallenge()
+            XCTFail("must throw error")
+        } catch is Registration.MissingSessionError {
+            XCTFail("must not throw this error")
+        } catch {
+            // OK
+        }
+
+        do {
+            mockResponse(statusCode: 403, hasSession: true)
+            try await fulfillChallenge()
+            XCTFail("must throw error")
+        } catch where error.httpStatusCode == Registration.challengeRejectedErrorCode {
+            XCTAssertEqual(session, responseSession)
+        }
+
+        do {
+            mockResponse(statusCode: 404, hasSession: true)
+            try await fulfillChallenge()
+            XCTFail("must throw error")
+        } catch is Registration.MissingSessionError {
+            // OK
+        }
+
+        do {
+            mockResponse(statusCode: 400, hasSession: true)
+            try await fulfillChallenge()
+            XCTFail("must throw error")
+        } catch is Registration.MissingSessionError {
+            XCTFail("must not throw this error")
+        } catch {
+            // OK
         }
     }
 

@@ -410,7 +410,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             return Guarantee.wrapAsync { await self.nextStep() }
         case .session(let session):
             return Guarantee.wrapAsync {
-                return await self.submit(challengeFulfillment: .captcha(token), for: session, failureCount: 0)
+                return await self.submit(challengeFulfillment: .captcha(token), for: session)
             }
         }
     }
@@ -3371,7 +3371,6 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             return await submit(
                 challengeFulfillment: .pushChallenge(unfulfilledPushChallengeToken),
                 for: session,
-                failureCount: 0,
             )
         }
 
@@ -3395,7 +3394,6 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
                 return await submit(
                     challengeFulfillment: .pushChallenge(challengeToken),
                     for: session,
-                    failureCount: 0,
                 )
             } catch {
                 switch error {
@@ -3476,9 +3474,8 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
     private func submit(
         challengeFulfillment fulfillment: Registration.ChallengeFulfillment,
         for session: RegistrationSession,
-        failureCount: Int,
     ) async -> RegistrationStep {
-        let maxAutomaticRetries = Constants.networkErrorRetries
+        var session = session
 
         switch fulfillment {
         case .captcha:
@@ -3487,14 +3484,18 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
             logger.info("Submitting push challenge fulfillment")
         }
 
-        let result = await deps.sessionManager.fulfillChallenge(
-            for: session,
-            fulfillment: fulfillment,
-            logger: logger,
-        )
+        do {
+            try await Retry.performWithBackoff(
+                maxAttempts: Constants.networkErrorRetries + 1,
+                isRetryable: { $0.isNetworkFailureOrTimeout },
+            ) {
+                try await deps.sessionManager.fulfillChallenge(
+                    for: &session,
+                    fulfillment: fulfillment,
+                    logger: logger,
+                )
+            }
 
-        switch result {
-        case .success(let session):
             if sessionCanNeverRequestVerificationCode(session) {
                 db.write { resetSession($0) }
                 return .showErrorSheet(.sessionCanNeverRequestVerificationCode)
@@ -3511,7 +3512,7 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
                 }
             }
             return await nextStep()
-        case .rejectedArgument(let session):
+        } catch where error.httpStatusCode == Registration.challengeRejectedErrorCode {
             db.write { tx in
                 self.processSession(session, tx)
                 self.updatePersistedSessionState(session: session, tx) {
@@ -3519,46 +3520,10 @@ public class RegistrationCoordinatorImpl: RegistrationCoordinator {
                 }
             }
             return .showErrorSheet(.genericError)
-        case .disallowed(let session):
-            logger.warn("Disallowed to complete a challenge which should be impossible.")
-            // Don't keep trying to send a code.
-            inMemoryState.pendingCodeTransport = nil
-            db.write { self.processSession(session, initialCodeRequestState: .failedToRequest, $0) }
-            return .showErrorSheet(.genericError)
-        case .invalidSession:
+        } catch is Registration.MissingSessionError {
             db.write { self.resetSession($0) }
             return .showErrorSheet(.sessionInvalidated)
-        case .serverFailure(let failureResponse):
-            if failureResponse.isPermanent {
-                return .showErrorSheet(.genericError)
-            } else {
-                return .showErrorSheet(.networkError)
-            }
-        case .retryAfterTimeout(let session, retryAfterHeader: _):
-            logger.error("Should not have to retry a captcha challenge request")
-            // Clear the pending code; we want the user to press again
-            // once the timeout expires.
-            inMemoryState.pendingCodeTransport = nil
-            db.write { self.processSession(session, initialCodeRequestState: .failedToRequest, $0) }
-            db.write { self.processSession(session, $0) }
-            return await nextStep()
-        case .networkFailure:
-            if failureCount < maxAutomaticRetries {
-                return await submit(
-                    challengeFulfillment: fulfillment,
-                    for: session,
-                    failureCount: failureCount + 1,
-                )
-            }
-            return .showErrorSheet(.networkError)
-        case .transportError(let session):
-            logger.error("Should not get a transport error for a challenge request")
-            // Clear the pending code; we want the user to press again
-            // once the timeout expires.
-            inMemoryState.pendingCodeTransport = nil
-            db.write { self.processSession(session, initialCodeRequestState: .failedToRequest, $0) }
-            return await nextStep()
-        case .genericError:
+        } catch {
             return .showErrorSheet(.genericError)
         }
     }

@@ -20,20 +20,6 @@ public enum RegistrationServiceResponses {
         public static var unknown: Self { .unexpectedError }
     }
 
-    public enum FulfillChallengeResponseCodes: Int, UnknownEnumCodable {
-        /// Success. Response body has `RegistrationSession` object.
-        case success = 200
-        /// E.g. the challenge token provided did not match.
-        /// Response body has `RegistrationSession` object.
-        case notAccepted = 403
-        /// No session was found with the given ID. A new session should be initiated.
-        case missingSession = 404
-        case malformedRequest = 422
-        case unexpectedError = -1
-
-        public static var unknown: Self { .unexpectedError }
-    }
-
     public enum RequestVerificationCodeResponseCodes: Int, UnknownEnumCodable {
         /// Success. Response body has `RegistrationSession` object.
         case success = 200

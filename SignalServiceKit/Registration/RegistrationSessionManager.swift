@@ -17,7 +17,7 @@ public protocol RegistrationSessionManager {
 
     /// Fulfill a challenge for the session (e.g. a captcha).
     /// See `Registration.UpdateSessionResponse` for possible responses, including errors.
-    func fulfillChallenge(for session: RegistrationSession, fulfillment: Registration.ChallengeFulfillment, logger: PrefixedLogger) async -> Registration.UpdateSessionResponse
+    func fulfillChallenge(for session: inout RegistrationSession, fulfillment: Registration.ChallengeFulfillment, logger: PrefixedLogger) async throws
 
     /// Request a verification code be sent to the session's phone number, for some transport.
     /// See `Registration.UpdateSessionResponse` for possible responses, including errors.
@@ -45,6 +45,10 @@ public enum Registration {
         case captcha(String)
         case pushChallenge(String)
     }
+
+    public static let challengeRejectedErrorCode = 403
+
+    public struct MissingSessionError: Error {}
 
     /// Collapses a few different error responses possible from the server down to only those
     /// relevant to the registration flow, in other words those that should have distinct error behaviors.

@@ -37,19 +37,17 @@ public class RegistrationSessionManagerMock: RegistrationSessionManager {
 
     // MARK: - FulfillChallenge
 
-    private var fulfillChallengeResponseMocks = [Registration.UpdateSessionResponse]()
-    public var latestChallengeFulfillment: Registration.ChallengeFulfillment?
-    public func addFulfillChallengeResponseMock(_ mock: Registration.UpdateSessionResponse) {
+    private var fulfillChallengeResponseMocks = [(inout RegistrationSession, Registration.ChallengeFulfillment) async throws -> Void]()
+    public func addFulfillChallengeResponseMock(_ mock: @escaping (inout RegistrationSession, Registration.ChallengeFulfillment) async throws -> Void) {
         fulfillChallengeResponseMocks.append(mock)
     }
 
     public func fulfillChallenge(
-        for session: RegistrationSession,
+        for session: inout RegistrationSession,
         fulfillment: Registration.ChallengeFulfillment,
         logger: PrefixedLogger,
-    ) async -> Registration.UpdateSessionResponse {
-        latestChallengeFulfillment = fulfillment
-        return fulfillChallengeResponseMocks.removeFirst()
+    ) async throws {
+        try await fulfillChallengeResponseMocks.removeFirst()(&session, fulfillment)
     }
 
     // MARK: - RequestVerificationCode
