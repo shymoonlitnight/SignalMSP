@@ -4007,7 +4007,7 @@
 "EXPIRATION_WARNING_TODAY" = "سَتنتهي صلاحية هذا الإصدار من سيجنال اليوم. قُم بالتحديث لتواصل المراسلة.";
 
 /* Description of how and why Signal iOS uses Touch ID/Face ID/Phone Passcode to export your chat history. */
-"EXPORT_CHATS_AUTHENTICATION_REASON" = "Authenticate to export your chat history";
+"EXPORT_CHATS_AUTHENTICATION_REASON" = "أكِّد هويتك لتصدير سجل الدردشات.";
 
 /* action sheet header when re-sending message which failed because of an invalid key signature */
 "FAILED_SENDING_BECAUSE_INVALID_KEY_SIGNATURE" = "تعذَّر إرسال الرسالة لأن %1$@ يَحتاج إلى تحديث تطبيق سيجنال وفتحه.";
@@ -4711,6 +4711,9 @@
 /* Title for the group name view. */
 "GROUP_NAME_VIEW_TITLE" = "اسم المجموعة";
 
+/* Bottom bar label for group chats the local user is not a member of */
+"GROUP_NOT_MEMBER_BOTTOM_PANEL_LABEL" = "You can’t send messages to this group because you’re not a member.";
+
 /* Message indicating that a remote user has accepted their invite. Embeds {{remote user name}}. */
 "GROUP_REMOTE_USER_ACCEPTED_INVITE_FORMAT" = "قَبِلَ %1$@ الدعوة إلى المجموعة.";
 
@@ -4812,6 +4815,9 @@
 
 /* The title for the 'group requests and invites' view. */
 "GROUP_REQUESTS_AND_INVITES_VIEW_TITLE" = "الطلبات والدعوات";
+
+/* Label for a banner in group settings shown when the local user is not a member of the group */
+"GROUP_SETTINGS_NOT_MEMBER_BANNER_LABEL" = "You’re not a member of this group";
 
 /* Name for a group story on the stories list. Embeds {author's name}, {group name} */
 "GROUP_STORY_NAME_FORMAT" = "%1$@ إلى %2$@";
@@ -5007,6 +5013,15 @@
 
 /* An explanation of why the user cannot be removed on a linked device. */
 "HIDE_RECIPIENT_IMPOSSIBLE_BECAUSE_SYSTEM_CONTACT_ACTION_SHEET_EXPLANATION" = "هذا الشخص محفوظ في جهات اتصالك. احذفه من جهات اتصالك على هاتفك وحاوِل مرّة أخرى.";
+
+/* Displayed on Calls tab when the screen is large (eg iPad) and is split into two columns and nothing is selected. */
+"HOME_CALLS_TAB_PLACEHOLDER" = "Tap %1$@ to start a new voice or video call.";
+
+/* Displayed on Chats tab when the screen is large (eg iPad) and is split into two columns and no chat is selected. */
+"HOME_CHATS_TAB_PLACEHOLDER" = "Select a chat or tap %1$@ to start messaging.";
+
+/* Displayed on Stories tab when screen is large (eg iPad) and is split into two columns. */
+"HOME_STORIES_TAB_PLACEHOLDER" = "Tap to view a story.";
 
 /* Label for 'archived conversations' button. */
 "HOME_VIEW_ARCHIVED_CONVERSATIONS" = "الدردشات المؤرشفة";
@@ -5495,7 +5510,7 @@
 "LINKED_DEVICE_URL_OPENED_ACTION_SHEET_IN_APP_CAMERA_MESSAGE" = "يبدو أنك تحاول ربط جهاز يستخدم سيجنال. انقر على \"متابعة\" ثم انقر على \"ربط جهاز جديد\" وامسح كود الـ QR من جديد.";
 
 /* Bullet point about a download link on the linked devices education sheet. Embeds {{ %1$@ download link }} */
-"LINKED_DEVICES_EDUCATION_POINT_DOWNLOADS" = "On the device you want to link, visit %1$@ to install Signal";
+"LINKED_DEVICES_EDUCATION_POINT_DOWNLOADS" = "على الجهاز الذي ترغب بربطه، قُم بزيارة %1$@ لتثبيت سيجنال";
 
 /* Bullet point about message sync on the linked devices education sheet */
 "LINKED_DEVICES_EDUCATION_POINT_MESSAGES" = "تتمُّ مُزامنة رسائل تطبيق سيجنال مع تطبيق سيجنال على هاتفك المحمول بعد ربطه.";
@@ -5504,13 +5519,13 @@
 "LINKED_DEVICES_EDUCATION_POINT_PRIVACY" = "تتَّسِم جميع المراسلات في الأجهزة المُرتبِطة بالخصوصية.";
 
 /* Title for the linked device education sheet */
-"LINKED_DEVICES_EDUCATION_TITLE" = "Signal on a linked device";
+"LINKED_DEVICES_EDUCATION_TITLE" = "سيجنال على جهاز مُرتبِط";
 
 /* Text that appears where the linked device list would be indicating that there are no linked devices. */
 "LINKED_DEVICES_EMPTY_STATE" = "لا توجد أجهزة مُرتبِطة";
 
 /* Description for header of the linked devices list */
-"LINKED_DEVICES_HEADER_DESCRIPTION" = "Use this Signal account on another device.";
+"LINKED_DEVICES_HEADER_DESCRIPTION" = "استخدِم حساب سيجنال هذا على جهازٍ آخر.";
 
 /* Footer text below the list of currently-linked devices */
 "LINKED_DEVICES_LIST_FOOTER" = "معلومات الرسائل والدردشات محمية من خلال التشفير من طرف لِطرف على جميع الأجهزة.";
@@ -5534,7 +5549,10 @@
 "LINKED_DEVICES_TITLE" = "الأجهزة المُرتبِطة";
 
 /* Alert Title */
-"LINKING_DEVICE_FAILED_TITLE" = "فشل ربط الجهاز";
+"LINKING_DEVICE_FAILED_TITLE" = "Couldn’t Link Device";
+
+/* Shown when trying to link a device to an account but that device is out of date and must first update its version of Signal. */
+"LINKING_DEVICE_OUT_OF_DATE" = "Your other device is running an old version of Signal. You need to update Signal on that device before you can link it.";
 
 /* Progress label when the message loading has nearly completed during the device linking process */
 "LINKING_SYNCING_FINALIZING" = "جارٍ الانتهاء من نقل الرسائل…";
@@ -6224,10 +6242,10 @@
 "MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "يتطلَّب سيجنال الوصول إلى الصور الخاصة بك لتفعيل هذه الميزة.";
 
 /* Title for a progress modal shown after the user taps Cancel, while the work is being cancelled. */
-"MODAL_CIRCULAR_PROGRESS_CANCELLING_TITLE" = "Cancelling…";
+"MODAL_CIRCULAR_PROGRESS_CANCELLING_TITLE" = "جارٍ الإلغاء…";
 
 /* Label on a progress modal indicating how far along some work is. Embeds {{ formatted percentage }}. */
-"MODAL_CIRCULAR_PROGRESS_PERCENT_COMPLETE" = "%1$@ complete";
+"MODAL_CIRCULAR_PROGRESS_PERCENT_COMPLETE" = "%1$@ اكتملَ";
 
 /* Text on a blocking progress screen that indicates that there's a deletion in progress. */
 "MODAL_DELETING" = "جارٍ الحذف…";
@@ -6739,6 +6757,27 @@
 /* Title of the 'onboarding splash' view. */
 "ONBOARDING_SPLASH_TITLE" = "حافِظ على خصوصيتك أينما كُنت.\nكُن على طبيعتك في كل رسالة.";
 
+/* Subtitle for action to verify with an authenticator as a 2fa method. */
+"ONBOARDING_TWO_FACTOR_AUTH_METHOD_AUTHENTICATOR_APP_BODY" = "Enter a one-time code generated by your authenticator app.";
+
+/* Title for action to verify with an authenticator as a 2fa method. */
+"ONBOARDING_TWO_FACTOR_AUTH_METHOD_AUTHENTICATOR_APP_TITLE" = "Authenticator App";
+
+/* Description for the 2fa screens shown during registration. */
+"ONBOARDING_TWO_FACTOR_AUTH_METHOD_BODY" = "Choose a method below to verify your account.";
+
+/* Subtitle for action to verify with a passkey as a 2fa method. */
+"ONBOARDING_TWO_FACTOR_AUTH_METHOD_PASSKEY_BODY" = "Tap to use your saved biometric or FIDO2 passkey";
+
+/* Title for action to verify with a passkey as a 2fa method. */
+"ONBOARDING_TWO_FACTOR_AUTH_METHOD_PASSKEY_TITLE" = "Passkey";
+
+/* Description for the screen asking the user to verify their account with a passkey during registration. */
+"ONBOARDING_TWO_FACTOR_AUTH_PASSKEY_BODY" = "To continue, verify your account with your passkey.";
+
+/* Title for the 2fa screens shown during registration. */
+"ONBOARDING_TWO_FACTOR_AUTH_TITLE" = "Two-Factor Authentication";
+
 /* Label for the link that lets users change their phone number in the onboarding views. */
 "ONBOARDING_VERIFICATION_BACK_LINK" = "هل هو رقم غير صحيح؟";
 
@@ -6822,6 +6861,12 @@
 
 /* Title of prompt notifying registration without restore completed on the new device. */
 "OUTGOING_DEVICE_REGISTRATION_COMPLETE_TITLE" = "تمَّ التسجيل بنجاح";
+
+/* Body of prompt notifying connection failure during restore. */
+"OUTGOING_DEVICE_REGISTRATION_FAILED_CONNECTION_BODY" = "Connection to device failed or timed out. Please try again.";
+
+/* Title of prompt notifying connection failure during restore. */
+"OUTGOING_DEVICE_REGISTRATION_FAILED_CONNECTION_TITLE" = "Failed to connect";
 
 /* Body of prompt notifying restore failed. */
 "OUTGOING_DEVICE_REGISTRATION_FAILED_RESTORE_BODY" = "تحتوي رسالة الاستعادة من الجهاز الآخر على بيانات خاطئة أو منتهية الصلاحية.  يُرجى المُحاولة مرّة أخرى.";
@@ -7873,9 +7918,6 @@
 /* Message for an action sheet telling users how to use quick restore, when trying to open an external quick restore URL. */
 "QUICK_RESTORE_URL_OPENED_ACTION_SHEET_EXTERNAL_URL_MESSAGE" = "لنقل هذا الحساب إلى حساب جديد، انقر على \"متابعة\" وامسح كود الـ QR باستخدام كاميرا سيجنال. تأكَّد من مسح كود الـ QR الصادر مباشرةً من سيجنال فقط.";
 
-/* Label to show above a sticker used to reply to a message */
-"QUOTE_REPLY_STICKER" = "الرد";
-
 /* Accessibility label stating the author of the message to which you are replying. Embeds: {{ the author of the message to which you are replying }} {{ original message }}. */
 "QUOTED_REPLY_ACCESSIBILITY_LABEL_FORMAT" = "ردًا على %1$@. %2$@";
 
@@ -8033,19 +8075,19 @@
 "REGISTER_WITHOUT_NUMBER" = "التسجيل دون رقم";
 
 /* Short description for a sheet warning users about an incorrect recovery key used for registration. */
-"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_BODY" = "Make sure you’re registering with the same phone number and 64-character recovery key you saved when enabling Signal backups. Backups cannot be recovered without this key.";
+"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_BODY" = "تأكَّد من أنك تُسجِّل باستخدام نفس رقم الهاتف ومفتاح الاستعادة المُكوَّن من 64 رمزًا الذي حفظته عند تفعيل النسخ الاحتياطية لسيجنال. لا يُمكن استرجاع النسخ الاحتياطية دون هذا المفتاح.";
 
 /* Title for a sheet warning users about an incorrect recovery key used for registration. */
 "REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TITLE" = "مفتاح الاستعادة خاطئ";
 
 /* Action label action allowing users to use PIN/SMS for registration. */
-"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_ACTION" = "Register Another Way";
+"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_ACTION" = "التسجيل عبر طريقة أخرى";
 
 /* Message body for a sheet asking users if they would rather use PIN/SMS for registration. */
-"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_MESSAGE" = "You can register your account by verifying via an SMS code Signal will send you, or by entering your PIN. After registering, you can try restoring your backup with your recovery key again.";
+"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_MESSAGE" = "يمكنك تسجيل حسابك عن طريق التحقُّق عبر كود رسالة قصيرة سيقوم سيجنال بإرساله إليك، أو بإدخال رقم التعريف الشخصي (PIN). بعد التسجيل، يمكنك محاولة استعادة نسختك الاحتياطية باستخدام مفتاح الاستعادة مرّة أخرى.";
 
 /* Title for a sheet asking users if they would rather use PIN/SMS for registration. */
-"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_TITLE" = "Verify with SMS or PIN?";
+"REGISTRATION_BACKUP_REGISTRATION_ERROR_INCORRECT_KEY_TRY_PIN_TITLE" = "هل ترغبُ بالتحقُّق برسالة قصيرة أو برقم التعريف الشخصي (PIN)؟";
 
 /* Body for a sheet warning users about a missing backup. */
 "REGISTRATION_BACKUP_RESTORE_ERROR_BACKUP_NOT_FOUND_BODY" = "لا توجد نسخة احتياطية مرتبطة لمفتاح الاستعادة هذا. يُرجى التأكُّد من أن المفتاح صحيح وحاوِل من جديد.";
@@ -8348,28 +8390,28 @@
 "REGISTRATION_SIGNAL_LOGIN_PAY" = "دفع %1$@";
 
 /* Text for a bullet point describing that an existing Signal Login can be used to log in and restore an account. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_BULLET_RESTORE" = "Login and restore your account";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_BULLET_RESTORE" = "تسجيل الدخول واستعادة الحساب";
 
 /* Text for a bullet point thanking the user for supporting Signal by previously buying a Signal Login. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_BULLET_THANKS" = "Thanks for supporting Signal";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_BULLET_THANKS" = "شكرًا لدعمك لسيجنال";
 
 /* Subtitle for the option to register with a Signal Login the user already owns. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_SUBTITLE" = "Use your existing login info";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_SUBTITLE" = "استخدِم معلومات تسجيل الدخول الحالية";
 
 /* Title for the option to register with a Signal Login the user already owns. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_TITLE" = "I have a Signal Login";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_EXISTING_TITLE" = "لدي Signal Login";
 
 /* Text for a bullet point describing that a Signal Login lets you register without a phone number. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_NO_PHONE_NUMBER" = "No phone number needed";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_NO_PHONE_NUMBER" = "لا حاجة لرقم هاتف";
 
 /* Text for a bullet point explaining that buying a Signal Login supports Signal, a non-profit. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_NON_PROFIT" = "Signal is a non-profit — your purchase helps support our mission";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_NON_PROFIT" = "سيجنال شركة غير ربحية — مشترياتك تساعد على دعمنا في مهمتنا";
 
 /* Text for a bullet point describing that a Signal Login comes with a username for messaging and calling. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_USERNAME" = "Username for messaging & calls";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_BULLET_USERNAME" = "اسم المُستخدِم للمراسلة والمكالمات";
 
 /* Subtitle for the option to buy a new Signal Login. */
-"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_SUBTITLE" = "One-time purchase";
+"REGISTRATION_SIGNAL_LOGIN_SELECTION_PURCHASE_SUBTITLE" = "الشراء لمرّة واحدة";
 
 /* Title text for the 'Signal Login' screen. */
 "REGISTRATION_SIGNAL_LOGIN_TITLE" = "Signal Login";
@@ -8927,7 +8969,7 @@
 "SEND_MEDIA_TURN_OFF_MM_TITLE" = "هل ترغبُ بإيقاف الوضع المُتعدِّد؟";
 
 /* Label for the button to send a sticker message */
-"SEND_STICKER_BUTTON_TITLE" = "Send Sticker";
+"SEND_STICKER_BUTTON_TITLE" = "إرسال المُلصَق";
 
 /* String describing high quality sent media */
 "SENT_MEDIA_QUALITY_HIGH" = "عالي الدقة";
@@ -9143,43 +9185,43 @@
 "SETTINGS_CHATS" = "الدردشات";
 
 /* Title for a button in Chats settings that starts exporting the user's chat history. */
-"SETTINGS_CHATS_EXPORT_BUTTON" = "Export Chats";
+"SETTINGS_CHATS_EXPORT_BUTTON" = "تصدير الدردشات";
 
 /* Title for a button in a sheet shown before the user chooses a folder to export their chat history into, which opens a folder picker. */
-"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_CHOOSE_BUTTON" = "Choose Folder";
+"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_CHOOSE_BUTTON" = "اختر مجلدًا";
 
 /* Message for a sheet shown before the user chooses a folder to export their chat history into. */
-"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_MESSAGE" = "Choose a folder in your device’s storage where your chat history will be stored.";
+"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_MESSAGE" = "اختر مجلدًا في مساحة تخزين جهازك حيث سيتم تخرين سِجل دردشتك.";
 
 /* Title for a sheet shown before the user chooses a folder to export their chat history into. */
-"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_TITLE" = "Choose a Folder";
+"SETTINGS_CHATS_EXPORT_CHOOSE_FOLDER_SHEET_TITLE" = "اختر مجلد";
 
 /* Message for a sheet shown after the user's chat history has been exported. */
-"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_MESSAGE" = "BE CAREFUL where you store your chat export file and do not share it with anyone. Other apps on your device can access it depending on your device’s permissions.";
+"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_MESSAGE" = "انتبه أين تُخزِّن ملف تصدير دردشتك، ولا تشاركه مع أي أحد. قد تتمكَّن تطبيقات أخرى في جهازك من الوصول إليها حسب الأذونات في جهازك.";
 
 /* Title for a sheet shown after the user's chat history has been exported. */
-"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_TITLE" = "Chat Export Complete";
+"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_TITLE" = "اكتملَ تصدير الدردشة";
 
 /* Title for a button in a sheet shown after the user's chat history has been exported, which opens the exported folder in the Files app. */
-"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_VIEW_IN_FILES_BUTTON" = "View in Files";
+"SETTINGS_CHATS_EXPORT_COMPLETE_SHEET_VIEW_IN_FILES_BUTTON" = "العرض في الملفات";
 
 /* Message for a sheet shown when the user starts exporting their chat history from Chats settings. */
-"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_MESSAGE" = "BE CAREFUL! Do NOT share this file with anyone. Your chat history will be saved to your device and other apps can access it depending on your device’s permissions. Exporting with media will result in a larger file size.";
+"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_MESSAGE" = "انتبه! لا تشارِك هذا الملف مع أي أحد. سيتم حفظ سِجل الدردشة الخاص بك في جهازك وقد تتمكن التطبيقات الأخرى من الوصول إليه حسب أذونات جهازك. التصدير مع الوسائط قد ينتج عنه حجم ملف أكبر.";
 
 /* Title for a sheet shown when the user starts exporting their chat history from Chats settings. */
-"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_TITLE" = "Export Chat History?";
+"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_TITLE" = "هل ترغبُ بتصدير سِجل الدردشة؟";
 
 /* Title for a button in a sheet shown when the user starts exporting their chat history, which exports their chat history including attachments. */
-"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_WITH_MEDIA_BUTTON" = "Export With Media";
+"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_WITH_MEDIA_BUTTON" = "التصدير مع الوسائط";
 
 /* Title for a button in a sheet shown when the user starts exporting their chat history, which exports their chat history excluding attachments. */
-"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_WITHOUT_MEDIA_BUTTON" = "Export Without Media";
+"SETTINGS_CHATS_EXPORT_CONFIRMATION_SHEET_WITHOUT_MEDIA_BUTTON" = "التصدير دون الوسائط";
 
 /* Footer for the section in Chats settings containing a button to export the user's chat history. */
-"SETTINGS_CHATS_EXPORT_FOOTER" = "Export a machine-readable JSON copy of your chats. Disappearing messages will not be included.";
+"SETTINGS_CHATS_EXPORT_FOOTER" = "تصدير نسخة JSON قابلة للقراءة آليًا لجميع دردشاتك. لن تكون الرسائل المؤقَّتة مُضمَّنة.";
 
 /* Title for a progress modal shown while the user's chat history is being exported. */
-"SETTINGS_CHATS_EXPORT_PROGRESS_TITLE" = "Exporting chats…";
+"SETTINGS_CHATS_EXPORT_PROGRESS_TITLE" = "جارٍ تصدير الدردشة…";
 
 /* No comment provided by engineer. */
 "SETTINGS_CLEAR_HISTORY" = "إزالة سجل الدردشة";
@@ -10316,29 +10358,38 @@
 /* Title for the 'available built-in stickers' section of the 'manage stickers' view. */
 "STICKERS_MANAGE_VIEW_AVAILABLE_BUILT_IN_PACKS_SECTION_TITLE" = "حزَم المُلصَقات الفنية على سيجنال";
 
+/* Subtitle for the section of known stickers in the manage stickers view */
+"STICKERS_MANAGE_VIEW_AVAILABLE_KNOWN_PACKS_SECTION_SUBTITLE" = "When you receive a sticker from someone, the sticker pack will appear here.";
+
 /* Title for the 'available known stickers' section of the 'manage stickers' view. */
-"STICKERS_MANAGE_VIEW_AVAILABLE_KNOWN_PACKS_SECTION_TITLE" = "حزم المُلصَقات التي قد تلقيتها";
+"STICKERS_MANAGE_VIEW_AVAILABLE_KNOWN_PACKS_SECTION_TITLE" = "Shared With You";
 
 /* Label indicating that one or more known sticker packs failed to load. */
 "STICKERS_MANAGE_VIEW_FAILED_KNOWN_PACKS" = "فشل تحميل بعض مجموعات المُلصَقات";
 
-/* Title for the 'installed stickers' section of the 'manage stickers' view. */
-"STICKERS_MANAGE_VIEW_INSTALLED_PACKS_SECTION_TITLE" = "حزم المُلصَقات المُثبَّتة";
+/* An option in the sticker management screen allowing the user to select the filter option 'all'; i.e., 'unfiltered'. */
+"STICKERS_MANAGE_VIEW_FILTER_TAB_ALL" = "All";
+
+/* An option in the sticker management screen allowing the user to select the filter option 'my stickers'; i.e., their installed packs. */
+"STICKERS_MANAGE_VIEW_FILTER_TAB_MY_STICKERS" = "My Stickers";
 
 /* Label indicating that one or more known sticker packs is loading. */
 "STICKERS_MANAGE_VIEW_LOADING_KNOWN_PACKS" = "جارٍ التحميل...";
 
 /* Label indicating that the user has no installed sticker packs. */
-"STICKERS_MANAGE_VIEW_NO_INSTALLED_PACKS" = "لا توجد أي حزم مُلصَقات مُثبَّتة";
+"STICKERS_MANAGE_VIEW_NO_INSTALLED_PACKS" = "No sticker packs.\nAdd stickers to send to your friends.";
 
-/* Label indicating that the user has no known sticker packs. */
-"STICKERS_MANAGE_VIEW_NO_KNOWN_PACKS" = "المُلصقات مِن الرسائل الواردة ستظهر هُنا";
+/* Button to redirect back to the manage sticker 'all' section */
+"STICKERS_MANAGE_VIEW_NO_INSTALLED_PACKS_BUTTON" = "Add Stickers";
 
 /* Title for the 'manage stickers' view. */
 "STICKERS_MANAGE_VIEW_TITLE" = "المُلصَقات";
 
+/* Default author for sticker packs. */
+"STICKERS_PACK_DEFAULT_AUTHOR" = "Unknown author";
+
 /* Default title for sticker packs. */
-"STICKERS_PACK_DEFAULT_TITLE" = "مجموعة المُلصَقات";
+"STICKERS_PACK_DEFAULT_TITLE" = "Unknown title";
 
 /* The default title for the 'sticker pack' view. */
 "STICKERS_PACK_VIEW_DEFAULT_TITLE" = "مجموعة المُلصَقات";

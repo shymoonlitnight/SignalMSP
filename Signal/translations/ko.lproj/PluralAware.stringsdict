@@ -563,7 +563,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>other</key>
-			<string>이 메시지는 오직 %1$d 님만 수정할 수 있습니다.</string>
+			<string>이 메시지는 %1$d번만 수정할 수 있습니다.</string>
 		</dict>
 	</dict>
 	<key>GROUPS_TOO_MANY_MEMBERS_ALERT_MESSAGE_%d</key>
@@ -759,7 +759,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>other</key>
-			<string>이 그룹의 이름 %1$d개가 충돌합니다.</string>
+			<string>이 그룹에서 이름이 중복되는 멤버가 %1$d명 있습니다.</string>
 		</dict>
 	</dict>
 	<key>GROUP_MEMBERSHIP_NAME_COLLISION_MEMBER_COUNT_%d</key>
