@@ -170,7 +170,13 @@ script from the `personal` branch, with the API key from term's secrets.
   extensions are `$(SIGNAL_APPSTORE_ENTITLEMENTS)` etc., defaulting to
   upstream's `-AppStore` files.
 
-### App icon (on `personal`: `Signal/AppIcons/AppIcon.icon/`)
+### App icon (on `personal`: `Signal/AppIcons/AppIcon-MSP.icon/`)
+- `AppIcon-MSP` is the primary icon (`ASSETCATALOG_COMPILER_APPICON_NAME` in
+  the Signal target). Upstream's `AppIcon.icon` is unchanged and is offered
+  as the "Signal" alternate in Settings > Appearance > App Icon
+  (`AppIcon.signal` in `AppIcon.swift`). The settings grid shows
+  `AppIcon.xcassets/AppIconPreview/msp.imageset`, exported with ictool
+  (see below) at 180×180.
 - Light blue background gradient instead of Signal blue, so the personal build
   is easy to tell apart from App Store Signal on the same phone.
 - `Assets/logo.svg`: the bubble glyph is navy (`#14286A`) instead of white.
@@ -184,7 +190,7 @@ script from the `personal` branch, with the API key from term's secrets.
   centered at 512,512 (currently outer radius 200, inner 112; a bigger inner
   radius makes it fatter).
 - Preview without building:
-  `"/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool" Signal/AppIcons/AppIcon.icon --export-preview iOS Light 512 512 1 /tmp/Light.png`
+  `"/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool" Signal/AppIcons/AppIcon-MSP.icon --export-preview iOS Light 512 512 1 /tmp/Light.png`
   (also `Dark`, `TintedLight`).
 
 ### Entitlements (set in `Config/User.xcconfig`)
