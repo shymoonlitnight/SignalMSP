@@ -1280,7 +1280,30 @@ class HomeTabSplitViewController: UISplitViewController, UISplitViewControllerDe
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         updateTabBar(animated: animated) // covers tab switches
+
+        // This call is necessary because delegate methods aren't called on launch.
+        if #available(iOS 17, *) {
+            updatePrimaryColumnTraits()
+        }
+    }
+
+    @available(iOS 17.0, *)
+    private func updatePrimaryColumnTraits() {
+        guard let primaryViewController = viewController(for: .primary) else {
+            owsFailBeta("Could not locate primary view controller.")
+            return
+        }
+
+        // Make the primary column `elevated` when split view is expanded.
+        // Remove the override when split is collapsed.
+        let viewController = (primaryViewController.navigationController ?? primaryViewController)
+        if isCollapsed {
+            viewController.traitOverrides.remove(UITraitUserInterfaceLevel.self)
+        } else {
+            viewController.traitOverrides.userInterfaceLevel = .elevated
+        }
     }
 
     // MARK: - UISplitViewControllerDelegate
@@ -1321,13 +1344,25 @@ class HomeTabSplitViewController: UISplitViewController, UISplitViewControllerDe
     }
 
     func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
-        guard tabBarController?.selectedViewController === svc else { return }
-        updateTabBar()
+        if #available(iOS 17, *) {
+            updatePrimaryColumnTraits()
+        }
+
+        // Currently selected split view controller dictates whether tabbar should be visible or not.
+        if tabBarController?.selectedViewController === svc {
+            updateTabBar()
+        }
     }
 
     func splitViewControllerDidExpand(_ svc: UISplitViewController) {
-        guard tabBarController?.selectedViewController === svc else { return }
-        updateTabBar()
+        if #available(iOS 17, *) {
+            updatePrimaryColumnTraits()
+        }
+
+        // Currently selected split view controller dictates whether tabbar should be visible or not.
+        if tabBarController?.selectedViewController === svc {
+            updateTabBar()
+        }
     }
 
     func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
