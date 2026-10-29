@@ -17,9 +17,9 @@ upstream/main  →  app-intents  →  build-config  →  mute-triggers  →  per
 
 | Branch | Contents | Rules |
 |---|---|---|
-| `app-intents` | App Intent, shared mute toggle, Control Center control, call-screen key commands | Small, tidy, always PR-ready. No personal config, experiments, or notes. |
+| `app-intents` | App Intents and the shared mute toggle (`CallMuteController`) | Small, tidy, always PR-ready. No personal config, experiments, or notes. |
 | `build-config` | Signing team, bundle IDs, app name and App Store entitlements as build settings that `Config/User.xcconfig` can override | Builds unchanged without a `User.xcconfig`. Could be offered upstream. |
-| `mute-triggers` | Trigger-source infrastructure, play/pause, volume double-tap, AirPods head gesture, and their settings; build script, these docs | Fork-only; never sent upstream. |
+| `mute-triggers` | Call-screen key commands, Control Center control, trigger-source infrastructure, play/pause, volume double-tap, AirPods head gesture, and their settings; build script, these docs | Fork-only; never sent upstream. |
 | `personal` | Icon, anything else only this build needs | Top of stack; what gets built. |
 
 To do:
@@ -61,6 +61,9 @@ To do:
    `CallMuteController.toggle()`) that every trigger calls. It owns the mute
    state plus feedback (earcon/haptic). Today the logic is
    `setMicrophoneMuteState` in `CallMuteShortcuts.swift`.
+Items 3 and 4 moved to `mute-triggers` on 2026-10-29 to keep `app-intents`
+small and easier to merge.
+
 3. **Control Center control** (iOS 18+, `SetValueIntent` toggle). Thin layer
    over the intent with a big, glove-friendly tap target. Can also be assigned
    to the Action Button or Lock Screen.

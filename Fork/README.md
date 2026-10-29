@@ -15,9 +15,9 @@ implementation checkpoints.
 | Branch | Contents |
 |---|---|
 | `upstream/main` | Signal's code. Never commit here; just `git fetch upstream`. |
-| `app-intents` | Upstream plus the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`), key commands and Control Center toggle. Meant to stay upstreamable (an accessibility case). |
+| `app-intents` | Upstream plus `CallMuteController` and the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`). Kept small and meant to stay upstreamable (an accessibility case). |
 | `build-config` | `app-intents` plus building with your own team from `Config/User.xcconfig` alone: signing, bundle IDs, app name and App Store entitlements as overridable build settings. Unchanged builds without a `User.xcconfig`; could be offered upstream. |
-| `mute-triggers` | `build-config` plus fork-only mute triggers, the registration ID fix, these notes and `Fork/release.py`. Never sent upstream. |
+| `mute-triggers` | `build-config` plus the call-screen key commands, the Control Center toggle (`SignalControls` extension), fork-only mute triggers, the registration ID fix, these notes and `Fork/release.py`. Never sent upstream. |
 | `personal` | `mute-triggers` plus what only this build needs: the app icon and a notification extension entitlements file. This is what gets built, and is the fork's default branch on GitHub. |
 | `regid-warnings` | Side branch: upstream plus the registration ID fix only, for its own upstream PR. Not part of the stack. |
 
@@ -49,10 +49,11 @@ meant to be sent upstream separately.
 
 ### Keeping the layers clean
 
-- Work for the call-mute App Intents (and shared mute code they use) goes on
+- Work for `CallMuteController` and the call-mute App Intents goes on
   `app-intents`; building with your own team on `build-config`; icon and
   anything else only this build needs on `personal`; everything else
-  (triggers, these notes, `release.py`) on `mute-triggers`. If you happen to
+  (key commands, Control Center, other triggers, these notes, `release.py`)
+  on `mute-triggers`. If you happen to
   be on `personal`, use `git commit --fixup` and rebase, or check out the
   lower branch to commit.
 - Lower branches must never depend on higher ones. Each branch must build on
