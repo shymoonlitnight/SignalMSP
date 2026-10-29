@@ -3,17 +3,25 @@
 Administrative:
 
 - [ ] I have read the [README](https://github.com/signalapp/Signal-iOS/blob/main/README.md).
-- [ ] I have read the [CONTRIBUTING](https://github.com/signalapp/Signal-iOS/blob/main/CONTRIBUTING.md) document and understand the caveats in the Pull Requests section.
-- [ ] I have signed the [Contributor Licence Agreement](https://signal.org/cla/).
+- [ ] I have read [CONTRIBUTING.md](https://github.com/signalapp/Signal-iOS/blob/main/CONTRIBUTING.md).
+    - [ ] I understand the caveats in the Pull Requests section.
+- [ ] I have signed the [Contributor License Agreement](https://signal.org/cla/).
 
-Commits and testing:
+Testing:
 
-- [ ] My commits are rebased on the latest main branch.
-- [ ] My commits are well-structured for review.
-- [ ] My change has been thoroughly tested, and I am not aware of any regressions to existing features or behaviors.
+- [ ] I have verified that the issue reproduces on latest `main`.
+    - [ ] I have included a screen recording documenting the issue reproducing.
+- [ ] I have verified that the issue no longer reproduces on my branch.
+    - [ ] I have included a screen recording documenting the issue no longer reproducing.
+- [ ] I have thoroughly tested this change, and I am not aware of any regressions to existing features or behaviors.
 - [ ] I have tested my contribution on these devices:
- * iDevice A, iOS X.Y.Z
- * iDevice B, iOS Z.Y
+    - iDevice A, iOS X.Y.Z
+    - iDevice B, iOS X.Y.Z
+
+Commits:
+
+- [ ] My commits are rebased on latest `main`.
+- [ ] My commits are well-structured for review.
 
 ---
 
