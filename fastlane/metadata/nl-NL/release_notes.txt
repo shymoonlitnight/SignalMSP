@@ -1,1 +1,2 @@
-• Deze update bevat verschillende verbeteringen voor stickers, waaronder een handige snelkoppeling om de link van een stickerpakket te delen.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

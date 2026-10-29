@@ -1,1 +1,2 @@
-• 本次更新对贴纸体验进行了多项改进，包括新增分享贴纸包链接的快捷方式。
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

@@ -1,1 +1,2 @@
-• В этом обновлении введён ряд улучшений, касающихся работы со стикерами, в том числе добавлен удобный способ поделиться ссылкой на набор стикеров.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

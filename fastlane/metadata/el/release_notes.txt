@@ -1,1 +1,2 @@
-• Αυτή η ενημέρωση εισάγει αρκετές βελτιώσεις στην εμπειρία χρήσης των αυτοκόλλητων, συμπεριλαμβανομένης μιας εύχρηστης συντόμευσης για την κοινοποίηση συνδέσμου πακέτου αυτοκόλλητων.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

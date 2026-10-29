@@ -1,1 +1,2 @@
-• Kemas kini ini memperkenalkan beberapa penambahbaikan kepada pengalaman pelekat, termasuk pintasan mudah untuk berkongsi pautan pek pelekat.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

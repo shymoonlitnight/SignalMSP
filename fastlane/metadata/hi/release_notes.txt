@@ -1,1 +1,2 @@
-• इस अपडेट के साथ स्टिकर इस्तेमाल में कई सुधार किए गए हैं, जिसमें स्टिकर पैक लिंक को शेयर करने का आसान शॉर्टकट भी शामिल है।
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

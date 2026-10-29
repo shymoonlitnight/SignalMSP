@@ -1,1 +1,2 @@
-• Esta atualização traz várias melhorias na experiência com figurinhas, incluindo um atalho prático para compartilhar o link de um pacote de figurinhas.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

@@ -1,1 +1,2 @@
-• Bản cập nhật này mang đến một số cải tiến cho trải nghiệm sử dụng nhãn dán, bao gồm một lối tắt tiện lợi để chia sẻ đường dẫn đến gói nhãn dán.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

@@ -1,1 +1,2 @@
-• 本次更新推出了對貼圖使用體驗的多項優化，其中包括可直接分享貼圖包連結的方便捷徑。
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

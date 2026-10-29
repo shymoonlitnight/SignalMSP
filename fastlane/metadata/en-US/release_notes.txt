@@ -1,1 +1,2 @@
-• This update introduces several improvements to the sticker experience, including a convenient shortcut to share a sticker pack link.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

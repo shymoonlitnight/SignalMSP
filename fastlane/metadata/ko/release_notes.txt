@@ -1,1 +1,2 @@
-• 이번 업데이트에서는 스티커 팩 링크를 간편하게 공유할 수 있는 단축키를 비롯해 스티커 이용 환경을 전반적으로 개선했습니다.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

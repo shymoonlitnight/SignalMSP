@@ -1,1 +1,2 @@
-• આ અપડેટમાં સ્ટીકરના અનુભવમાં અનેક સુધારાઓ લાવવામાં આવ્યા છે, જેમાં સ્ટીકર પેકની લિંક શેર કરવા માટે એક અનુકૂળ શોર્ટકટનો પણ સમાવેશ થાય છે.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

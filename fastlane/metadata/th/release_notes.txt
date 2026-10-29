@@ -1,1 +1,2 @@
-• พัฒนาในหลายๆ จุดเพื่อยกระดับการใช้งานสติกเกอร์ พร้อมทางลัดใหม่ที่ให้คุณแชร์ลิงก์ของชุดสติกเกอร์ได้ทันใจขึ้นอีก
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

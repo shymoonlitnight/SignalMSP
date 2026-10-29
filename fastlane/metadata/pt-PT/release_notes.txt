@@ -1,1 +1,2 @@
-• Esta atualização apresenta várias melhorias à experiência de autocolantes, incluindo um atalho conveniente para partilhar o link de um pacote de autocolantes.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

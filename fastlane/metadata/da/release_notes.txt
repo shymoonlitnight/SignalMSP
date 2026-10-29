@@ -1,1 +1,2 @@
-• Denne opdatering indeholder flere forbedringer af klistermærkeoplevelsen, herunder en nem genvej til at dele et link til en klistermærkepakke.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.

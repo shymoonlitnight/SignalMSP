@@ -1,1 +1,2 @@
-• Bu güncelleme, bir çıkartma paketi bağlantısı paylaşmak için pratik bir kısayol da dahil olmak üzere çıkartma deneyimine çeşitli iyileştirmeler getiriyor.
+• Stickers are supported in quoted replies, so you have another way to make a point that sticks around.
+• Following last week's update, consider this a duet that includes additional improvements for the iPhone Duo.
