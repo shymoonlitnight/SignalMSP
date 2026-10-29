@@ -614,6 +614,7 @@ extension TransientStickerPackDataSource: StickerPackDataSource {
 extension TransientStickerPackDataSource: StickerPackDataSourceDelegate {
     public func stickerPackDataDidChange() {
         ensureState()
+        fireDidChange()
     }
 }
 

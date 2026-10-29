@@ -842,6 +842,12 @@ public class StickerManager {
         }
     }
 
+    public func mapDatedStickerPacks(stickerPacks: [StickerPackRecord]) -> [DatedStickerPackInfo] {
+        return stickerPacks.map {
+            DatedStickerPackInfo(timestamp: $0.dateCreated.ows_millisecondsSince1970, info: $0.info)
+        }
+    }
+
     private func tryToDownloadStickerPacks(
         stickerPacks: [StickerPackInfo],
         installMode: InstallMode,
