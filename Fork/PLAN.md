@@ -6,6 +6,8 @@ with a **Verify** step; tick it off only after that check passes.
 Decisions (2026-10-23):
 - `main` is retired; `app-intents` replaces it.
 - The Control Center control stays in `app-intents` for now; revisit after CP1.3a.
+  Update 2026-10-29: it moved to `mute-triggers`, with the call-screen key
+  commands, so `app-intents` is just `CallMuteController` and the App Intents.
 - The `RegistrationIdMismatchManager` fix lives on its own PR branch
   `regid-warnings` and is carried as the first commit of `mute-triggers`.
 
