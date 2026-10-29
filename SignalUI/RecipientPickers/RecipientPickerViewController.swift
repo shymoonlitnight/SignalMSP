@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import MessageUI
 public import SignalServiceKit
 import SwiftUI
@@ -101,8 +100,6 @@ public class RecipientPickerViewController: OWSViewController, OWSNavigationChil
         tableView.refreshControl = refreshControl
 
         updateTableContents()
-
-        applyTheme()
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -114,11 +111,6 @@ public class RecipientPickerViewController: OWSViewController, OWSNavigationChil
         SSKEnvironment.shared.contactManagerImplRef.requestSystemContactsOnce()
 
         showContactAppropriateViews()
-    }
-
-    override public func themeDidChange() {
-        super.themeDidChange()
-        applyTheme()
     }
 
     public var preferredNavigationBarStyle: OWSNavigationBarStyle { .solid }
@@ -239,10 +231,6 @@ public class RecipientPickerViewController: OWSViewController, OWSNavigationChil
     private lazy var noSignalContactsView = createNoSignalContactsView()
 
     var tableView: UITableView { tableViewController.tableView }
-
-    private func applyTheme() {
-        tableViewController.tableView.sectionIndexColor = Theme.primaryTextColor
-    }
 
     // MARK: Context Menu
 

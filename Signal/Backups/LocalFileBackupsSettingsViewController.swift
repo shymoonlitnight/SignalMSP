@@ -6,7 +6,6 @@
 import SignalServiceKit
 import SignalUI
 import SwiftUI
-import UIKit
 
 class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
     private let localFileBackupAttachmentMetadataStore: LocalFileBackupAttachmentMetadataStore
@@ -164,11 +163,6 @@ class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
                 Logger.error("Unexpected error encountered: \(error)")
             }
         }
-    }
-
-    override func themeDidChange() {
-        super.themeDidChange()
-        updateTableContents()
     }
 
     @objc
@@ -366,7 +360,7 @@ class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
                     comment: "Title for a button shown under a progress bar tracking a manual backup, which lets the user cancel the backup.",
                 )
                 label.font = OWSTableItem.primaryLabelFont
-                label.textColor = Theme.primaryTextColor
+                label.textColor = .Signal.label
                 label.adjustsFontForContentSizeCategory = true
 
                 cell.contentView.addSubview(label)
@@ -480,7 +474,7 @@ class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
                         comment: "Message describing to the user that the last backup failed.",
                     )
                     label.font = .dynamicTypeSubheadlineClamped
-                    label.textColor = Theme.primaryTextColor
+                    label.textColor = .Signal.label
                     label.adjustsFontForContentSizeCategory = true
                     label.numberOfLines = 0
                     label.textAlignment = .natural
@@ -506,7 +500,7 @@ class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
 
                 let iconView = UIImageView(image: .backup)
                 iconView.contentMode = .scaleAspectFit
-                iconView.tintColor = Theme.primaryIconColor
+                iconView.tintColor = .Signal.label
                 iconView.autoSetDimensions(to: .square(24))
                 iconView.setContentHuggingHorizontalHigh()
                 iconView.setCompressionResistanceHorizontalHigh()
@@ -517,7 +511,7 @@ class LocalFileBackupsSettingsViewController: OWSTableViewController2 {
                     comment: "Label for the button that starts a manual on-device backup.",
                 )
                 label.font = OWSTableItem.primaryLabelFont
-                label.textColor = Theme.primaryTextColor
+                label.textColor = .Signal.label
                 label.adjustsFontForContentSizeCategory = true
 
                 let stack = UIStackView(arrangedSubviews: [iconView, label])

@@ -87,7 +87,6 @@ open class ContactPickerViewController: OWSViewController, OWSNavigationChildCon
     }
 
     private func applyTheme() {
-        tableView.sectionIndexColor = Theme.primaryTextColor
         if let owsNavigationController = navigationController as? OWSNavigationController {
             owsNavigationController.updateNavbarAppearance()
         }

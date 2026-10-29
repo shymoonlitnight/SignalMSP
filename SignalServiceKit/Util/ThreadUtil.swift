@@ -706,7 +706,7 @@ extension TSThread {
                 }
                 return Self.intentRecipientAvatarImage(recipient: localAddress, transaction: tx)
             } else {
-                let rawImage = UIImage(named: "custom-story-light-36")
+                let rawImage = UIImage(named: "custom-story-36")
                 return rawImage?.pngData().map(INImage.init(imageData:))
             }
         } else {

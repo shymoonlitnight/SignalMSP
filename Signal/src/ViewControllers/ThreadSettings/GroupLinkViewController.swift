@@ -4,16 +4,14 @@
 //
 
 import LibSignalClient
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 protocol GroupLinkViewControllerDelegate: AnyObject {
     func groupLinkViewViewDidUpdate()
 }
 
-// MARK: -
-
-public class GroupLinkViewController: OWSTableViewController2 {
+class GroupLinkViewController: OWSTableViewController2 {
 
     weak var groupLinkViewControllerDelegate: GroupLinkViewControllerDelegate?
 
@@ -31,7 +29,7 @@ public class GroupLinkViewController: OWSTableViewController2 {
 
     // MARK: - View Lifecycle
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         title = OWSLocalizedString(
@@ -75,7 +73,7 @@ public class GroupLinkViewController: OWSTableViewController2 {
                     let urlLabel = UILabel()
                     urlLabel.text = inviteLink.url().absoluteString
                     urlLabel.font = .dynamicTypeSubheadline
-                    urlLabel.textColor = Theme.secondaryTextAndIconColor
+                    urlLabel.textColor = .Signal.secondaryLabel
                     urlLabel.numberOfLines = 0
                     urlLabel.lineBreakMode = .byCharWrapping
 
@@ -262,13 +260,30 @@ public class GroupLinkViewController: OWSTableViewController2 {
         actionSheet.addAction(OWSActionSheets.cancelAction)
         presentActionSheet(actionSheet)
     }
+
+    private func updateLinkMode(linkMode: GroupInviteLinkMode) {
+        GroupLinkViewUtils.updateLinkMode(
+            secretParams: secretParams,
+            linkMode: linkMode,
+            fromViewController: self,
+            completion: { [weak self] in self?.didModifyGroup() },
+        )
+    }
+
+    private func resetLink() {
+        GroupViewUtils.updateGroupWithActivityIndicator(
+            fromViewController: self,
+            updateBlock: { [secretParams] in
+                try await GroupManager.resetLinkV2(secretParams: secretParams)
+            },
+            completion: { [weak self] in self?.didModifyGroup() },
+        )
+    }
 }
 
-// MARK: -
+@MainActor
+class GroupLinkViewUtils {
 
-public class GroupLinkViewUtils {
-
-    @MainActor
     static func updateLinkMode(
         secretParams: GroupSecretParams,
         linkMode: GroupInviteLinkMode,
@@ -286,7 +301,7 @@ public class GroupLinkViewUtils {
 
     // MARK: -
 
-    public static func showShareLinkAlert(
+    static func showShareLinkAlert(
         inviteLink: GroupInviteLink,
         fromViewController: UIViewController,
         sendMessageController: SendMessageController,
@@ -380,29 +395,5 @@ public class GroupLinkViewUtils {
 
     private static func shareLinkViaSharingUI(groupInviteLinkUrl: URL) {
         AttachmentSharing.showShareUI(for: groupInviteLinkUrl, sender: self)
-    }
-}
-
-// MARK: -
-
-private extension GroupLinkViewController {
-
-    func updateLinkMode(linkMode: GroupInviteLinkMode) {
-        GroupLinkViewUtils.updateLinkMode(
-            secretParams: secretParams,
-            linkMode: linkMode,
-            fromViewController: self,
-            completion: { [weak self] in self?.didModifyGroup() },
-        )
-    }
-
-    func resetLink() {
-        GroupViewUtils.updateGroupWithActivityIndicator(
-            fromViewController: self,
-            updateBlock: { [secretParams] in
-                try await GroupManager.resetLinkV2(secretParams: secretParams)
-            },
-            completion: { [weak self] in self?.didModifyGroup() },
-        )
     }
 }

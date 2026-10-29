@@ -212,7 +212,7 @@ class AdvancedPrivacySettingsViewController: OWSTableViewController2 {
 
                 let nameLabel = UILabel()
                 nameLabel.text = OWSLocalizedString("SETTINGS_UNIDENTIFIED_DELIVERY_SHOW_INDICATORS", comment: "switch label")
-                nameLabel.textColor = Theme.primaryTextColor
+                nameLabel.textColor = .Signal.label
                 nameLabel.font = OWSTableItem.primaryLabelFont
                 nameLabel.adjustsFontForContentSizeCategory = true
                 nameLabel.numberOfLines = 0
@@ -221,9 +221,11 @@ class AdvancedPrivacySettingsViewController: OWSTableViewController2 {
                 nameLabel.setContentHuggingHorizontalHigh()
                 stackView.addArrangedSubview(nameLabel)
 
+                // TODO: Use symbols font here.
                 let imageView = UIImageView()
                 imageView.contentMode = .center
-                imageView.setTemplateImageName(Theme.iconName(.sealedSenderIndicator), tintColor: Theme.primaryTextColor)
+                imageView.tintColor = .Signal.label
+                imageView.image = Theme.iconImage(.sealedSenderIndicator)
                 imageView.autoSetDimension(.width, toSize: 20)
                 stackView.addArrangedSubview(imageView)
 
@@ -276,11 +278,6 @@ class AdvancedPrivacySettingsViewController: OWSTableViewController2 {
         contents.add(sealedSenderSection)
 
         self.contents = contents
-    }
-
-    override func themeDidChange() {
-        super.themeDidChange()
-        updateTableContents()
     }
 
     private func didToggleEnableCensorshipCircumvention(_ sender: UISwitch) {

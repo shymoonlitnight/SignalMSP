@@ -473,7 +473,7 @@ struct ConversationHeaderBuilder {
             transaction: transaction,
         )
         previewView.font = .dynamicTypeSubheadlineClamped
-        previewView.textColor = Theme.secondaryTextAndIconColor
+        previewView.textColor = .Signal.secondaryLabel
         previewView.textAlignment = .center
         previewView.numberOfLines = 2
 

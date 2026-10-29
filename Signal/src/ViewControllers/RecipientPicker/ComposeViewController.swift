@@ -13,7 +13,7 @@ class ComposeViewController: RecipientPickerContainerViewController {
 
         title = OWSLocalizedString("MESSAGE_COMPOSEVIEW_TITLE", comment: "Title for the compose view.")
 
-        view.backgroundColor = Theme.backgroundColor
+        view.backgroundColor = .Signal.background
 
         recipientPicker.shouldShowInvites = true
         recipientPicker.shouldShowNewGroup = true

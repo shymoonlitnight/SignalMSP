@@ -12,7 +12,9 @@ public protocol FindByPhoneNumberDelegate: AnyObject {
     )
 }
 
-public class FindByPhoneNumberViewController: OWSTableViewController2 {
+public class FindByPhoneNumberViewController: OWSTableViewController2, UITextFieldDelegate, SheetDismissalDelegate,
+    CountryCodeViewControllerDelegate
+{
     weak var findByPhoneNumberDelegate: FindByPhoneNumberDelegate?
     let buttonText: String?
     let requiresRegisteredNumber: Bool
@@ -38,7 +40,7 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
     private var titleAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.dynamicTypeHeadlineClamped,
-            .foregroundColor: Theme.primaryTextColor,
+            .foregroundColor: UIColor.Signal.label,
         ]
     }
 
@@ -59,18 +61,6 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
                 comment: "Label for the phone number textfield",
             ),
             attributes: titleAttributes,
-        )
-    }
-
-    private var phoneNumberPlaceholder: NSAttributedString {
-        NSAttributedString(
-            string: OWSLocalizedString(
-                "REGISTRATION_ENTERNUMBER_DEFAULT_TEXT",
-                comment: "Placeholder text for the phone number textfield",
-            ),
-            attributes: [
-                .font: UIFont.dynamicTypeBodyClamped,
-            ],
         )
     }
 
@@ -117,6 +107,7 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
             countryRowTitleLabel.autoSetDimension(.width, toSize: titleWidth)
         }
 
+        countryCodeLabel.textColor = .Signal.secondaryLabel
         countryCodeLabel.font = UIFont.dynamicTypeBodyClamped
         countryCodeLabel.accessibilityIdentifier =
             UIView.accessibilityIdentifier(in: self, name: "countryCodeLabel")
@@ -147,6 +138,16 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
             nationalNumberRowTitleLabel.autoSetDimension(.width, toSize: titleWidth)
         }
 
+        nationalNumberTextField.textColor = .Signal.label
+        nationalNumberTextField.attributedPlaceholder = NSAttributedString(
+            string: OWSLocalizedString(
+                "REGISTRATION_ENTERNUMBER_DEFAULT_TEXT",
+                comment: "Placeholder text for the phone number textfield",
+            ),
+            attributes: [
+                .font: UIFont.dynamicTypeBodyClamped,
+            ],
+        )
         nationalNumberTextField.becomeFirstResponder()
 
         phoneNumberStack.addArrangedSubview(nationalNumberTextField)
@@ -159,32 +160,11 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
             self?.tryToSelectPhoneNumber()
         }
         navigationItem.rightBarButtonItem?.isEnabled = false
-
-        applyTheme()
-    }
-
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        applyTheme()
     }
 
     override public func contentSizeCategoryDidChange() {
         super.contentSizeCategoryDidChange()
         loadTableContents()
-    }
-
-    override public func themeDidChange() {
-        super.themeDidChange()
-        applyTheme()
-    }
-
-    private func applyTheme() {
-        countryRowTitleLabel.attributedText = countryTitle
-        countryCodeLabel.textColor = .placeholderText
-        nationalNumberRowTitleLabel.attributedText = nationalNumberTitle
-        nationalNumberTextField.attributedPlaceholder = phoneNumberPlaceholder
-        nationalNumberTextField.textColor = Theme.primaryTextColor
     }
 
     func updateButtonState() {
@@ -252,19 +232,15 @@ public class FindByPhoneNumberViewController: OWSTableViewController2 {
             findByPhoneNumberDelegate?.findByPhoneNumber(self, didSelectAddress: SignalServiceAddress(phoneNumber: phoneNumber))
         }
     }
-}
 
-// MARK: - SheetDismissalDelegate
+    // MARK: - SheetDismissalDelegate
 
-extension FindByPhoneNumberViewController: SheetDismissalDelegate {
     public func didDismissPresentedSheet() {
         nationalNumberTextField.becomeFirstResponder()
     }
-}
 
-// MARK: - Country
+    // MARK: - CountryCodeViewControllerDelegate
 
-extension FindByPhoneNumberViewController: CountryCodeViewControllerDelegate {
     public func countryCodeViewController(_ vc: CountryCodeViewController, didSelectCountry country: PhoneNumberCountry) {
         updateCountry(country)
         updateButtonState()
@@ -295,9 +271,9 @@ extension FindByPhoneNumberViewController: CountryCodeViewControllerDelegate {
         let labelFormat = CurrentAppContext().isRTL ? "(%2$@) %1$@" : "%1$@ (%2$@)"
         countryCodeLabel.text = String(format: labelFormat, country.plusPrefixedCallingCode, country.countryCode.localizedUppercase)
     }
-}
 
-extension FindByPhoneNumberViewController: UITextFieldDelegate {
+    // MARK: - UITextFieldDelegate
+
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         TextFieldFormatting.phoneNumberTextField(textField, changeCharactersIn: range, replacementString: string, plusPrefixedCallingCode: country.plusPrefixedCallingCode)
         updateButtonState()

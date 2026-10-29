@@ -146,9 +146,9 @@ class GroupAttributesEditorHelper: NSObject {
         cameraCornerButton.autoPinEdge(toSuperviewEdge: .bottom)
 
         nameTextField.text = groupNameOriginal
-        nameTextField.font = .dynamicTypeBody
+        nameTextField.font = .dynamicTypeBodyClamped
         nameTextField.backgroundColor = .clear
-        nameTextField.textColor = Theme.primaryTextColor
+        nameTextField.textColor = .Signal.label
         nameTextField.delegate = self
         nameTextField.addAction(
             UIAction { [weak self] _ in self?.textFieldDidChange() },
@@ -170,7 +170,7 @@ class GroupAttributesEditorHelper: NSObject {
     static func buildCameraButtonForCorner() -> UIView {
         let cameraImageContainer = UIView()
         cameraImageContainer.autoSetDimensions(to: CGSize.square(32))
-        cameraImageContainer.backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray15 : UIColor(rgbHex: 0xf8f9f9)
+        cameraImageContainer.backgroundColor = UIColor(light: UIColor(rgbHex: 0xf8f9f9), dark: .ows_gray15)
         cameraImageContainer.layer.cornerRadius = 16
 
         cameraImageContainer.layer.shadowColor = UIColor.black.cgColor
@@ -188,7 +188,7 @@ class GroupAttributesEditorHelper: NSObject {
         secondaryShadowView.autoPinEdgesToSuperviewEdges()
 
         let cameraImageView = UIImageView(image: Theme.iconImage(.buttonCamera))
-        cameraImageView.tintColor = Theme.isDarkThemeEnabled ? .ows_gray80 : .black
+        cameraImageView.tintColor = UIColor(light: .black, dark: .ows_gray80)
         cameraImageView.autoSetDimensions(to: CGSize.square(20))
         cameraImageView.contentMode = .scaleAspectFit
 
@@ -200,7 +200,7 @@ class GroupAttributesEditorHelper: NSObject {
 
     static func buildCameraButtonForCenter() -> UIView {
         let cameraImageView = UIImageView()
-        cameraImageView.setTemplateImageName("camera", tintColor: Theme.primaryIconColor)
+        cameraImageView.setTemplateImageName("camera", tintColor: .Signal.label)
         let iconSize: CGFloat = 32
         cameraImageView.autoSetDimensions(to: CGSize(square: iconSize))
         return cameraImageView

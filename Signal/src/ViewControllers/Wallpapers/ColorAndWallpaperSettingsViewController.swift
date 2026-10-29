@@ -406,7 +406,7 @@ private class MiniPreviewView: UIView {
             }
         } else {
             stackViewContainer = UIView()
-            stackViewContainer.backgroundColor = Theme.backgroundColor
+            stackViewContainer.backgroundColor = .Signal.background
             hasWallpaper = false
             shouldDimWallpaperInDarkMode = false
         }
@@ -416,7 +416,7 @@ private class MiniPreviewView: UIView {
         super.init(frame: .zero)
 
         layer.cornerRadius = OWSTableViewController2.cellRounding
-        backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray65 : .ows_gray05
+        backgroundColor = UIColor(light: .ows_gray05, dark: .ows_gray65)
 
         stackViewContainer.layer.cornerRadius = 8
         stackViewContainer.clipsToBounds = true
@@ -460,7 +460,7 @@ private class MiniPreviewView: UIView {
         let containerView = UIView()
         let pillView = PillView()
         pillView.autoSetDimensions(to: CGSize(width: 24, height: 10))
-        pillView.backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray80 : .ows_gray05
+        pillView.backgroundColor = UIColor(light: .ows_gray05, dark: .ows_gray80)
         containerView.addSubview(pillView)
         pillView.autoHCenterInSuperview()
         pillView.autoPinHeightToSuperview()
@@ -516,7 +516,7 @@ private class MiniPreviewView: UIView {
         vStackView.isLayoutMarginsRelativeArrangement = true
         vStackView.axis = .vertical
         vStackView.autoSetDimension(.height, toSize: 28)
-        vStackView.addBackgroundView(withBackgroundColor: Theme.backgroundColor)
+        vStackView.addBackgroundView(withBackgroundColor: .Signal.background)
 
         vStackView.addArrangedSubview(.vStretchingSpacer())
 
@@ -526,21 +526,21 @@ private class MiniPreviewView: UIView {
 
         let backImageView = UIImageView()
         backImageView.contentMode = .scaleAspectFit
-        backImageView.setTemplateImage(UIImage(imageLiteralResourceName: "NavBarBack"), tintColor: Theme.primaryIconColor)
+        backImageView.setTemplateImage(UIImage(imageLiteralResourceName: "NavBarBack"), tintColor: .Signal.label)
         backImageView.autoSetDimension(.width, toSize: 10)
         hStackView.addArrangedSubview(backImageView)
 
         hStackView.addArrangedSubview(.spacer(withWidth: 6))
 
         let circleView = CircleView(diameter: 14)
-        circleView.backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray65 : .ows_gray05
+        circleView.backgroundColor = UIColor(light: .ows_gray05, dark: .ows_gray65)
         hStackView.addArrangedSubview(circleView)
 
         hStackView.addArrangedSubview(.spacer(withWidth: 4))
 
         let contactNameLabel = UILabel()
         contactNameLabel.font = .semiboldFont(ofSize: 8)
-        contactNameLabel.textColor = Theme.primaryTextColor
+        contactNameLabel.textColor = .Signal.label
         contactNameLabel.text = OWSLocalizedString(
             "WALLPAPER_MINI_PREVIEW_CONTACT_NAME",
             comment: "Placeholder text for header of the wallpaper mini preview",
@@ -552,7 +552,7 @@ private class MiniPreviewView: UIView {
         let videoCallImageView = UIImageView()
         videoCallImageView.contentMode = .scaleAspectFit
         videoCallImageView.autoSetDimension(.width, toSize: 10)
-        videoCallImageView.setTemplateImageName(Theme.iconName(.buttonVideoCall), tintColor: Theme.primaryIconColor)
+        videoCallImageView.setTemplateImageName(Theme.iconName(.buttonVideoCall), tintColor: .Signal.label)
         hStackView.addArrangedSubview(videoCallImageView)
 
         hStackView.addArrangedSubview(.spacer(withWidth: 8))
@@ -560,7 +560,7 @@ private class MiniPreviewView: UIView {
         let audioCallImageView = UIImageView()
         audioCallImageView.contentMode = .scaleAspectFit
         audioCallImageView.autoSetDimension(.width, toSize: 10)
-        audioCallImageView.setTemplateImageName(Theme.iconName(.buttonVoiceCall), tintColor: Theme.primaryIconColor)
+        audioCallImageView.setTemplateImageName(Theme.iconName(.buttonVoiceCall), tintColor: .Signal.label)
         hStackView.addArrangedSubview(audioCallImageView)
 
         return vStackView
@@ -571,18 +571,18 @@ private class MiniPreviewView: UIView {
         stackView.layoutMargins = UIEdgeInsets(hMargin: 8, vMargin: 5)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.autoSetDimension(.height, toSize: 24)
-        stackView.addBackgroundView(withBackgroundColor: Theme.backgroundColor)
+        stackView.addBackgroundView(withBackgroundColor: .Signal.background)
 
         let plusImageView = UIImageView()
         plusImageView.contentMode = .scaleAspectFit
-        plusImageView.setTemplateImageName("plus", tintColor: Theme.primaryIconColor)
+        plusImageView.setTemplateImageName("plus", tintColor: .Signal.label)
         plusImageView.autoSetDimension(.width, toSize: 10)
         stackView.addArrangedSubview(plusImageView)
 
         stackView.addArrangedSubview(.spacer(withWidth: 8))
 
         let pillView = PillView()
-        pillView.backgroundColor = Theme.isDarkThemeEnabled ? .ows_gray65 : .ows_gray05
+        pillView.backgroundColor = UIColor(light: .ows_gray05, dark: .ows_gray65)
         stackView.addArrangedSubview(pillView)
 
         stackView.addArrangedSubview(.spacer(withWidth: 8))
@@ -590,7 +590,7 @@ private class MiniPreviewView: UIView {
         let cameraImageView = UIImageView()
         cameraImageView.contentMode = .scaleAspectFit
         cameraImageView.autoSetDimension(.width, toSize: 10)
-        cameraImageView.setTemplateImageName(Theme.iconName(.buttonCamera), tintColor: Theme.primaryIconColor)
+        cameraImageView.setTemplateImageName(Theme.iconName(.buttonCamera), tintColor: .Signal.label)
         stackView.addArrangedSubview(cameraImageView)
 
         stackView.addArrangedSubview(.spacer(withWidth: 8))
@@ -598,7 +598,7 @@ private class MiniPreviewView: UIView {
         let microphoneImageView = UIImageView()
         microphoneImageView.contentMode = .scaleAspectFit
         microphoneImageView.autoSetDimension(.width, toSize: 10)
-        microphoneImageView.setTemplateImageName(Theme.iconName(.buttonMicrophone), tintColor: Theme.primaryIconColor)
+        microphoneImageView.setTemplateImageName(Theme.iconName(.buttonMicrophone), tintColor: .Signal.label)
         stackView.addArrangedSubview(microphoneImageView)
 
         return stackView

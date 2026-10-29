@@ -12,7 +12,9 @@ protocol GroupAttributesViewControllerDelegate: AnyObject {
 
 // MARK: -
 
-class GroupAttributesViewController: OWSTableViewController2 {
+class GroupAttributesViewController: OWSTableViewController2, GroupAttributesEditorHelperDelegate,
+    GroupDescriptionViewControllerDelegate, GroupNameViewControllerDelegate
+{
 
     enum EditAction {
         case none
@@ -49,8 +51,6 @@ class GroupAttributesViewController: OWSTableViewController2 {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = Theme.backgroundColor
 
         title = OWSLocalizedString("EDIT_GROUP_DEFAULT_TITLE", comment: "The navbar title for the 'update group' view.")
 
@@ -158,11 +158,8 @@ class GroupAttributesViewController: OWSTableViewController2 {
     private func didTapAvatarView() {
         helper.didTapAvatarView()
     }
-}
 
-// MARK: -
-
-extension GroupAttributesViewController {
+    // MARK: -
 
     var shouldCancelNavigationBack: Bool {
         let result = hasUnsavedChanges
@@ -212,36 +209,32 @@ extension GroupAttributesViewController {
         })
         fromViewController.presentActionSheet(actionSheet)
     }
-}
 
-// MARK: -
+    // MARK: -
 
-private extension GroupAttributesViewController {
-    func updateGroupThreadAndDismiss() {
+    private func updateGroupThreadAndDismiss() {
         helper.updateGroupIfNecessary(fromViewController: self) { [weak self] in
             self?.attributesDelegate?.groupAttributesDidUpdate()
             self?.navigationController?.popViewController(animated: true)
         }
     }
-}
 
-// MARK: -
+    // MARK: - GroupAttributesEditorHelperDelegate
 
-extension GroupAttributesViewController: GroupAttributesEditorHelperDelegate {
     func groupAttributesEditorContentsDidChange() {
         updateNavbar()
     }
-}
 
-extension GroupAttributesViewController: GroupDescriptionViewControllerDelegate {
+    // MARK: - GroupDescriptionViewControllerDelegate
+
     func groupDescriptionViewControllerDidComplete(groupDescription: String?) {
         helper.groupDescriptionCurrent = groupDescription
         updateNavbar()
         updateTableContents()
     }
-}
 
-extension GroupAttributesViewController: GroupNameViewControllerDelegate {
+    // MARK: - GroupNameViewControllerDelegate
+
     func groupNameViewControllerDidComplete(groupName: String?) {
         helper.groupNameCurrent = groupName
         updateNavbar()

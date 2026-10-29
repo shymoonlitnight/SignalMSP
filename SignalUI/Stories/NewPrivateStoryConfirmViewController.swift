@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-import Foundation
 import SafariServices
 import SignalServiceKit
 
@@ -63,22 +62,15 @@ public class NewPrivateStoryConfirmViewController: OWSTableViewController2 {
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-
+        textField.textColor = .Signal.label
         textField.font = .dynamicTypeBody
         textField.backgroundColor = .clear
         textField.placeholder = OWSLocalizedString(
             "NEW_PRIVATE_STORY_NAME_PLACEHOLDER",
             comment: "Placeholder text for a new private story name",
         )
-
         return textField
     }()
-
-    override public func themeDidChange() {
-        super.themeDidChange()
-
-        nameTextField.textColor = Theme.primaryTextColor
-    }
 
     private func updateTableContents() {
         let contents = OWSTableContents()
@@ -200,8 +192,6 @@ public class NewPrivateStoryConfirmViewController: OWSTableViewController2 {
     }
 
     public func showMissingNameAlert() {
-        AssertIsOnMainThread()
-
         OWSActionSheets.showActionSheet(
             title: OWSLocalizedString(
                 "NEW_PRIVATE_STORY_MISSING_NAME_ALERT_TITLE",

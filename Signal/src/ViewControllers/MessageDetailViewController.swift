@@ -136,6 +136,7 @@ class MessageDetailViewController: OWSTableViewController2 {
     override func themeDidChange() {
         super.themeDidChange()
 
+        // TODO: chat snippet is the only thing that doesn't supoprt dynamic colors.
         refreshContent()
     }
 
@@ -598,7 +599,7 @@ class MessageDetailViewController: OWSTableViewController2 {
 
     private static func buildValueLabel(name: String, value: String) -> UILabel {
         let label = UILabel()
-        label.textColor = Theme.primaryTextColor
+        label.textColor = .Signal.label
         label.font = .dynamicTypeFootnoteClamped
         label.attributedText = valueLabelAttributedText(name: name, value: value)
         return label

@@ -17,7 +17,7 @@ private class ContactNameFieldView: UIView {
     private lazy var textField: UITextField = {
         let textField = UITextField()
         textField.font = .dynamicTypeBody
-        textField.textColor = Theme.primaryTextColor
+        textField.textColor = .Signal.label
         textField.placeholder = name
         textField.autocapitalizationType = .words
         return textField

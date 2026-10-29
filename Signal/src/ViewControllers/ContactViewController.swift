@@ -9,7 +9,7 @@ import MessageUI
 import SignalServiceKit
 import SignalUI
 
-class ContactViewController: OWSTableViewController2 {
+class ContactViewController: OWSTableViewController2, ContactShareViewHelperDelegate {
 
     private enum ContactViewMode: Equatable {
         case aciShare(aci: Aci)
@@ -311,7 +311,7 @@ class ContactViewController: OWSTableViewController2 {
         // 26pt with default size
         let fontPointSize = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title1).pointSize - 2
         nameLabel.font = UIFont.semiboldFont(ofSize: fontPointSize)
-        nameLabel.textColor = Theme.primaryTextColor
+        nameLabel.textColor = .Signal.label
         nameLabel.lineBreakMode = .byWordWrapping
         nameLabel.textAlignment = .center
         nameLabel.numberOfLines = 5
@@ -325,7 +325,7 @@ class ContactViewController: OWSTableViewController2 {
             let label = UILabel()
             label.text = organizationName
             label.font = .dynamicTypeSubheadline
-            label.textColor = Theme.secondaryTextAndIconColor
+            label.textColor = .Signal.secondaryLabel
             label.lineBreakMode = .byWordWrapping
             label.textAlignment = .center
             label.numberOfLines = 3
@@ -377,11 +377,8 @@ class ContactViewController: OWSTableViewController2 {
         let fieldContentView = ContactFieldViewHelper.contactFieldView(forNote: note)
         return buildTableViewCellWith(fieldContentView, menuActions: menuActions)
     }
-}
 
-// MARK: Actions
-
-extension ContactViewController {
+    // MARK: Actions
 
     private func didPressSendMessage() {
         if let sharedAci {
@@ -550,9 +547,8 @@ extension ContactViewController {
         addAddressPart(address.country)
         return addressParts.joined(separator: ", ")
     }
-}
 
-extension ContactViewController: ContactShareViewHelperDelegate {
+    // MARK: - ContactShareViewHelperDelegate
 
     func didCreateOrEditContact() {
         updateContent()

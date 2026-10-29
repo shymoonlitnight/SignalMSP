@@ -79,7 +79,7 @@ final class PrivateStorySettingsViewController: OWSTableViewController2 {
                 icon: .groupInfoAddMembers,
                 iconSize: AvatarBuilder.smallAvatarSizePoints,
                 innerIconSize: 20,
-                iconTintColor: Theme.primaryTextColor,
+                iconTintColor: .Signal.label,
             )
 
             let rowLabel = UILabel()
@@ -87,7 +87,7 @@ final class PrivateStorySettingsViewController: OWSTableViewController2 {
                 "PRIVATE_STORY_SETTINGS_ADD_VIEWER_BUTTON",
                 comment: "Button to add a new viewer on the 'private story settings' view",
             )
-            rowLabel.textColor = Theme.primaryTextColor
+            rowLabel.textColor = .Signal.label
             rowLabel.font = OWSTableItem.primaryLabelFont
             rowLabel.lineBreakMode = .byTruncatingTail
 
@@ -143,12 +143,12 @@ final class PrivateStorySettingsViewController: OWSTableViewController2 {
                         icon: .groupInfoShowAllMembers,
                         iconSize: AvatarBuilder.smallAvatarSizePoints,
                         innerIconSize: 20,
-                        iconTintColor: Theme.primaryTextColor,
+                        iconTintColor: .Signal.label,
                     )
 
                     let rowLabel = UILabel()
                     rowLabel.text = CommonStrings.seeAllButton
-                    rowLabel.textColor = Theme.primaryTextColor
+                    rowLabel.textColor = .Signal.label
                     rowLabel.font = OWSTableItem.primaryLabelFont
                     rowLabel.lineBreakMode = .byTruncatingTail
 

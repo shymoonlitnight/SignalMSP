@@ -96,13 +96,6 @@ class CustomColorViewController: OWSTableViewController2 {
         saturationSlider = SpectrumSlider(spectrum: saturationSpectrum, value: 0)
 
         super.init()
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(updateTableContents),
-            name: .themeDidChange,
-            object: nil,
-        )
     }
 
     override func viewDidLoad() {
@@ -123,6 +116,12 @@ class CustomColorViewController: OWSTableViewController2 {
 
         wallpaperViewBuilder = SSKEnvironment.shared.databaseStorageRef.read { tx in Wallpaper.viewBuilder(for: thread, tx: tx) }
 
+        updateTableContents()
+    }
+
+    override func themeDidChange() {
+        super.themeDidChange()
+        // TODO: fully dynamic colors for the wallpaper preview.
         updateTableContents()
     }
 
@@ -211,7 +210,6 @@ class CustomColorViewController: OWSTableViewController2 {
 
     private var previewView: CustomColorPreviewView?
 
-    @objc
     func updateTableContents() {
         let contents = OWSTableContents()
 
@@ -273,7 +271,7 @@ class CustomColorViewController: OWSTableViewController2 {
 
             let headerLabel = UILabel()
             headerLabel.font = UIFont.dynamicTypeSubheadline.semibold()
-            headerLabel.textColor = Theme.isDarkThemeEnabled ? UIColor.ows_gray15 : UIColor.ows_gray60
+            headerLabel.textColor = .Signal.secondaryLabel
             headerLabel.text = headerText
             cell.contentView.addSubview(headerLabel)
             headerLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 6)
@@ -975,7 +973,7 @@ private class CustomColorPreviewView: UIView {
             hasWallpaper = true
         } else {
             wallpaperPreviewView = UIView()
-            wallpaperPreviewView.backgroundColor = Theme.backgroundColor
+            wallpaperPreviewView.backgroundColor = .Signal.background
             hasWallpaper = false
         }
 
@@ -1063,6 +1061,7 @@ private class CustomColorPreviewView: UIView {
         }
 
         private let selectedBorder = OWSLayerView.circleView()
+        private static let selectedBorderColor = UIColor(light: .ows_whiteAlpha60, dark: .white)
         private let unselectedBorder = OWSLayerView.circleView()
 
         private let swatchView: ColorOrGradientSwatchView
@@ -1085,12 +1084,7 @@ private class CustomColorPreviewView: UIView {
             self.addSubview(swatchView)
             swatchView.autoCenterInSuperview()
 
-            let selectedColor = (
-                Theme.isDarkThemeEnabled
-                    ? UIColor.white
-                    : UIColor(white: 0, alpha: 0.6),
-            )
-            selectedBorder.layer.borderColor = selectedColor.cgColor
+            selectedBorder.layer.borderColor = Self.selectedBorderColor.cgColor
             selectedBorder.layer.borderWidth = Self.selectedBorderThickness
             selectedBorder.autoSetDimensions(to: .square(Self.swatchSize + Self.selectedBorderThickness * 2))
             self.addSubview(selectedBorder)
@@ -1107,6 +1101,13 @@ private class CustomColorPreviewView: UIView {
 
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+
+        override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+            super.traitCollectionDidChange(previousTraitCollection)
+            if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+                selectedBorder.layer.borderColor = Self.selectedBorderColor.cgColor
+            }
         }
 
         func updateSelection() {

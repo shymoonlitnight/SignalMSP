@@ -30,11 +30,6 @@ class PhoneNumberPrivacySettingsViewController: OWSTableViewController2 {
         updateTableContents()
     }
 
-    override func themeDidChange() {
-        super.themeDidChange()
-        updateTableContents()
-    }
-
     private func loadValues() {
         let databaseStorage = SSKEnvironment.shared.databaseStorageRef
         let tsAccountManager = DependenciesBridge.shared.tsAccountManager
@@ -91,9 +86,9 @@ class PhoneNumberPrivacySettingsViewController: OWSTableViewController2 {
         let textColor: UIColor = {
             switch sharingMode {
             case .everybody:
-                return Theme.secondaryTextAndIconColor
+                return .Signal.secondaryLabel
             case .nobody:
-                return Theme.primaryTextColor
+                return .Signal.label
             }
         }()
 

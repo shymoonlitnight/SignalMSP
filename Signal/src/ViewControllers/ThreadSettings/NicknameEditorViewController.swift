@@ -6,7 +6,7 @@
 import SignalServiceKit
 import SignalUI
 
-class NicknameEditorViewController: OWSTableViewController2 {
+class NicknameEditorViewController: OWSTableViewController2, UITextFieldDelegate, TextViewWithPlaceholderDelegate {
 
     // MARK: Properties
 
@@ -190,7 +190,7 @@ class NicknameEditorViewController: OWSTableViewController2 {
             let remainingCharacters = Self.maxNoteLengthGlyphs - glyphCount
             noteCharacterLimitLabel.text = "\(remainingCharacters)"
             if remainingCharacters > 5 {
-                noteCharacterLimitLabel.textColor = Theme.secondaryTextAndIconColor
+                noteCharacterLimitLabel.textColor = .Signal.secondaryLabel
             } else {
                 noteCharacterLimitLabel.textColor = .Signal.red
             }
@@ -255,12 +255,12 @@ class NicknameEditorViewController: OWSTableViewController2 {
 
         let givenNameItem = OWSTableItem.textFieldItem(
             self.givenNameTextField,
-            textColor: Theme.primaryTextColor,
+            textColor: .Signal.label,
         )
 
         let familyNameItem = OWSTableItem.textFieldItem(
             self.familyNameTextField,
-            textColor: Theme.primaryTextColor,
+            textColor: .Signal.label,
         )
 
         if NSLocale.current.isCJKV {
@@ -360,9 +360,9 @@ class NicknameEditorViewController: OWSTableViewController2 {
 
         self.dismiss(animated: true)
     }
-}
 
-extension NicknameEditorViewController: UITextFieldDelegate {
+    // MARK: - UITextFieldDelegate
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         TextFieldHelper.textField(
             textField,
@@ -372,11 +372,9 @@ extension NicknameEditorViewController: UITextFieldDelegate {
             maxGlyphCount: OWSUserProfile.Constants.maxNameLengthGlyphs,
         )
     }
-}
 
-// MARK: - TextViewWithPlaceholderDelegate
+    // MARK: - TextViewWithPlaceholderDelegate
 
-extension NicknameEditorViewController: TextViewWithPlaceholderDelegate {
     func textViewDidUpdateText(_ textView: TextViewWithPlaceholder) {
         self.editingChanged()
         _textViewDidUpdateText(textView)

@@ -4,9 +4,9 @@
 //
 
 import SignalServiceKit
-public import SignalUI
+import SignalUI
 
-public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
+class PrivateStoryNameSettingsViewController: OWSTableViewController2, UITextFieldDelegate {
 
     let thread: TSPrivateStoryThread
     let completionHandler: () -> Void
@@ -24,7 +24,7 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
 
     // MARK: - View Lifecycle
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         title = thread.name
@@ -33,7 +33,7 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
         updateNavigationBar()
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         nameTextField.becomeFirstResponder()
@@ -43,8 +43,8 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
 
     private lazy var nameTextField: UITextField = {
         let textField = UITextField()
-
         textField.text = thread.name
+        textField.textColor = .Signal.label
         textField.font = .dynamicTypeBody
         textField.backgroundColor = .clear
         textField.placeholder = OWSLocalizedString(
@@ -57,15 +57,8 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
             UIAction { [weak self] _ in self?.textFieldDidChange() },
             for: .editingChanged,
         )
-
         return textField
     }()
-
-    override public func themeDidChange() {
-        super.themeDidChange()
-
-        nameTextField.textColor = Theme.primaryTextColor
-    }
 
     private func updateNavigationBar() {
         navigationItem.leftBarButtonItem = .cancelButton { [weak self] in
@@ -103,8 +96,6 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
     // MARK: - Actions
 
     private func didTapCancel() {
-        AssertIsOnMainThread()
-
         if hasPendingChanges {
             OWSActionSheets.showPendingChangesActionSheet {
                 self.dismiss(animated: true)
@@ -115,8 +106,6 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
     }
 
     private func didTapDone() {
-        AssertIsOnMainThread()
-
         guard let name = nameTextField.text?.nilIfEmpty?.filterForDisplay else {
             return showMissingNameAlert()
         }
@@ -132,14 +121,12 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
         updateNavigationBar()
     }
 
-    override public func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         super.dismiss(animated: flag, completion: completion)
         completionHandler()
     }
 
-    public func showMissingNameAlert() {
-        AssertIsOnMainThread()
-
+    func showMissingNameAlert() {
         OWSActionSheets.showActionSheet(
             title: OWSLocalizedString(
                 "NEW_PRIVATE_STORY_MISSING_NAME_ALERT_TITLE",
@@ -151,10 +138,10 @@ public class PrivateStoryNameSettingsViewController: OWSTableViewController2 {
             ),
         )
     }
-}
 
-extension PrivateStoryNameSettingsViewController: UITextFieldDelegate {
-    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    // MARK: UITextFieldDelegate
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if string == "\n" {
             if hasPendingChanges {
                 didTapDone()

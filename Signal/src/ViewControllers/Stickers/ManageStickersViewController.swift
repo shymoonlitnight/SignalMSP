@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
-public import SignalServiceKit
-public import SignalUI
+import SignalServiceKit
+import SignalUI
 
 private class StickerPackActionButton: UIView {
 
@@ -48,9 +48,7 @@ private class StickerPackActionButton: UIView {
     }
 }
 
-// MARK: -
-
-public class ManageStickersViewController: OWSTableViewController2 {
+class ManageStickersViewController: OWSTableViewController2, SendMessageDelegate, StickerPackDataSourceDelegate {
 
     typealias DatedStickerPackInfo = StickerManager.DatedStickerPackInfo
 
@@ -75,17 +73,12 @@ public class ManageStickersViewController: OWSTableViewController2 {
 
     override public var navbarBackgroundColorOverride: UIColor? { cellBackgroundColor }
 
-    override public func loadView() {
-        super.loadView()
-
-        navigationItem.title = OWSLocalizedString("STICKERS_MANAGE_VIEW_TITLE", comment: "Title for the 'manage stickers' view.")
-
-        navigationItem.rightBarButtonItem = .cancelButton(dismissingFrom: self)
-        navigationItem.titleView = filterPicker
-    }
-
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationItem.title = OWSLocalizedString("STICKERS_MANAGE_VIEW_TITLE", comment: "Title for the 'manage stickers' view.")
+        navigationItem.titleView = filterPicker
+        navigationItem.rightBarButtonItem = .cancelButton(dismissingFrom: self)
 
         NotificationCenter.default.addObserver(
             self,
@@ -767,22 +760,17 @@ public class ManageStickersViewController: OWSTableViewController2 {
 
         needsStateUpdate = true
     }
-}
 
-// MARK: -
+    // MARK: - StickerPackDataSourceDelegate
 
-extension ManageStickersViewController: StickerPackDataSourceDelegate {
-    public func stickerPackDataDidChange() {
+    func stickerPackDataDidChange() {
         AssertIsOnMainThread()
         needsTableUpdate = true
     }
-}
 
-// MARK: -
+    // MARK: - SendMessageDelegate
 
-extension ManageStickersViewController: SendMessageDelegate {
-
-    public func sendMessageFlowDidComplete(threads: [TSThread]) {
+    func sendMessageFlowDidComplete(threads: [TSThread]) {
         AssertIsOnMainThread()
 
         sendMessageFlow = nil
@@ -790,7 +778,7 @@ extension ManageStickersViewController: SendMessageDelegate {
         navigationController?.popToViewController(self, animated: true)
     }
 
-    public func sendMessageFlowWillShowConversation() {
+    func sendMessageFlowWillShowConversation() {
         AssertIsOnMainThread()
 
         sendMessageFlow = nil
@@ -798,7 +786,7 @@ extension ManageStickersViewController: SendMessageDelegate {
         // Don't pop anything -- the flow does that itself.
     }
 
-    public func sendMessageFlowDidCancel() {
+    func sendMessageFlowDidCancel() {
         AssertIsOnMainThread()
 
         sendMessageFlow = nil

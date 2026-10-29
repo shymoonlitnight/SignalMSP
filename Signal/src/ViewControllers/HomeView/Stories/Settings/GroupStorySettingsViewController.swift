@@ -112,7 +112,7 @@ class GroupStorySettingsViewController: OWSTableViewController2 {
                         icon: .groupInfoShowAllMembers,
                         iconSize: AvatarBuilder.smallAvatarSizePoints,
                         innerIconSize: 20,
-                        iconTintColor: Theme.primaryTextColor,
+                        iconTintColor: .Signal.label,
                     )
 
                     let rowLabel = UILabel()

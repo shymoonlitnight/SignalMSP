@@ -620,7 +620,7 @@ extension PrivateStoryConversationItem: ConversationItem {
     }
 
     public var image: UIImage? {
-        UIImage(named: "custom-story-\(Theme.isDarkThemeEnabled ? "dark" : "light")-36")
+        UIImage(named: "custom-story-36")
     }
 
     public func getExistingThread(transaction: DBReadTransaction) -> TSThread? {

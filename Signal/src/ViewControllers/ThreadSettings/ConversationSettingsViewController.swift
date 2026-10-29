@@ -272,14 +272,6 @@ class ConversationSettingsViewController: OWSTableViewController2, BadgeCollecti
     /// The base implementation of this reloads the table contents, which does
     /// not update header/footer views. Since we need those to be updated, we
     /// instead recreate the table contents wholesale.
-    override func themeDidChange() {
-        super.themeDidChange()
-        updateTableContents()
-    }
-
-    /// The base implementation of this reloads the table contents, which does
-    /// not update header/footer views. Since we need those to be updated, we
-    /// instead recreate the table contents wholesale.
     override func contentSizeCategoryDidChange() {
         super.contentSizeCategoryDidChange()
         updateTableContents()

@@ -50,8 +50,6 @@ final class AddToGroupViewController: OWSTableViewController2, UISearchResultsUp
 
         defaultSeparatorInsetLeading = Self.cellHInnerMargin + CGFloat(AvatarBuilder.smallAvatarSizePoints) + ContactCellView.avatarTextHSpacing
 
-        tableView.sectionIndexColor = UIColor.Signal.label
-
         Task {
             await self.updateGroupThreads()
         }

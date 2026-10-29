@@ -10,7 +10,7 @@ protocol GroupNameViewControllerDelegate: AnyObject {
     func groupNameViewControllerDidComplete(groupName: String?)
 }
 
-class GroupNameViewController: OWSTableViewController2 {
+class GroupNameViewController: OWSTableViewController2, GroupAttributesEditorHelperDelegate {
     private let helper: GroupAttributesEditorHelper
 
     weak var nameDelegate: GroupNameViewControllerDelegate?
@@ -88,15 +88,9 @@ class GroupNameViewController: OWSTableViewController2 {
         section.add(.init(
             customCellBlock: {
                 let cell = OWSTableItem.newCell()
-
                 cell.selectionStyle = .none
-
-                nameTextField.font = .dynamicTypeBodyClamped
-                nameTextField.textColor = Theme.primaryTextColor
-
                 cell.contentView.addSubview(nameTextField)
                 nameTextField.autoPinEdgesToSuperviewMargins()
-
                 return cell
             },
             actionBlock: {
@@ -114,9 +108,9 @@ class GroupNameViewController: OWSTableViewController2 {
         nameDelegate?.groupNameViewControllerDidComplete(groupName: helper.groupNameCurrent)
         dismiss(animated: true)
     }
-}
 
-extension GroupNameViewController: GroupAttributesEditorHelperDelegate {
+    // MARK: - GroupAttributesEditorHelperDelegate
+
     func groupAttributesEditorContentsDidChange() {
         updateNavigation()
     }

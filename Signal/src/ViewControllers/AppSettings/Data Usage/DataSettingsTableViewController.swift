@@ -102,7 +102,7 @@ class DataSettingsTableViewController: OWSTableViewController2 {
         } else {
             autoDownloadSection.add(OWSTableItem.item(
                 name: resetCopy,
-                textColor: Theme.secondaryTextAndIconColor,
+                textColor: .Signal.secondaryLabel,
                 accessibilityIdentifier: resetAccessibilityIdentifier,
             ))
         }

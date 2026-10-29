@@ -43,12 +43,6 @@ class ChatColorViewController: OWSTableViewController2 {
             name: ChatColorSettingStore.chatColorsDidChangeNotification,
             object: nil,
         )
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(themeDidChangeNotification),
-            name: .themeDidChange,
-            object: nil,
-        )
     }
 
     private var wallpaperViewBuilder: WallpaperViewBuilder?
@@ -76,8 +70,9 @@ class ChatColorViewController: OWSTableViewController2 {
         updateTableContents()
     }
 
-    @objc
-    private func themeDidChangeNotification() {
+    override func themeDidChange() {
+        super.themeDidChange()
+        // TODO: update preview to use dynamic colors.
         updateTableContents()
     }
 
@@ -100,7 +95,7 @@ class ChatColorViewController: OWSTableViewController2 {
             hasWallpaper = true
         } else {
             wallpaperPreviewView = UIView()
-            wallpaperPreviewView.backgroundColor = Theme.backgroundColor
+            wallpaperPreviewView.backgroundColor = .Signal.background
             hasWallpaper = false
         }
         wallpaperPreviewView.layer.cornerRadius = OWSTableViewController2.cellRounding
@@ -459,8 +454,8 @@ private class ChatColorPicker: UIView {
                     addOptionView(innerView: view, selectionViews: [editIconView])
                 case .addNewOption:
                     let view = OWSLayerView.circleView()
-                    view.backgroundColor = Theme.washColor
-                    let imageView = UIImageView.withTemplateImageName("plus-bold", tintColor: Theme.primaryIconColor)
+                    view.backgroundColor = .Signal.primaryFill
+                    let imageView = UIImageView.withTemplateImageName("plus-bold", tintColor: .Signal.label)
                     view.addSubview(imageView)
                     imageView.autoSetDimensions(to: .square(24))
                     imageView.autoCenterInSuperview()
@@ -568,7 +563,7 @@ private class ChatColorPicker: UIView {
 
             var selectionViews = selectionViews
             let selectionView = OWSLayerView.circleView()
-            selectionView.layer.borderColor = Theme.primaryIconColor.cgColor
+            selectionView.layer.borderColor = UIColor.Signal.label.cgColor
             selectionView.layer.borderWidth = optionViewSelectionThickness
             self.addSubview(selectionView)
             selectionView.autoPinEdgesToSuperviewEdges()

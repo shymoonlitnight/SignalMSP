@@ -340,7 +340,8 @@ class UsernameLinkPresentQRCodeViewController: OWSTableViewController2 {
         let instructionsLabel = UILabel()
         stackView.addArrangedSubview(instructionsLabel)
         instructionsLabel.font = .systemFont(ofSize: 14)
-        instructionsLabel.textColor = Theme.lightThemeSecondaryTextAndIconColor
+        instructionsLabel.textColor = .Signal.secondaryLabel
+            .resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
         instructionsLabel.numberOfLines = 0
         instructionsLabel.textAlignment = .center
         instructionsLabel.text = OWSLocalizedString(
@@ -369,12 +370,11 @@ class UsernameLinkPresentQRCodeViewController: OWSTableViewController2 {
         label.font = .dynamicTypeCaption1
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.textColor = Theme.secondaryTextAndIconColor
+        label.textColor = .Signal.secondaryLabel
         label.text = OWSLocalizedString(
             "USERNAME_LINK_QR_CODE_VIEW_DISCLAIMER_LABEL",
             comment: "Text for a label explaining what the username link and QR code give others access to.",
         )
-
         return label
     }
 

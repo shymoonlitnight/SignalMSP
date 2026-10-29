@@ -119,11 +119,6 @@ class AppSettingsViewController: OWSTableViewController2 {
         }
     }
 
-    override func themeDidChange() {
-        super.themeDidChange()
-        updateTableContents()
-    }
-
     func updateTableContents() {
         let db = DependenciesBridge.shared.db
         let tsAccountManager = DependenciesBridge.shared.tsAccountManager
@@ -329,7 +324,7 @@ class AppSettingsViewController: OWSTableViewController2 {
                         "SETTINGS_PAYMENTS_TITLE",
                         comment: "Label for the 'payments' section of the app settings.",
                     )
-                    nameLabel.textColor = Theme.primaryTextColor
+                    nameLabel.textColor = .Signal.label
                     nameLabel.font = OWSTableItem.primaryLabelFont
                     nameLabel.adjustsFontForContentSizeCategory = true
                     nameLabel.numberOfLines = 0
@@ -476,7 +471,7 @@ class AppSettingsViewController: OWSTableViewController2 {
         nameLabel.font = UIFont.dynamicTypeTitle2Clamped.medium()
         if let fullName = localUserProfile?.filteredFullName?.nilIfEmpty {
             nameLabel.text = fullName
-            nameLabel.textColor = Theme.primaryTextColor
+            nameLabel.textColor = .Signal.label
         } else {
             nameLabel.text = OWSLocalizedString(
                 "APP_SETTINGS_EDIT_PROFILE_NAME_PROMPT",
@@ -511,7 +506,7 @@ class AppSettingsViewController: OWSTableViewController2 {
         if let phoneNumber = localIdentifiers?.phoneNumber {
             addSubtitleLabel(
                 text: PhoneNumber.bestEffortFormatPartialUserSpecifiedTextToLookLikeAPhoneNumber(phoneNumber),
-                textColor: Theme.primaryTextColor,
+                textColor: .Signal.label,
             )
         }
 
@@ -520,7 +515,7 @@ class AppSettingsViewController: OWSTableViewController2 {
             case let .available(username, _):
                 addSubtitleLabel(
                     text: username,
-                    textColor: Theme.primaryTextColor,
+                    textColor: .Signal.label,
                 )
             case .unset, .usernameAndLinkCorrupted, .linkCorrupted:
                 break
@@ -530,7 +525,7 @@ class AppSettingsViewController: OWSTableViewController2 {
         if let bioText = localUserProfile?.bioForDisplay {
             let bioLabel = addSubtitleLabel(
                 text: bioText,
-                textColor: Theme.secondaryTextAndIconColor,
+                textColor: .Signal.secondaryLabel,
             )
             bioLabel?.layoutMargins.top = 8
         }

@@ -28,7 +28,7 @@ class ContactReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.font = .dynamicTypeSubheadline
-        label.textColor = .Signal.secondaryLabel
+        label.textColor = .Signal.label
         label.text = OWSLocalizedString(
             "LINKED_DEVICE_MANAGE_CONTACTS_BANNER",
             comment: "Shown in a banner when you tap the 'New Chat' icon at the top of the list of chats.",
@@ -45,7 +45,7 @@ class ContactReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
             ),
             for: .normal,
         )
-        button.setTitleColor(.Signal.secondaryLabel, for: .normal)
+        button.setTitleColor(.Signal.label, for: .normal)
         button.titleLabel!.font = .dynamicTypeSubheadline.semibold()
         button.addAction(
             UIAction { [weak self] _ in self?.didTapLearnMore() },
@@ -58,14 +58,14 @@ class ContactReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
 
     private lazy var contactIcon: UIImageView = {
         let imageView = UIImageView()
-        imageView.setTemplateImageName("person-circle", tintColor: .Signal.secondaryLabel)
+        imageView.setTemplateImageName("person-circle", tintColor: .Signal.label)
         imageView.autoSetDimensions(to: CGSize(square: 24))
         return imageView
     }()
 
     private lazy var closeButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTemplateImageName("x-20", tintColor: .Signal.secondaryLabel)
+        button.setTemplateImageName("x-20", tintColor: .Signal.label)
         button.addAction(
             UIAction { [weak self] _ in self?.didTapDismiss() },
             for: .primaryActionTriggered,
@@ -101,7 +101,7 @@ class ContactReminderTableViewCell: UITableViewCell, CustomBackgroundColorCell {
     // MARK: - CustomBackgroundColorCell
 
     var customBackgroundColor: UIColor {
-        UIColor(light: .ows_gray12, dark: .ows_gray80)
+        UIColor.Signal.tertiaryBackground
     }
 
     var customSelectedBackgroundColor: UIColor {

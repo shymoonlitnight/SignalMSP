@@ -120,7 +120,7 @@ private class ContactNoteTableViewController: OWSTableViewController2, TextViewW
                 comment: "Title for a view showing the note that has been set for a profile.",
             )
             titleLabel.font = .dynamicTypeHeadline.semibold()
-            titleLabel.textColor = Theme.primaryTextColor
+            titleLabel.textColor = .Signal.label
             titleLabel.autoCenterInSuperviewMargins()
             titleLabel.autoPinHeightToSuperviewMargins()
 
