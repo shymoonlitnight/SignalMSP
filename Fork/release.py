@@ -185,6 +185,23 @@ def check_entitlements(repo):
                        f'or point {key} at another file in Config/User.xcconfig')
 
 
+def check_stray_files(repo):
+    '''
+    stop if a folder Xcode syncs into a target (PBXFileSystemSynchronizedRootGroup)
+    has untracked files: they'd be bundled into the app, e.g. a leftover
+    submodule checkout whose scripts then fail App Store signature checks
+    '''
+    pbxproj = repo / 'Signal.xcodeproj/project.pbxproj'
+    if not pbxproj.exists():
+        return
+    folders = re.findall(r'isa = PBXFileSystemSynchronizedRootGroup;.*?\bpath = "?([^";]+)"?;', pbxproj.read_text())
+    stray = [ll[3:] for ll in git_lines(repo, 'status', '--porcelain', '--untracked-files=normal')
+             if ll.startswith('?? ') and any(ll[3:].startswith(f'{ff}/') for ff in folders)]
+    if stray:
+        raise Stop('untracked files in folders Xcode bundles into the app', *stray,
+                   'delete them (e.g. a leftover submodule checkout) or commit them, then re-run')
+
+
 def app_bundle_id(repo):
     return f"{personal_setting(repo, 'SIGNAL_BUNDLEID_PREFIX')}.signal"
 
@@ -563,6 +580,7 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
     version = info['CFBundleShortVersionString']
 
     check_entitlements(repo)
+    check_stray_files(repo)
 
     # -- clean
 
@@ -767,6 +785,25 @@ def _test_repo(tmp):
     assert conf['DEVELOPMENT_TEAM'] == 'MYTEAM123' and conf['SIGNAL_BUNDLEID_PREFIX'] == 'org.mine', conf
     assert app_bundle_id(repo) == 'org.mine.signal'
     assert personal_setting(repo, 'DEVELOPMENT_TEAM') == 'MYTEAM123'
+
+    # untracked files in a synchronized folder would be bundled; elsewhere they're fine
+    kit = _commit(repo, 'Kit', **{'Kit/Kit.swift': ''})
+    pbx = repo / 'Signal.xcodeproj/project.pbxproj'
+    pbx.parent.mkdir()
+    pbx.write_text('A /* Kit */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFolders = (); path = Kit; };\n')
+    (repo / 'Pods').mkdir()
+    (repo / 'Pods/x').write_text('')
+    check_stray_files(repo)
+    (repo / 'Kit/tests').mkdir()
+    (repo / 'Kit/tests/gradlew').write_text('')
+    try:
+        check_stray_files(repo)
+        raise AssertionError('stray file accepted')
+    except Stop as e:
+        assert 'Kit/tests/' in e.steps, e.steps
+    for dd in ('Signal.xcodeproj', 'Pods', 'Kit'):
+        shutil.rmtree(repo / dd)
+    git(repo, 'reset', '-q', '--hard', f'{kit}~')
 
     # upstream's values in Project.xcconfig don't count as set
     user_conf = repo / 'Config' / 'User.xcconfig'
