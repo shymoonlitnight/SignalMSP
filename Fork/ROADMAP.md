@@ -29,12 +29,14 @@ To do:
       App Intents commit into its own commit. Keep it out of `app-intents`
       (separate PR branch if it goes upstream).
 - [x] Move `CallMuteShortcutsTest` into its own file
-      (`Signal/test/Calls/CallMuteShortcutsTest.swift`).
+      (`SignalTests/Calls/CallMuteShortcutsTest.swift`).
 - [x] Create `mute-triggers` on top of `app-intents`; rebase `personal` onto it.
 - [x] Release script rebases the whole stack with one
       `git rebase --update-refs upstream/main` (with rerere), keeping each commit.
 - [x] Keep fork-only code in its own folder (e.g. `Signal/ForkExtras/`) to
-      minimize upstream conflicts. Group new pbxproj entries and keep them few.
+      minimize upstream conflicts. With upstream's folder references, new files
+      need no pbxproj entries; only the `SignalControls` target and the icon
+      build settings touch it.
 - [ ] Optional (not done): a `FORK_EXPERIMENTS` compile flag around `mute-triggers`
       code, so `personal` can also build an upstream-only flavor.
 - [x] Commit the build script to `personal` (`Fork/release.py`). Once

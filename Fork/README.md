@@ -41,7 +41,6 @@ git checkout personal
 git fetch upstream
 git rebase --update-refs upstream/main   # Git 2.38+; also moves the branches below
 git push --force-with-lease origin app-intents build-config mute-triggers personal
-make dependencies
 ```
 
 Each fork commit is kept as is. Don't squash them; `app-intents`' commits are
@@ -61,13 +60,16 @@ meant to be sent upstream separately.
   your own. Every so often, check out each branch and build it.
 - Put personal config in `Config/User.xcconfig`, not `project.pbxproj`.
   pbxproj conflicts are painful.
+- The project uses folder references: a file added under `Signal/`,
+  `SignalTests/`, `SignalControls/` etc. joins that folder's target without
+  any `project.pbxproj` change. Add new files that way rather than with new
+  groups or targets. Tests go in `SignalTests/` (not the old `Signal/test/`).
 
 ## Making a personalized build
 
 ### 1. Setup
 
-Follow upstream `BUILDING.md` steps 1 and 2 (clone with submodules,
-`make dependencies`), then:
+Follow upstream `BUILDING.md` step 1 (clone), then:
 
 ```sh
 git checkout personal
@@ -219,7 +221,7 @@ return an error when no call is active. Use them from Shortcuts, then attach
 the shortcut to the Action Button, Back Tap (Accessibility → Touch → Back Tap),
 Full Keyboard Access commands, AssistiveTouch, or Switch Control.
 
-Tests are in `Signal/test/Calls/CallMuteShortcutsTest.swift`.
+Tests are in `SignalTests/Calls/CallMuteShortcutsTest.swift`.
 
 A separate, unrelated commit logs network failures during the registration
 ID check as warnings instead of asserting (`RegistrationIdMismatchManager.swift`).
