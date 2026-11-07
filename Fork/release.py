@@ -11,7 +11,7 @@ Update SignalMSP from upstream Signal-iOS, then build and upload it to TestFligh
 Steps of a release:
 1. update: fetch upstream, rebase the branch stack (app-intents, build-config, mute-triggers, personal) onto
    upstream/main in one `git rebase --update-refs`, keeping each fork commit,
-   force-push the stack to origin, then `make dependencies`
+   force-push the stack to origin (Swift packages resolve during the build)
 2. clean: drop the build stamp from the info plists, xcodebuild clean
    (and with --derived-data, delete Signal's DerivedData)
 3. archive: App Store Release archive into Xcode's Archives (shows in Organizer),
@@ -229,7 +229,7 @@ def set_build_number(repo, number):
 def xcodebuild(*args, warnings=False):
     '''
     run xcodebuild through xcbeautify: errors only, or with warnings=True also
-    the (mostly third-party Pods) warnings, one line each. raises on failure
+    the (mostly third-party package) warnings, one line each. raises on failure
     '''
     args = [str(aa) for aa in args]
     log('xcodebuild', *args, style='do')
@@ -478,8 +478,8 @@ def left_behind_branches(repo, branch, upstream='upstream/main'):
     return left
 
 
-def update(repo, branch, yes=False, make: str | None = 'dependencies'):
-    '''rebase `branch` and the branches below it onto upstream/main, push them, and make dependencies'''
+def update(repo, branch, yes=False):
+    '''rebase `branch` and the branches below it onto upstream/main and push them'''
     upstream = 'upstream/main'
 
     for marker in ('rebase-merge', 'rebase-apply', 'MERGE_HEAD', 'CHERRY_PICK_HEAD'):
@@ -534,8 +534,6 @@ def update(repo, branch, yes=False, make: str | None = 'dependencies'):
             run('git', '-C', repo, 'push', '--force-with-lease', 'origin', *out_of_date)
 
     run('git', '-C', repo, 'submodule', 'update', '--init', '--recursive')
-    if make:
-        run('make', make, cwd=repo)
 
 
 # ---------------------------------------------------------------------
@@ -874,7 +872,7 @@ def _test_update(tmp):
     assert left_behind_branches(repo, 'personal') == []
 
     _commit(upstream, 'Upstream change', **{'d.txt': 'd\n'})
-    update(repo, 'personal', yes=True, make=None)
+    update(repo, 'personal', yes=True)
 
     assert is_ancestor(repo, 'upstream/main', 'app-intents')
     assert is_ancestor(repo, 'app-intents', 'mute-triggers') and is_ancestor(repo, 'mute-triggers', 'personal')
@@ -891,7 +889,7 @@ def _test_update(tmp):
     git(repo, 'checkout', '-q', 'personal')
     assert left_behind_branches(repo, 'personal') == ['app-intents']
     try:
-        update(repo, 'personal', yes=True, make=None)
+        update(repo, 'personal', yes=True)
         raise AssertionError('expected Stop')
     except Stop as e:
         assert "'app-intents' has commits" in str(e), e
@@ -966,7 +964,7 @@ def main(argv=None):
     rel.add_argument('--derived-data', action='store_true', help="also delete Signal's DerivedData when cleaning")
     rel.add_argument('--yes', '-y', action='store_true',
                      help="don't ask before pushing or uploading (still stops on conflicts or failures)")
-    rel.add_argument('--warnings', action='store_true', help='show build warnings (mostly third-party Pods)')
+    rel.add_argument('--warnings', action='store_true', help='show build warnings (mostly third-party packages)')
     rel.add_argument('--notes', help='What to Test text, instead of generating it')
     rel.add_argument('--notes-wait', type=int, default=30,
                      help='minutes to wait for App Store Connect to list the build before setting notes')
