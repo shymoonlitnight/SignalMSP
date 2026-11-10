@@ -26,8 +26,9 @@ extension CallMuteControl {
         var previewValue: Bool { false }
 
         func currentValue() async throws -> Bool {
-            // Written by the app whenever the call or its mute state changes.
-            return CallMuteControlState.isMuted
+            // Written by the app whenever the call or its mute state changes,
+            // and refreshed during a call; a stale muted state shows unmuted.
+            return CallMuteControlState.displayedIsMuted
         }
     }
 }
