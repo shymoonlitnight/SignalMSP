@@ -126,15 +126,32 @@ def confirm(query, yes=False):
     return input(f'{query}? [y/N] ').strip().lower() in ('y', 'yes')
 
 
-def xcconfig(repo):
-    '''DEVELOPMENT_TEAM etc. from Config/User.xcconfig (falling back to Config/Project.xcconfig)'''
+def xcconfig(repo, names=('Project.xcconfig', 'User.xcconfig')):
+    '''
+    DEVELOPMENT_TEAM etc. from Config/User.xcconfig (falling back to Config/Project.xcconfig).
+    skips conditional settings (KEY[sdk=...]) and #include lines; expands $(KEY) and
+    ${KEY} references to other keys read here, leaving others (like $(inherited)) as written
+    '''
     values = {}
-    for name in ('Project.xcconfig', 'User.xcconfig'):
+    for name in names:
         conf = repo / 'Config' / name
-        if conf.exists():
-            for line in conf.read_text().splitlines():
-                if m := re.match(r'\s*([A-Z_]+)\s*=\s*(.*?)\s*(//.*)?$', line):
-                    values[m.group(1)] = m.group(2)
+        if not conf.exists():
+            continue
+        for line in conf.read_text().splitlines():
+            m = re.match(r'\s*([A-Za-z_][A-Za-z0-9_]*)\s*(\[[^]]*\])?\s*=(.*)$', line)
+            if not m or m.group(2):
+                continue
+            # a comment starts at a // that begins the value or follows whitespace, so URLs survive
+            values[m.group(1)] = re.sub(r'(^|\s)//.*$', '', m.group(3).strip()).strip()
+
+    def expand(m):
+        return values.get(m.group(1) or m.group(2), m.group(0))
+
+    for _ in range(5):
+        expanded = {kk: re.sub(r'\$\((\w+)\)|\$\{(\w+)\}', expand, vv) for kk, vv in values.items()}
+        if expanded == values:
+            break
+        values = expanded
     return values
 
 
@@ -144,14 +161,11 @@ def personal_setting(repo, key):
     Signal's values, which would only fail late (signing, no app record)
     '''
     value = xcconfig(repo).get(key)
-    upstream = {}
-    conf = repo / 'Config' / 'Project.xcconfig'
-    if conf.exists():
-        for line in conf.read_text().splitlines():
-            if m := re.match(r'\s*([A-Z_]+)\s*=\s*(.*?)\s*(//.*)?$', line):
-                upstream[m.group(1)] = m.group(2)
+    upstream = xcconfig(repo, names=('Project.xcconfig',))
     if not value or value == upstream.get(key):
         raise Stop(f'{key} not set', f'set it in {repo}/Config/User.xcconfig (see User.xcconfig.sample)')
+    if '$(' in value or '${' in value:
+        raise Stop(f'{key} = {value} could not be resolved', f'set it to a plain value in {repo}/Config/User.xcconfig')
     return value
 
 
@@ -894,6 +908,29 @@ def _test_repo(tmp):
     assert conf['DEVELOPMENT_TEAM'] == 'MYTEAM123' and conf['SIGNAL_BUNDLEID_PREFIX'] == 'org.mine', conf
     assert app_bundle_id(repo) == 'org.mine.signal'
     assert personal_setting(repo, 'DEVELOPMENT_TEAM') == 'MYTEAM123'
+
+    # xcconfig: references, URLs, digits in keys, conditional settings
+    user_conf = repo / 'Config' / 'User.xcconfig'
+    saved = user_conf.read_text()
+    user_conf.write_text(saved + 'SIGNAL_ORG_BUNDLEID_PREFIX = $(SIGNAL_BUNDLEID_PREFIX)\n'
+                                 'SIGNAL_URL = https://example.com // note\n'
+                                 'FOO2 = bar\n'
+                                 'DEVELOPMENT_TEAM[sdk=iphonesimulator*] = SIMTEAM\n'
+                                 'OTHER_FLAGS = $(inherited) ${FOO2}\n')
+    conf = xcconfig(repo)
+    assert conf['SIGNAL_ORG_BUNDLEID_PREFIX'] == 'org.mine', conf
+    assert conf['SIGNAL_URL'] == 'https://example.com', conf
+    assert conf['FOO2'] == 'bar', conf
+    assert conf['DEVELOPMENT_TEAM'] == 'MYTEAM123', conf
+    assert conf['OTHER_FLAGS'] == '$(inherited) bar', conf
+    assert personal_setting(repo, 'SIGNAL_ORG_BUNDLEID_PREFIX') == 'org.mine'
+    user_conf.write_text(saved.replace('MYTEAM123', '$(UNKNOWN_TEAM)'))
+    try:
+        personal_setting(repo, 'DEVELOPMENT_TEAM')
+        raise AssertionError('unresolved reference accepted')
+    except Stop as e:
+        assert 'could not be resolved' in str(e), e
+    user_conf.write_text(saved)
 
     # untracked files in a synchronized folder would be bundled; elsewhere they're fine
     kit = _commit(repo, 'Kit', **{'Kit/Kit.swift': ''})
