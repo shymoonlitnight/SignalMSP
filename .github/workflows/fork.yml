@@ -1,0 +1,75 @@
+# SignalMSP's own checks. Upstream's workflows only run on pull requests and on
+# pushes to main and release/*, so nothing ran on the fork's branches.
+name: fork
+
+on:
+  push:
+    branches:
+      - app-intents
+      - build-config
+      - mute-triggers
+      - personal
+      - review-fixes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-script:
+    name: release.py self-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+
+      # the PlistBuddy part skips itself off macOS
+      - name: Self-test
+        run: python3 Fork/release.py self-test
+
+  swift-tests:
+    name: Fork Swift tests
+    # a full Signal build takes most of an hour, so only when started by hand
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      # same Xcode selection and downloads as upstream's build_and_test job (main.yml)
+      - name: Set Xcode version
+        run: |
+          echo DEVELOPER_DIR=/Applications/Xcode_27.1.app >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v6
+
+      - name: Check Xcode version
+        run: |
+          Scripts/check_xcode_version.py --relaxed
+
+      - name: Download Metal toolchain
+        run: |
+          xcodebuild -downloadComponent MetalToolchain
+
+      - name: Download iOS runtime
+        run: |
+          xcodebuild -downloadPlatform iOS
+
+      - name: Test
+        run: |
+          SIM_ID=$(xcrun simctl list devices available | grep -m1 iPhone | grep -oE '[0-9A-F-]{36}')
+          echo "Using simulator $SIM_ID"
+          set -o pipefail
+          xcodebuild test \
+            -workspace Signal.xcworkspace \
+            -scheme Signal \
+            -destination "platform=iOS Simulator,id=$SIM_ID" \
+            CODE_SIGNING_ALLOWED=NO \
+            -only-testing:SignalTests/CallMuteControllerTest \
+            -only-testing:SignalTests/CallMuteKeyCommandsTest \
+            -only-testing:SignalTests/CallMuteControlUpdaterTest \
+            -only-testing:SignalTests/CallMuteShortcutsTest \
+            -only-testing:SignalTests/HeadTiltDetectorTest \
+            -only-testing:SignalTests/MuteTriggerCoordinatorTest
