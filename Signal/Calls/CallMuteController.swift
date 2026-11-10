@@ -176,6 +176,27 @@ final class CallMuteController {
         return call.isMuted
     }
 
+    /// An incoming individual call that's ringing and hasn't been answered.
+    /// No `default:`, so a new upstream state has to be placed here.
+    static func isRingingUnanswered(_ state: CallState) -> Bool {
+        switch state {
+        case .localRinging_Anticipatory, .localRinging_ReadyToAnswer:
+            return true
+        case .idle, .dialing, .answering, .remoteRinging, .accepting, .connected, .reconnecting,
+             .localFailure, .localHangup, .remoteHangup, .remoteHangupNeedPermission,
+             .remoteBusy, .answeredElsewhere, .declinedElsewhere, .busyElsewhere:
+            return false
+        }
+    }
+
+    /// Whether a mute change can be applied directly, which works while
+    /// locked or backgrounded. Unmuting without microphone permission has to
+    /// go through the normal flow, so the permission prompt behaves as it
+    /// does from the call screen.
+    static func canApplyDirectly(isMuted: Bool, recordPermission: AVAudioSession.RecordPermission) -> Bool {
+        return isMuted || recordPermission == .granted
+    }
+
     private func waitForMuteState(_ targetState: Bool, call: CallMuteTarget) async -> Bool {
         for _ in 0..<maxPolls {
             if call.isMuted == targetState {
@@ -220,12 +241,7 @@ private final class SignalCallMuteTarget: CallMuteTarget {
         guard case .individual(let individualCall) = call.mode else {
             return false
         }
-        switch individualCall.state {
-        case .localRinging_Anticipatory, .localRinging_ReadyToAnswer:
-            return true
-        default:
-            return false
-        }
+        return CallMuteController.isRingingUnanswered(individualCall.state)
     }
 
     func requestMuted(_ isMuted: Bool) {
@@ -236,7 +252,8 @@ private final class SignalCallMuteTarget: CallMuteTarget {
         case .individual:
             break
         }
-        if isMuted || AVAudioSession.sharedInstance().recordPermission == .granted {
+        let recordPermission = AVAudioSession.sharedInstance().recordPermission
+        if CallMuteController.canApplyDirectly(isMuted: isMuted, recordPermission: recordPermission) {
             // Apply the change directly so it works while locked or
             // backgrounded, without visible call controls.
             callService.updateIsLocalAudioMutedWithMicrophonePermission(call: call, isLocalAudioMuted: isMuted)
