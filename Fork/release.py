@@ -85,10 +85,16 @@ def log(*args, style=None):
     print(text, file=sys.stderr, flush=True)
 
 
-def run(*args, check=True, capture=False, input=None, cwd=None, quiet=False):
+def shown(args, redact=()):
+    '''a command line for the log, with the values in `redact` as ***'''
+    hidden = {str(rr) for rr in redact}
+    return ' '.join('***' if aa in hidden else aa for aa in map(str, args))
+
+
+def run(*args, check=True, capture=False, input=None, cwd=None, quiet=False, redact=()):
     args = [str(aa) for aa in args]
     if not quiet:
-        log(' '.join(args), style='do')
+        log(shown(args, redact), style='do')
     return subprocess.run(args, check=check, input=input, cwd=cwd,
                           stdout=subprocess.PIPE if capture else None,
                           stderr=subprocess.PIPE if capture else None)
@@ -244,13 +250,13 @@ def set_build_number(repo, number):
             '-c', f'Set :CFBundleShortVersionString {version}', repo / rel, quiet=True)
 
 
-def xcodebuild(*args, warnings=False):
+def xcodebuild(*args, warnings=False, redact=()):
     '''
     run xcodebuild through xcbeautify: errors only, or with warnings=True also
     the (mostly third-party package) warnings, one line each. raises on failure
     '''
     args = [str(aa) for aa in args]
-    log('xcodebuild', *args, style='do')
+    log(shown(['xcodebuild', *args], redact), style='do')
     beautify = shutil.which('xcbeautify')
     if not beautify:
         return run('xcodebuild', *args, '-quiet', quiet=True)
@@ -274,6 +280,11 @@ def asc_key():
     if not key_path.exists():
         raise Stop(f'ASC_KEY_PATH, {key_path}, not found')
     return key_id, issuer_id, key_path
+
+
+def asc_key_values():
+    '''the API key's id, issuer and path, to keep out of logged command lines'''
+    return tuple(asc_key() or ())
 
 
 def asc_auth_args():
@@ -660,7 +671,8 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
             if build_number:
                 set_build_number(repo, build_number)
             xcodebuild(*build_args, '-destination', 'generic/platform=iOS', '-archivePath', archive_path,
-                       '-allowProvisioningUpdates', *asc_auth_args(), 'archive', warnings=warnings)
+                       '-allowProvisioningUpdates', *asc_auth_args(), 'archive', warnings=warnings,
+                       redact=asc_key_values())
         except subprocess.CalledProcessError:
             raise Stop('archive failed', f're-run with --warnings, or open {workspace} in Xcode for details')
         finally:
@@ -705,12 +717,12 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
         try:
             xcodebuild('-exportArchive', '-archivePath', archive_path, '-exportOptionsPlist', options,
                        '-exportPath', Path(tmp) / 'export', '-allowProvisioningUpdates', *asc_auth_args(),
-                       warnings=warnings)
+                       warnings=warnings, redact=key)
             ipas = glob.glob(str(Path(tmp) / 'export' / '*.ipa'))
             if not ipas:
                 raise Stop(f'export of {archive_path.name} produced no .ipa')
             run('xcrun', 'altool', '--upload-app', '-f', ipas[0], '-t', 'ios',
-                '--apiKey', key_id, '--apiIssuer', issuer_id, '--p8-file-path', key_path)
+                '--apiKey', key_id, '--apiIssuer', issuer_id, '--p8-file-path', key_path, redact=key)
         except subprocess.CalledProcessError:
             raise Stop(f'upload of {archive_path.name} failed', 'see the output above; the archive is kept, '
                        're-run with --no-update --no-clean --no-archive to retry the upload')
@@ -786,6 +798,7 @@ def self_test():
             _test_update(tmp)
             _test_archive_info(tmp)
             _test_asc_token(tmp)
+            _test_redact()
     finally:
         archives_dir = saved_archives
         os.environ.update(saved_env)
@@ -1096,6 +1109,16 @@ def _test_asc_token(tmp):
 
     for kk in ('ASC_KEY_ID', 'ASC_ISSUER_ID', 'ASC_KEY_PATH'):
         os.environ.pop(kk)
+
+
+def _test_redact():
+    import contextlib
+    import io
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err):
+        run('true', 'SECRETVALUE', Path('/keys/AuthKey.p8'), redact=('SECRETVALUE', Path('/keys/AuthKey.p8')))
+    assert 'SECRETVALUE' not in err.getvalue() and 'AuthKey' not in err.getvalue(), err.getvalue()
+    assert 'true *** ***' in err.getvalue(), err.getvalue()
 
 
 # ---------------------------------------------------------------------
