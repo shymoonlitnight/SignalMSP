@@ -6,6 +6,7 @@
 import AVFoundation
 import Foundation
 import SignalServiceKit
+import SignalUI
 
 enum CallMuteError: LocalizedError, Equatable {
     case noActiveCall
@@ -82,6 +83,7 @@ final class CallMuteController {
     }
 
     private static func live() -> CallMuteController {
+        let earcon = CallMuteEarcon()
         return CallMuteController(
             currentCall: {
                 guard
@@ -92,8 +94,11 @@ final class CallMuteController {
                 }
                 return SignalCallMuteTarget(callService: callService, call: call)
             },
-            feedback: { _ in
+            feedback: { isMuted in
                 ImpactHapticFeedback.impactOccurred(style: .medium)
+                // The haptic can't be felt with the phone in a pocket, and
+                // doesn't fire when backgrounded or locked; the tone is heard.
+                earcon.play(isMuted: isMuted)
             },
         )
     }
@@ -179,6 +184,21 @@ final class CallMuteController {
             try? await Task.sleep(nanoseconds: pollIntervalNanoseconds)
         }
         return call.isMuted == targetState
+    }
+}
+
+/// A short tone in the call audio when mute changes: falling for mute,
+/// rising for unmute. Played on its own player, not through
+/// CallAudioService, so it doesn't stop a ringback or join sound.
+@MainActor
+final class CallMuteEarcon {
+    private var player: AudioPlayer?
+
+    func play(isMuted: Bool) {
+        player?.stop()
+        let sound: StandardSound = isMuted ? .beginNextTrack : .endLastTrack
+        player = Sounds.audioPlayer(forSound: .standard(sound), audioBehavior: .call)
+        player?.play()
     }
 }
 
