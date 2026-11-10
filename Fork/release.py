@@ -188,15 +188,16 @@ def check_entitlements(repo):
 def check_stray_files(repo):
     '''
     stop if a folder Xcode syncs into a target (PBXFileSystemSynchronizedRootGroup)
-    has untracked files: they'd be bundled into the app, e.g. a leftover
-    submodule checkout whose scripts then fail App Store signature checks
+    has untracked or git-ignored files: they'd be bundled into the app, e.g. a
+    leftover submodule checkout whose scripts then fail App Store signature checks
     '''
     pbxproj = repo / 'Signal.xcodeproj/project.pbxproj'
     if not pbxproj.exists():
         return
     folders = re.findall(r'isa = PBXFileSystemSynchronizedRootGroup;.*?\bpath = "?([^";]+)"?;', pbxproj.read_text())
-    stray = [ll[3:] for ll in git_lines(repo, 'status', '--porcelain', '--untracked-files=normal')
-             if ll.startswith('?? ') and any(ll[3:].startswith(f'{ff}/') for ff in folders)]
+    stray = [ll[3:] for ll in git_lines(repo, 'status', '--porcelain', '--untracked-files=normal', '--ignored=matching')
+             if ll[:3] in ('?? ', '!! ') and Path(ll[3:]).name != '.DS_Store'
+             and any(ll[3:].startswith(f'{ff}/') for ff in folders)]
     if stray:
         raise Stop('untracked files in folders Xcode bundles into the app', *stray,
                    'delete them (e.g. a leftover submodule checkout) or commit them, then re-run')
@@ -853,6 +854,19 @@ def _test_repo(tmp):
         raise AssertionError('stray file accepted')
     except Stop as e:
         assert 'Kit/tests/' in e.steps, e.steps
+    shutil.rmtree(repo / 'Kit/tests')
+    # git-ignored files get bundled too; Finder's .DS_Store doesn't matter
+    (repo / '.gitignore').write_text('Kit/build/\n.DS_Store\n')
+    (repo / 'Kit/.DS_Store').write_text('')
+    check_stray_files(repo)
+    (repo / 'Kit/build').mkdir()
+    (repo / 'Kit/build/x').write_text('')
+    try:
+        check_stray_files(repo)
+        raise AssertionError('ignored file accepted')
+    except Stop as e:
+        assert 'Kit/build/' in e.steps, e.steps
+    (repo / '.gitignore').unlink()
     for dd in ('Signal.xcodeproj', 'Pods', 'Kit'):
         shutil.rmtree(repo / dd)
     git(repo, 'reset', '-q', '--hard', f'{kit}~')
