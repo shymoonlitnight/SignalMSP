@@ -13,6 +13,7 @@ import WidgetKit
 final class CallMuteControlUpdater: CallServiceStateObserver, IndividualCallObserver, GroupCallObserver {
     private var call: SignalCall?
     private var publishedIsMuted: Bool?
+    private var refreshTimer: Timer?
     private let store: (Bool) -> Void
     private let reloadControl: () -> Void
 
@@ -46,6 +47,12 @@ final class CallMuteControlUpdater: CallServiceStateObserver, IndividualCallObse
         reloadControl()
     }
 
+    /// Stores the current value again, which refreshes its timestamp so the
+    /// control doesn't treat it as stale. The control isn't reloaded.
+    func refresh() {
+        store(Self.isMuted(for: call))
+    }
+
     // MARK: - CallServiceStateObserver
 
     func didUpdateCall(from oldValue: SignalCall?, to newValue: SignalCall?) {
@@ -67,6 +74,19 @@ final class CallMuteControlUpdater: CallServiceStateObserver, IndividualCallObse
             call.addObserver(self, syncStateImmediately: true)
         }
         publish()
+
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+        if newValue != nil {
+            refreshTimer = Timer.scheduledTimer(
+                withTimeInterval: CallMuteControlState.refreshInterval,
+                repeats: true,
+            ) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.refresh()
+                }
+            }
+        }
     }
 
     // MARK: - IndividualCallObserver

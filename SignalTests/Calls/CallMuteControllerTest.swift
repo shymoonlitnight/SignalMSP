@@ -323,4 +323,34 @@ final class CallMuteControlUpdaterTest: XCTestCase {
         XCTAssertEqual(reloads, 1)
         XCTAssertFalse(CallMuteControlUpdater.isMuted(for: nil))
     }
+
+    func testRefreshStoresTheCurrentValueWithoutReloading() {
+        var stored: [Bool] = []
+        var reloads = 0
+        let updater = CallMuteControlUpdater(store: { stored.append($0) }, reloadControl: { reloads += 1 })
+        updater.didUpdateCall(from: nil, to: nil)
+
+        updater.refresh()
+        XCTAssertEqual(stored, [false, false])
+        XCTAssertEqual(reloads, 1)
+    }
+}
+
+// MARK: -
+
+final class CallMuteControlStateTest: XCTestCase {
+    func testStaleMutedStateShowsUnmuted() {
+        let now: TimeInterval = 1_000_000
+        let staleAfter = CallMuteControlState.staleAfter
+
+        XCTAssertTrue(CallMuteControlState.displayedValue(isMuted: true, updatedAt: now - 10, now: now))
+        XCTAssertTrue(CallMuteControlState.displayedValue(isMuted: true, updatedAt: now - staleAfter, now: now))
+        XCTAssertFalse(CallMuteControlState.displayedValue(isMuted: true, updatedAt: now - staleAfter - 1, now: now))
+        XCTAssertFalse(CallMuteControlState.displayedValue(isMuted: true, updatedAt: nil, now: now))
+        XCTAssertFalse(CallMuteControlState.displayedValue(isMuted: false, updatedAt: now, now: now))
+    }
+
+    func testRefreshesWellWithinTheStaleTime() {
+        XCTAssertLessThan(CallMuteControlState.refreshInterval * 2, CallMuteControlState.staleAfter)
+    }
 }
