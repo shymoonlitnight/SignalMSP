@@ -32,6 +32,9 @@ enum CallMuteError: LocalizedError, Equatable {
 protocol CallMuteTarget: AnyObject {
     var isMuted: Bool { get }
     var hasEnded: Bool { get }
+    /// Still the app's current call. A change that finishes after the call
+    /// was replaced or ended mustn't be reported for it.
+    var isCurrent: Bool { get }
     /// An incoming call that's ringing and hasn't been answered. Muting it
     /// would carry over when it's answered from CallKit, so it's refused.
     var isRingingUnanswered: Bool { get }
@@ -43,27 +46,42 @@ protocol CallMuteTarget: AnyObject {
 
 /// Single entry point for changing microphone mute from outside the call
 /// screen's own mute button, such as Shortcuts (App Intents).
+///
+/// Use `shared`, so every way of toggling goes through one debounce: two
+/// toggles close together (say a key press and a Shortcut) would otherwise
+/// cancel each other out.
 @MainActor
 final class CallMuteController {
+    /// The controller for the app's current call.
+    static let shared: CallMuteController = .live()
+
     private let currentCall: @MainActor () -> CallMuteTarget?
     private let feedback: @MainActor (_ isMuted: Bool) -> Void
     private let pollIntervalNanoseconds: UInt64
     private let maxPolls: Int
+    private let debounceInterval: TimeInterval
+    private let now: () -> TimeInterval
+
+    private var lastToggleTime: TimeInterval?
+    private var changesInProgress = 0
 
     init(
         currentCall: @escaping @MainActor () -> CallMuteTarget?,
         feedback: @escaping @MainActor (_ isMuted: Bool) -> Void,
         pollIntervalNanoseconds: UInt64 = 50 * NSEC_PER_MSEC,
         maxPolls: Int = 20,
+        debounceInterval: TimeInterval = 0.3,
+        now: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
     ) {
         self.currentCall = currentCall
         self.feedback = feedback
         self.pollIntervalNanoseconds = pollIntervalNanoseconds
         self.maxPolls = maxPolls
+        self.debounceInterval = debounceInterval
+        self.now = now
     }
 
-    /// A controller for the app's current call.
-    static func live() -> CallMuteController {
+    private static func live() -> CallMuteController {
         return CallMuteController(
             currentCall: {
                 guard
@@ -91,14 +109,24 @@ final class CallMuteController {
         return try activeCall().isMuted
     }
 
-    /// Flips the mute state and returns the new state.
+    /// Flips the mute state and returns the new state. A toggle within
+    /// `debounceInterval` of the last one, or while a change is still being
+    /// applied, changes nothing and returns the current state: presses that
+    /// bounce, or two triggers firing for one gesture, count once.
     @discardableResult
     func toggle() async throws -> Bool {
+        let time = now()
+        if changesInProgress > 0 || lastToggleTime.map({ time - $0 < debounceInterval }) == true {
+            Logger.info("Ignoring a mute toggle close to the previous one")
+            return try activeCall().isMuted
+        }
         let call = try changeableCall()
+        lastToggleTime = time
         return try await setMuted(!call.isMuted, on: call)
     }
 
-    /// Sets the mute state and returns the resulting state.
+    /// Sets the mute state and returns the resulting state. Not debounced:
+    /// repeating it changes nothing.
     @discardableResult
     func setMuted(_ isMuted: Bool) async throws -> Bool {
         return try await setMuted(isMuted, on: try changeableCall())
@@ -123,9 +151,18 @@ final class CallMuteController {
     }
 
     private func setMuted(_ isMuted: Bool, on call: CallMuteTarget) async throws -> Bool {
+        changesInProgress += 1
+        defer { changesInProgress -= 1 }
+
         call.requestMuted(isMuted)
 
-        guard await waitForMuteState(isMuted, call: call) else {
+        let applied = await waitForMuteState(isMuted, call: call)
+
+        // The call may have ended while waiting; CallKit mustn't hear about it.
+        guard call.isCurrent, !call.hasEnded else {
+            throw CallMuteError.callEnded
+        }
+        guard applied else {
             throw CallMuteError.unableToChangeMuteState
         }
 
@@ -157,6 +194,7 @@ private final class SignalCallMuteTarget: CallMuteTarget {
 
     var isMuted: Bool { call.isOutgoingAudioMuted }
     var hasEnded: Bool { call.hasTerminated }
+    var isCurrent: Bool { callService.callServiceState.currentCall === call }
 
     var isRingingUnanswered: Bool {
         guard case .individual(let individualCall) = call.mode else {
