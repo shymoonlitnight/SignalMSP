@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import SignalRingRTC
 import XCTest
 
 @testable import Signal
@@ -112,6 +113,31 @@ final class MuteTriggerCoordinatorTest: XCTestCase {
         await settle()
 
         XCTAssertEqual(toggles, 2)
+    }
+
+    func testIndividualCallRunsOnlyWhileConnected() {
+        let running: [CallState] = [.connected, .reconnecting]
+        let notRunning: [CallState] = [
+            .idle, .dialing, .answering, .remoteRinging,
+            .localRinging_Anticipatory, .localRinging_ReadyToAnswer, .accepting,
+            .localFailure, .localHangup, .remoteHangup, .remoteHangupNeedPermission,
+            .remoteBusy, .answeredElsewhere, .declinedElsewhere, .busyElsewhere,
+        ]
+        for state in running {
+            XCTAssertTrue(MuteTriggerCoordinator.shouldRun(individualState: state), "\(state)")
+        }
+        for state in notRunning {
+            XCTAssertFalse(MuteTriggerCoordinator.shouldRun(individualState: state), "\(state)")
+        }
+        XCTAssertFalse(MuteTriggerCoordinator.shouldRun(individualState: nil))
+    }
+
+    func testGroupCallRunsOnlyOnceJoined() {
+        XCTAssertTrue(MuteTriggerCoordinator.shouldRun(joinState: .joined))
+        for state: JoinState in [.notJoined, .joining, .pending] {
+            XCTAssertFalse(MuteTriggerCoordinator.shouldRun(joinState: state), "\(state)")
+        }
+        XCTAssertFalse(MuteTriggerCoordinator.shouldRun(joinState: nil))
     }
 
     func testDefaultSources() {
