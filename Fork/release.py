@@ -297,11 +297,20 @@ def asc_auth_args():
             '-authenticationKeyIssuerID', issuer_id]
 
 
+_asc_token_cache = None  # (key, token, expiry)
+
+
 def asc_token():
-    '''short-lived App Store Connect API JWT (ES256), signed with the system openssl'''
+    '''
+    short-lived App Store Connect API JWT (ES256), signed with the system openssl.
+    reused until a minute before it expires, rather than signing one per request
+    '''
+    global _asc_token_cache
     key = asc_key()
     if not key:
         raise Stop('no App Store Connect API key', 'set ASC_KEY_ID, ASC_ISSUER_ID and ASC_KEY_PATH')
+    if _asc_token_cache and _asc_token_cache[0] == key and time.time() < _asc_token_cache[2] - 60:
+        return _asc_token_cache[1]
     key_id, issuer_id, key_path = key
 
     def b64(data):
@@ -320,7 +329,8 @@ def asc_token():
 
     # openssl gives a DER SEQUENCE of two INTEGERs; JWT wants raw 32-byte r || s
     def der_int(buf, pos):
-        assert buf[pos] == 0x02, 'unexpected signature format'
+        if buf[pos] != 0x02:
+            raise Stop('unexpected signature format from openssl')
         length = buf[pos + 1]
         return int.from_bytes(buf[pos + 2:pos + 2 + length], 'big'), pos + 2 + length
 
@@ -328,11 +338,17 @@ def asc_token():
     r, pos = der_int(der, pos)
     s, _ = der_int(der, pos)
     signature = b64(r.to_bytes(32, 'big') + s.to_bytes(32, 'big'))
-    return (signing_input + b'.' + signature).decode()
+    token = (signing_input + b'.' + signature).decode()
+    _asc_token_cache = (key, token, now + 600)
+    return token
+
+
+asc_api = 'https://api.appstoreconnect.apple.com/v1/'
 
 
 def asc_request(method, endpoint, body=None, **params):
-    url = f'https://api.appstoreconnect.apple.com/v1/{endpoint}'
+    '''`endpoint` is relative to the v1 api, or a full api url such as a links.next'''
+    url = endpoint if endpoint.startswith(asc_api) else asc_api + endpoint
     if params:
         url += '?' + urllib.parse.urlencode(params)
     headers = {'Authorization': f'Bearer {asc_token()}'}
@@ -360,6 +376,19 @@ def asc_get(endpoint, **params):
     return asc_request('GET', endpoint, **params)
 
 
+def asc_get_all(endpoint, **params):
+    '''every page's data, following links.next (only to the api itself, which gets the token)'''
+    data, page = [], asc_get(endpoint, **params)
+    while True:
+        data += page.get('data', [])
+        next_url = page.get('links', {}).get('next')
+        if not next_url:
+            return data
+        if not next_url.startswith(asc_api):
+            raise Stop(f'App Store Connect returned an unexpected next page: {next_url}')
+        page = asc_get(next_url)
+
+
 def asc_app_id(bundle_id):
     apps = asc_get('apps', **{'filter[bundleId]': bundle_id, 'fields[apps]': 'name'})['data']
     if not apps:
@@ -370,9 +399,10 @@ def asc_app_id(bundle_id):
 
 def asc_next_build_number(bundle_id, version):
     '''one more than the highest build number App Store Connect has for this version'''
-    builds = asc_get('builds', limit=200, **{'filter[app]': asc_app_id(bundle_id),
-                                             'filter[preReleaseVersion.version]': version,
-                                             'fields[builds]': 'version'})['data']
+    # all pages: the api sorts build numbers as strings, so -version can't pick the highest
+    builds = asc_get_all('builds', limit=200, **{'filter[app]': asc_app_id(bundle_id),
+                                                 'filter[preReleaseVersion.version]': version,
+                                                 'fields[builds]': 'version'})
     numbers = [int(bb['attributes']['version']) for bb in builds if bb['attributes']['version'].isdigit()]
     return max(numbers, default=0) + 1
 
@@ -455,6 +485,12 @@ def find_archive(scheme, version, build):
     return None, None
 
 
+def testflight_tag_order(tag):
+    '''testflight/8.34-2 as ((8, 34), 2), for sorting; None if it doesn't parse'''
+    m = re.fullmatch(rf'{re.escape(testflight_tag_prefix)}(\d+(?:\.\d+)*)-(\d+)', tag or '')
+    return (tuple(map(int, m.group(1).split('.'))), int(m.group(2))) if m else None
+
+
 def testflight_notes(repo, commit, tag=None):
     '''
     What to Test text for a build of `commit`: upstream's release notes for the
@@ -477,10 +513,15 @@ def testflight_notes(repo, commit, tag=None):
     if fork:
         sections.append(f'In this fork:\n{bullets(fork, 15)}')
 
-    # the fork's branches are rebased each update, so older tags aren't ancestors
-    # of `commit`; the newest other tag is the previous build
-    previous = next((tt for tt in git_lines(repo, 'tag', '--list', f'{testflight_tag_prefix}*',
-                                            '--sort=-creatordate') if tt != tag), None)
+    # the fork's branches are rebased each update, so older tags aren't ancestors of
+    # `commit`. the previous build is the highest <version>-<build> tag below `tag`,
+    # or without one (or one that doesn't parse), the newest other tag
+    tags = git_lines(repo, 'tag', '--list', f'{testflight_tag_prefix}*', '--sort=-creatordate')
+    if this_build := testflight_tag_order(tag):
+        older = [tt for tt in tags if (oo := testflight_tag_order(tt)) and oo < this_build]
+        previous = max(older, key=testflight_tag_order, default=None)
+    else:
+        previous = next((tt for tt in tags if tt != tag), None)
     if previous:
         base = git_lines(repo, 'merge-base', commit, 'upstream/main')
         if base:
@@ -623,7 +664,7 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
 
     xcode_check = run(repo / 'Scripts' / 'check_xcode_version.py', '--relaxed', cwd=repo, check=False)
     if xcode_check.returncode and not confirm('Xcode version differs from .xcode-version, continue anyway', yes):
-        return
+        raise Stop('cancelled')
 
     # every build dirties Signal-Info.plist, which would block the update
     restore_plists(repo)
@@ -788,7 +829,7 @@ def asc_check(repo):
 # self-test: the local pieces against a throwaway repo (no network, no xcodebuild)
 
 def self_test():
-    global archives_dir
+    global archives_dir, _asc_token_cache
     saved_env = {kk: os.environ.pop(kk) for kk in list(os.environ) if kk.startswith('GIT_') or kk.startswith('ASC_')}
     saved_archives = archives_dir
     try:
@@ -799,7 +840,9 @@ def self_test():
             _test_archive_info(tmp)
             _test_asc_token(tmp)
             _test_redact()
+            _test_asc_paging()
     finally:
+        _asc_token_cache = None
         archives_dir = saved_archives
         os.environ.update(saved_env)
     log('self-test ok', style='ok')
@@ -928,6 +971,13 @@ def _test_repo(tmp):
     git(repo, 'tag', 'testflight/8.34-1', head)
     assert 'since 8.33-4' in testflight_notes(repo, head, tag='testflight/8.34-1')
     git(repo, 'tag', '-d', 'testflight/8.34-1')
+
+    # notes for an older build use the tag below it, not the newest
+    git(repo, 'tag', 'testflight/8.34-1', head)
+    git(repo, 'tag', 'testflight/8.34-2', head)
+    assert 'since 8.33-4' in testflight_notes(repo, head, tag='testflight/8.34-1')
+    assert testflight_tag_order('testflight/8.34-10') > testflight_tag_order('testflight/8.34-9')
+    git(repo, 'tag', '-d', 'testflight/8.34-1', 'testflight/8.34-2')
 
     # without a previous tag there's no upstream section
     git(repo, 'tag', '-d', 'testflight/8.33-4')
@@ -1083,6 +1133,8 @@ def _test_asc_token(tmp):
     run('openssl', 'ecparam', '-name', 'prime256v1', '-genkey', '-noout', '-out', tmp / 'ec.pem', capture=True, quiet=True)
     run('openssl', 'pkcs8', '-topk8', '-nocrypt', '-in', tmp / 'ec.pem', '-out', key, capture=True, quiet=True)
     run('openssl', 'ec', '-in', tmp / 'ec.pem', '-pubout', '-out', tmp / 'pub.pem', capture=True, quiet=True)
+    global _asc_token_cache
+    _asc_token_cache = None
     os.environ.update(ASC_KEY_ID='TESTKEY', ASC_ISSUER_ID='issuer-uuid', ASC_KEY_PATH=str(key))
 
     def unb64(part):
@@ -1094,7 +1146,11 @@ def _test_asc_token(tmp):
             body = b'\0' + body
         return b'\x02' + bytes([len(body)]) + body
 
+    token = asc_token()
+    assert asc_token() == token, 'token not reused'
+
     for _ in range(5):  # r/s with a high bit set encode as 33 DER bytes; cover a few signatures
+        _asc_token_cache = None  # a fresh signature each time
         header, claims, signature = asc_token().split('.')
         assert json.loads(unb64(header)) == {'alg': 'ES256', 'kid': 'TESTKEY', 'typ': 'JWT'}
         assert json.loads(unb64(claims))['iss'] == 'issuer-uuid'
@@ -1109,6 +1165,24 @@ def _test_asc_token(tmp):
 
     for kk in ('ASC_KEY_ID', 'ASC_ISSUER_ID', 'ASC_KEY_PATH'):
         os.environ.pop(kk)
+
+
+def _test_asc_paging():
+    global asc_request
+    pages = {'builds': {'data': [1, 2], 'links': {'next': f'{asc_api}builds?cursor=2'}},
+             f'{asc_api}builds?cursor=2': {'data': [3], 'links': {}}}
+    saved = asc_request
+    try:
+        asc_request = lambda method, endpoint, body=None, **params: pages[endpoint]  # noqa: E731
+        assert asc_get_all('builds', limit=200) == [1, 2, 3]
+        pages['builds']['links']['next'] = 'https://example.com/steal-the-token'
+        try:
+            asc_get_all('builds')
+            raise AssertionError('followed a next link off the api')
+        except Stop:
+            pass
+    finally:
+        asc_request = saved
 
 
 def _test_redact():
