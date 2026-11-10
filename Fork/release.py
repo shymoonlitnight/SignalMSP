@@ -407,6 +407,27 @@ def archive_info(archive_path):
             'bundle_id': info['CFBundleIdentifier'], 'commit': commit}
 
 
+def check_archive(repo, archive_path, built_now):
+    '''
+    stop if the archive is for another app, or was built from another commit
+    in this run. an older archive (--no-archive) from another commit is
+    returned as text to ask about, None if it matches
+    '''
+    info = archive_info(archive_path)
+    expected = app_bundle_id(repo)
+    if info['bundle_id'] != expected:
+        raise Stop(f"{Path(archive_path).name} is {info['bundle_id']}, not {expected}",
+                   're-run without --no-archive, or move the other archive out of the way')
+    head = git(repo, 'rev-parse', 'HEAD')
+    commit = info['commit']
+    if commit and not (head.startswith(commit) or commit.startswith(head)):
+        mismatch = f'{Path(archive_path).name} was built from {commit[:12]}, but HEAD is {head[:12]}'
+        if built_now:
+            raise Stop(mismatch)
+        return mismatch
+    return None
+
+
 def all_archives(scheme):
     return sorted(glob.glob(str(archives_dir / f'*/{scheme} *.xcarchive')), key=os.path.getmtime, reverse=True)
 
@@ -649,11 +670,16 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
 
     if not upload:
         return
+    built_now = archive_path is not None
     if not archive_path:
         archives = all_archives(scheme)
         if not archives:
             raise Stop('no archive to upload', 're-run without --no-archive')
         archive_path = Path(archives[0])
+    if mismatch := check_archive(repo, archive_path, built_now):
+        # always ask, even with --yes: uploading the wrong build is easy to miss
+        if not confirm(f'{mismatch}; upload it anyway', yes=False):
+            raise Stop('cancelled')
 
     team = personal_setting(repo, 'DEVELOPMENT_TEAM')
     key = asc_key()
@@ -991,6 +1017,37 @@ def _test_archive_info(tmp):
     path, found = find_archive('Signal', '8.34', 3)
     assert path == app.parents[2] and found == info
     assert find_archive('Signal', '8.34', 4) == (None, None)
+
+    # an archive about to be uploaded must be this app, built from HEAD
+    repo = tmp / 'SignalMSP'  # from _test_repo: bundle id org.mine.signal
+    head = git(repo, 'rev-parse', 'HEAD')
+    plist = app / 'Info.plist'
+
+    def stamp(bundle_id, commit):
+        plist.write_bytes(plistlib.dumps({
+            'CFBundleShortVersionString': '8.34', 'CFBundleVersion': '3', 'CFBundleIdentifier': bundle_id,
+            'BuildDetails': {'SignalCommit': f'{commit} Personal signing and app icon'}}))
+
+    stamp('org.mine.signal', head)
+    assert check_archive(repo, app.parents[2], built_now=True) is None
+    assert check_archive(repo, app.parents[2], built_now=False) is None
+
+    stamp('org.example.signal', head)
+    for built_now in (True, False):
+        try:
+            check_archive(repo, app.parents[2], built_now)
+            raise AssertionError('archive of another app accepted')
+        except Stop as e:
+            assert 'not org.mine.signal' in str(e), e
+
+    stamp('org.mine.signal', 'abc123')
+    try:
+        check_archive(repo, app.parents[2], built_now=True)
+        raise AssertionError('archive built now from another commit accepted')
+    except Stop as e:
+        assert 'built from abc123' in str(e), e
+    mismatch = check_archive(repo, app.parents[2], built_now=False)
+    assert mismatch and 'abc123' in mismatch and head[:12] in mismatch, mismatch
 
 
 def _test_asc_token(tmp):
