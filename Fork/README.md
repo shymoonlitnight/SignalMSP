@@ -4,8 +4,9 @@ This fork of [Signal-iOS](https://github.com/signalapp/Signal-iOS) adds hands-fr
 microphone mute/unmute during calls (Shortcuts, Action Button, Back Tap, etc.).
 The goal is muting without touching the screen, e.g. outdoors wearing gloves.
 
-This folder exists only on the `mute-triggers` branch and above. Upstream's own docs
-(`BUILDING.md`, `CONTRIBUTING.md`) still apply; this file covers what's different.
+This folder is committed on `mute-triggers`, so it's there and on `personal`
+(built on top of it), but not on `app-intents` or `build-config`. Upstream's own
+docs (`BUILDING.md`, `CONTRIBUTING.md`) still apply; this file covers what's different.
 
 See [ROADMAP.md](ROADMAP.md) for planned work and [PLAN.md](PLAN.md) for the
 implementation checkpoints.
@@ -153,6 +154,16 @@ Build numbers are one past App Store Connect's latest for the version. Each
 upload is tagged `testflight/<version>-<build>` locally, which marks where
 the next build's "upstream changes since" notes start.
 
+Before force-pushing the stack, the script stops if `origin` has commits a
+local branch doesn't (pushed from another machine, or edited on github.com),
+and leases each push on the `origin` commit it checked. Before uploading, it
+checks the archive's bundle ID and source commit; an older archive from
+another commit (`--no-archive`) is uploaded only after asking, even with `--yes`.
+
+`.github/workflows/fork.yml` runs `release.py self-test` on every push to the
+stack. The fork's Swift test classes run there only when started by hand
+(Actions → fork → Run workflow), since a full Signal build takes most of an hour.
+
 term's `term dev signal_release`, `testflight_notes` and `asc_check` run this
 script from the `personal` branch, with the API key from term's secrets.
 
@@ -221,7 +232,15 @@ return an error when no call is active. Use them from Shortcuts, then attach
 the shortcut to the Action Button, Back Tap (Accessibility → Touch → Back Tap),
 Full Keyboard Access commands, AssistiveTouch, or Switch Control.
 
-Tests are in `SignalTests/Calls/CallMuteShortcutsTest.swift`.
+Every way of changing mute from outside the call screen (Shortcuts, keys,
+Control Center, triggers) goes through `CallMuteController.shared`. It gives
+a haptic and plays a short tone in the call audio: falling for mute, rising
+for unmute, so a change is noticed with the phone locked or in a pocket.
+Toggles within 0.3 s of each other, or while a change is still applying,
+count once; **Set Microphone Mute** isn't debounced (repeating it changes nothing).
+
+Tests are in `SignalTests/Calls/CallMuteShortcutsTest.swift` and
+`SignalTests/Calls/CallMuteControllerTest.swift`.
 
 A separate, unrelated commit logs network failures during the registration
 ID check as warnings instead of asserting (`RegistrationIdMismatchManager.swift`).
@@ -232,7 +251,9 @@ carried on `mute-triggers` until then.
 
 Fork-only code in `Signal/ForkExtras/`. Each trigger has an on/off switch,
 off by default, in the iOS Settings app: **Settings → Apps → SignalMSP →
-Call Mute Triggers**. Changes apply from the next call.
+Call Mute Triggers**. Changes apply from the next call. Triggers run only
+while a call is connected (a group call once joined), not while it rings or
+in the lobby.
 
 - **Media Remote Track Skip:** next/previous track toggles mute during a
   call. On the BT13 handlebar remote, a slow click (about half a second) on
@@ -244,9 +265,33 @@ Call Mute Triggers**. Changes apply from the next call.
   with head tracking (Pro, Max, 3rd gen or later) and asks for Motion &
   Fitness permission the first time a call starts with it on.
 
-All triggers go through `CallMuteController` with a 0.3 s debounce. Their
-messages start with `MuteTriggers:`, in Signal's debug log and live in
-Console.app (filter on subsystem `SignalMSP` or the text `MuteTriggers`).
+- **Log Head Movements:** for tuning head tilt. Logs every head movement
+  past about 11°, and a summary each minute. Off by default, since Signal's
+  debug log can be sent to Signal support; triggers are always logged.
+
+All triggers go through `CallMuteController.shared` (see above), whose
+debounce also covers keys and Shortcuts. Their messages start with
+`MuteTriggers:`, in Signal's debug log and live in Console.app (filter on
+subsystem `SignalMSP` or the text `MuteTriggers`).
+
+The Control Center toggle shows the state the app last stored. During a call
+the app refreshes it every minute; a muted state older than three minutes
+(the app was killed mid-call) shows as unmuted.
+
+## Security notes
+
+- **Locked phone (accepted risk).** The App Intents and the Control Center
+  toggle work from the Lock Screen without Face ID, so someone holding the
+  locked phone during a call can mute or unmute it, and **Get Active Call
+  State** tells whether a call is active. This is by design: CallKit's own
+  lock-screen call screen allows the same, and requiring Face ID would defeat
+  using it with gloves.
+- **Unnoticed unmute.** Head tilt and track skip toggle, so a false trigger
+  could unmute the microphone. The mute and unmute tones are there so that
+  can't go unnoticed.
+- **`release.py`** refuses to force-push over commits that are only on
+  `origin`, and keeps the API key ID, issuer and key path out of its logs
+  (shown as `***`).
 
 ## Background
 
