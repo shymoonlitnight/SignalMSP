@@ -158,16 +158,24 @@ struct HeadTiltDetector {
 @MainActor
 final class HeadTiltMuteTrigger: MuteTriggerSource {
     static let settingKey = "MuteTrigger.headTilt"
+    /// Settings switch for logging every head movement and a periodic
+    /// summary, for tuning. Off by default: Signal's debug log can be sent
+    /// to Signal support, and doesn't need a record of head movements.
+    static let debugLogSettingKey = "MuteTrigger.headTiltDebugLog"
 
     let name = "headTilt"
     private let manager = CMHeadphoneMotionManager()
-    private var detector = HeadTiltDetector()
-
-    // Periodic summary, to check updates keep arriving while backgrounded or
-    // locked. Lower this (e.g. to 1 s) when tuning the gesture.
-    private static let reportInterval: TimeInterval = 60
-    private var samplesSinceReport = 0
-    private var lastReportTime: TimeInterval?
+    /// Motion arrives at sensor rate for the whole call, so it's processed
+    /// off the main thread; only a trigger hops to the main actor.
+    private let queue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.name = "SignalMSP.HeadTilt"
+        queue.maxConcurrentOperationCount = 1
+        queue.qualityOfService = .userInitiated
+        return queue
+    }()
+    private let processor = HeadTiltMotionProcessor()
+    private var isRunning = false
 
     func start(onTrigger: @escaping @MainActor () -> Void) {
         guard manager.isDeviceMotionAvailable else {
@@ -175,27 +183,67 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
             return
         }
         ForkLog.info("MuteTriggers: headTilt starting, motion permission \(Self.describe(CMHeadphoneMotionManager.authorizationStatus()))")
-        manager.startDeviceMotionUpdates(to: .main) { [weak self] motion, error in
-            MainActor.assumeIsolated {
-                self?.handle(motion: motion, error: error, onTrigger: onTrigger)
+        let logMovements = UserDefaults.standard.bool(forKey: Self.debugLogSettingKey)
+        let processor = self.processor
+        queue.addOperation { processor.logMovements = logMovements }
+        isRunning = true
+        manager.startDeviceMotionUpdates(to: queue) { [weak self] motion, error in
+            if processor.handle(motion: motion, error: error) {
+                Task { @MainActor in
+                    // A sample processed just before stop() mustn't toggle afterwards.
+                    guard self?.isRunning == true else {
+                        return
+                    }
+                    onTrigger()
+                }
             }
         }
     }
 
     func stop() {
+        isRunning = false
         manager.stopDeviceMotionUpdates()
+        let processor = self.processor
+        queue.addOperation { processor.reset() }
+    }
+
+    private static func describe(_ status: CMAuthorizationStatus) -> String {
+        switch status {
+        case .notDetermined: return "not asked yet"
+        case .restricted: return "restricted"
+        case .denied: return "denied"
+        case .authorized: return "allowed"
+        @unknown default: return "unknown"
+        }
+    }
+}
+
+/// Turns headphone motion into triggers. Only used on HeadTiltMuteTrigger's
+/// serial queue, which is what makes the unchecked Sendable safe.
+final class HeadTiltMotionProcessor: @unchecked Sendable {
+    var logMovements = false
+    private var detector = HeadTiltDetector()
+
+    // Periodic summary (with logMovements), to check updates keep arriving
+    // while backgrounded or locked. Lower this (e.g. to 1 s) when tuning.
+    private static let reportInterval: TimeInterval = 60
+    private var samplesSinceReport = 0
+    private var lastReportTime: TimeInterval?
+
+    func reset() {
         detector = HeadTiltDetector()
         samplesSinceReport = 0
         lastReportTime = nil
     }
 
-    private func handle(motion: CMDeviceMotion?, error: Error?, onTrigger: @MainActor () -> Void) {
+    /// Whether mute should toggle.
+    func handle(motion: CMDeviceMotion?, error: Error?) -> Bool {
         if let error {
             ForkLog.warn("MuteTriggers: headTilt error \(error)")
-            return
+            return false
         }
         guard let motion else {
-            return
+            return false
         }
         let time = motion.timestamp
         // Gravity in the headphones' frame. Its component along the ear-to-ear
@@ -203,23 +251,29 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
         let gravity = motion.gravity
         let sidewaysTilt = Self.tiltAngle(Self.earToEarComponent(of: gravity))
 
+        var triggered = false
         for event in detector.process(angle: sidewaysTilt, at: time) {
             switch event {
             case .triggered:
                 ForkLog.info("MuteTriggers: headTilt held \(Self.describeSide(detector.offset))")
-                onTrigger()
-            case .movement(let peak, let heldFor, let triggered):
-                ForkLog.info(
-                    "MuteTriggers: headTilt movement peaked \(Self.describeSide(peak)), "
-                        + "held \(String(format: "%.1f", heldFor)) s\(triggered ? ", triggered" : "")",
-                )
+                triggered = true
+            case .movement(let peak, let heldFor, let didTrigger):
+                if logMovements {
+                    ForkLog.info(
+                        "MuteTriggers: headTilt movement peaked \(Self.describeSide(peak)), "
+                            + "held \(String(format: "%.1f", heldFor)) s\(didTrigger ? ", triggered" : "")",
+                    )
+                }
             }
         }
 
+        guard logMovements else {
+            return triggered
+        }
         samplesSinceReport += 1
         guard let lastReportTime else {
             lastReportTime = time
-            return
+            return triggered
         }
         if time - lastReportTime >= Self.reportInterval {
             let rate = Double(samplesSinceReport) / (time - lastReportTime)
@@ -233,6 +287,7 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
             samplesSinceReport = 0
             self.lastReportTime = time
         }
+        return triggered
     }
 
     /// The headphones' x axis isn't quite ear-to-ear: in testing (AirPods),
@@ -257,15 +312,5 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
 
     private static func degrees(_ radians: Double) -> Int {
         Int((radians * 180 / .pi).rounded())
-    }
-
-    private static func describe(_ status: CMAuthorizationStatus) -> String {
-        switch status {
-        case .notDetermined: return "not asked yet"
-        case .restricted: return "restricted"
-        case .denied: return "denied"
-        case .authorized: return "allowed"
-        @unknown default: return "unknown"
-        }
     }
 }
