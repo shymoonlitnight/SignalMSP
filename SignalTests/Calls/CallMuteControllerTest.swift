@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import AVFoundation
 import XCTest
 
 @testable import Signal
@@ -237,6 +238,32 @@ final class CallMuteControllerTest: XCTestCase {
 
         XCTAssertTrue(controller.hasActiveCall)
         XCTAssertTrue(try controller.isMuted())
+    }
+
+    func testIsRingingUnansweredForEveryCallState() {
+        let ringing: [CallState] = [.localRinging_Anticipatory, .localRinging_ReadyToAnswer]
+        let notRinging: [CallState] = [
+            .idle, .dialing, .answering, .remoteRinging, .accepting, .connected, .reconnecting,
+            .localFailure, .localHangup, .remoteHangup, .remoteHangupNeedPermission,
+            .remoteBusy, .answeredElsewhere, .declinedElsewhere, .busyElsewhere,
+        ]
+        for state in ringing {
+            XCTAssertTrue(CallMuteController.isRingingUnanswered(state), "\(state)")
+        }
+        for state in notRinging {
+            XCTAssertFalse(CallMuteController.isRingingUnanswered(state), "\(state)")
+        }
+    }
+
+    func testCanApplyDirectly() {
+        // Muting never needs the microphone.
+        XCTAssertTrue(CallMuteController.canApplyDirectly(isMuted: true, recordPermission: .granted))
+        XCTAssertTrue(CallMuteController.canApplyDirectly(isMuted: true, recordPermission: .denied))
+        XCTAssertTrue(CallMuteController.canApplyDirectly(isMuted: true, recordPermission: .undetermined))
+        // Unmuting does.
+        XCTAssertTrue(CallMuteController.canApplyDirectly(isMuted: false, recordPermission: .granted))
+        XCTAssertFalse(CallMuteController.canApplyDirectly(isMuted: false, recordPermission: .denied))
+        XCTAssertFalse(CallMuteController.canApplyDirectly(isMuted: false, recordPermission: .undetermined))
     }
 
     func testErrorDescriptions() {
