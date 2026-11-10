@@ -41,31 +41,13 @@ enum CallMuteKeyCommands {
         }
     }
 
-    /// Presses closer together than this count as one, for key repeat on
-    /// older iOS and for pedals that bounce or send duplicate key-downs.
-    static let debounceInterval: TimeInterval = 0.3
-
-    @MainActor
-    private static var lastToggleTime: TimeInterval?
-
-    /// Whether a press at `time` should toggle, given the last one that did.
-    static func shouldToggle(at time: TimeInterval, lastToggleTime: TimeInterval?) -> Bool {
-        guard let lastToggleTime else {
-            return true
-        }
-        return time - lastToggleTime >= debounceInterval
-    }
-
+    /// Key repeat on older iOS, and pedals that bounce or send duplicate
+    /// key-downs, are absorbed by `CallMuteController`'s debounce.
     @MainActor
     static func toggleMute() {
-        let time = ProcessInfo.processInfo.systemUptime
-        guard shouldToggle(at: time, lastToggleTime: lastToggleTime) else {
-            return
-        }
-        lastToggleTime = time
         Task { @MainActor in
             do {
-                try await CallMuteController.live().toggle()
+                try await CallMuteController.shared.toggle()
             } catch {
                 Logger.warn("Couldn't toggle mute from a key command: \(error)")
             }

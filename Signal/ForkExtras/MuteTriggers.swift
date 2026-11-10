@@ -21,8 +21,9 @@ protocol MuteTriggerSource: AnyObject {
 }
 
 /// Starts the enabled trigger sources when a call begins and stops them when
-/// it ends. Every source toggles mute through one debounced path, so two
-/// sources firing for the same press don't cancel each other out.
+/// it ends. Every source toggles mute through `CallMuteController.shared`,
+/// whose debounce keeps two sources firing for the same press from
+/// cancelling each other out.
 @MainActor
 final class MuteTriggerCoordinator: CallServiceStateObserver {
     struct SourceEntry {
@@ -36,27 +37,20 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
         SourceEntry(settingKey: HeadTiltMuteTrigger.settingKey, make: { HeadTiltMuteTrigger() }),
     ]
 
-    /// Triggers closer together than this count as one press.
-    static let debounceInterval: TimeInterval = 0.3
-
     private let sources: [SourceEntry]
     private let isEnabled: (String) -> Bool
     private let toggleMute: @MainActor () async throws -> Bool
-    private let now: () -> TimeInterval
 
     private var running: [MuteTriggerSource] = []
-    private var lastTriggerTime: TimeInterval?
 
     init(
         sources: [SourceEntry] = MuteTriggerCoordinator.allSources,
         isEnabled: @escaping (String) -> Bool = { UserDefaults.standard.bool(forKey: $0) },
-        toggleMute: @escaping @MainActor () async throws -> Bool = { try await CallMuteController.live().toggle() },
-        now: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime },
+        toggleMute: @escaping @MainActor () async throws -> Bool = { try await CallMuteController.shared.toggle() },
     ) {
         self.sources = sources
         self.isEnabled = isEnabled
         self.toggleMute = toggleMute
-        self.now = now
     }
 
     var runningSourceNames: [String] { running.map(\.name) }
@@ -98,17 +92,9 @@ final class MuteTriggerCoordinator: CallServiceStateObserver {
         ForkLog.info("MuteTriggers: stopping \(runningSourceNames)")
         running.forEach { $0.stop() }
         running = []
-        lastTriggerTime = nil
     }
 
     func trigger(from sourceName: String) {
-        let time = now()
-        if let lastTriggerTime, time - lastTriggerTime < Self.debounceInterval {
-            ForkLog.info("MuteTriggers: ignored \(sourceName) (debounce)")
-            return
-        }
-        lastTriggerTime = time
-
         Task { @MainActor in
             do {
                 let isMuted = try await toggleMute()

@@ -33,7 +33,6 @@ final class MuteTriggerCoordinatorTest: XCTestCase {
         }
     }
 
-    private var clock: TimeInterval = 100
     private var toggles = 0
     private var enabledKeys: Set<String> = []
     private var made: [String: FakeSource] = [:]
@@ -53,7 +52,6 @@ final class MuteTriggerCoordinatorTest: XCTestCase {
                 self.toggles += 1
                 return self.toggles % 2 == 1
             },
-            now: { [unowned self] in self.clock },
         )
     }
 
@@ -105,14 +103,12 @@ final class MuteTriggerCoordinatorTest: XCTestCase {
         XCTAssertEqual(toggles, 1)
     }
 
-    func testDebounceIgnoresTriggersCloseTogether() async {
+    /// Debouncing is CallMuteController's job; the coordinator passes every trigger on.
+    func testEveryTriggerCallsToggleMute() async {
         let coordinator = makeCoordinator(keys: [])
 
         coordinator.trigger(from: "a")
-        clock += 0.1
         coordinator.trigger(from: "b")
-        clock += MuteTriggerCoordinator.debounceInterval
-        coordinator.trigger(from: "a")
         await settle()
 
         XCTAssertEqual(toggles, 2)

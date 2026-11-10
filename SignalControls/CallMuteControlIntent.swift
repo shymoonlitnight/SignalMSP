@@ -39,7 +39,7 @@ struct SetCallMuteControlIntent: SetValueIntent, LiveActivityIntent {
     }
 #else
     private func toggleMute() async throws {
-        try await CallMuteController.live().toggle()
+        try await CallMuteController.shared.toggle()
     }
 #endif
 }
