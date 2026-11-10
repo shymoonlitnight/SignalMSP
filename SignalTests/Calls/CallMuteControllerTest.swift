@@ -21,6 +21,7 @@ final class CallMuteControllerTest: XCTestCase {
 
         var isMuted: Bool
         var hasEnded = false
+        var isCurrent = true
         var isRingingUnanswered = false
         var behavior: Behavior
         var requested: [Bool] = []
@@ -63,14 +64,18 @@ final class CallMuteControllerTest: XCTestCase {
     }
 
     private var feedback: [Bool] = []
+    private var clock: TimeInterval = 100
 
-    private func makeController(call: FakeCall?) -> CallMuteController {
+    /// Debounce is off unless a test asks for it, so tests can toggle back to back.
+    private func makeController(call: FakeCall?, debounceInterval: TimeInterval = 0) -> CallMuteController {
         feedback = []
         return CallMuteController(
             currentCall: { call },
             feedback: { [weak self] in self?.feedback.append($0) },
             pollIntervalNanoseconds: NSEC_PER_MSEC,
             maxPolls: 50,
+            debounceInterval: debounceInterval,
+            now: { [unowned self] in self.clock },
         )
     }
 
@@ -116,6 +121,82 @@ final class CallMuteControllerTest: XCTestCase {
         XCTAssertEqual(call.requested, [true])
         XCTAssertEqual(call.reportedToSystem, [])
         XCTAssertEqual(feedback, [])
+    }
+
+    func testCallEndingDuringWaitDoesNotReportOrGiveFeedback() async {
+        let call = FakeCall(isMuted: false, behavior: .afterPolls(3))
+        let controller = makeController(call: call)
+
+        // Runs once toggle() first waits for the change to apply.
+        Task { @MainActor in call.hasEnded = true }
+        await assertThrows(.callEnded) { try await controller.toggle() }
+        XCTAssertEqual(call.requested, [true])
+        XCTAssertEqual(call.reportedToSystem, [])
+        XCTAssertEqual(feedback, [])
+    }
+
+    func testCallReplacedDuringWaitDoesNotReport() async {
+        let call = FakeCall(isMuted: false, behavior: .afterPolls(3))
+        let controller = makeController(call: call)
+
+        Task { @MainActor in call.isCurrent = false }
+        await assertThrows(.callEnded) { try await controller.setMuted(true) }
+        XCTAssertEqual(call.reportedToSystem, [])
+        XCTAssertEqual(feedback, [])
+    }
+
+    func testTogglesCloseTogetherCountOnce() async throws {
+        let call = FakeCall(isMuted: false)
+        let controller = makeController(call: call, debounceInterval: 0.3)
+
+        let first = try await controller.toggle()
+        clock += 0.1
+        // Ignored: returns the current state without requesting a change.
+        let second = try await controller.toggle()
+        XCTAssertTrue(first)
+        XCTAssertTrue(second)
+        XCTAssertEqual(call.requested, [true])
+        XCTAssertEqual(feedback, [true])
+    }
+
+    func testTogglesFarEnoughApartBothApply() async throws {
+        let call = FakeCall(isMuted: false)
+        let controller = makeController(call: call, debounceInterval: 0.3)
+        clock = 0 // so 0.3 later is exactly 0.3 apart in floating point
+
+        let first = try await controller.toggle()
+        clock += 0.3
+        let second = try await controller.toggle()
+        XCTAssertTrue(first)
+        XCTAssertFalse(second)
+        XCTAssertEqual(call.requested, [true, false])
+    }
+
+    func testSetMutedRightAfterToggleIsNotDropped() async throws {
+        let call = FakeCall(isMuted: true)
+        let controller = makeController(call: call, debounceInterval: 0.3)
+
+        let toggled = try await controller.toggle()
+        let set = try await controller.setMuted(true)
+        XCTAssertFalse(toggled)
+        XCTAssertTrue(set)
+        XCTAssertEqual(call.requested, [false, true])
+    }
+
+    func testToggleWhileAChangeIsInProgressIsIgnored() async throws {
+        let call = FakeCall(isMuted: false, behavior: .afterPolls(5))
+        let controller = makeController(call: call)
+
+        async let first = controller.setMuted(true)
+        // Let setMuted start and begin waiting before toggling.
+        while call.requested.isEmpty {
+            await Task.yield()
+        }
+        let second = try await controller.toggle()
+        let firstResult = try await first
+        XCTAssertFalse(second, "returns the state before the pending change")
+        XCTAssertTrue(firstResult)
+        XCTAssertEqual(call.requested, [true])
     }
 
     func testNoActiveCall() async {

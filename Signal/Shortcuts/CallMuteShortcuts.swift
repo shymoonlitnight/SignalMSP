@@ -21,7 +21,7 @@ struct ToggleMicrophoneMuteIntent: CallShortcutIntent {
     static var description = IntentDescription("Toggle microphone mute for the current call.")
 
     func perform() async throws -> some IntentResult & ReturnsValue<Bool> {
-        let isMuted = try await CallMuteController.live().toggle()
+        let isMuted = try await CallMuteController.shared.toggle()
         return .result(value: isMuted)
     }
 }
@@ -39,7 +39,7 @@ struct SetMicrophoneMuteIntent: CallShortcutIntent {
     }
 
     func perform() async throws -> some IntentResult & ReturnsValue<Bool> {
-        let updatedMuteState = try await CallMuteController.live().setMuted(isMuted)
+        let updatedMuteState = try await CallMuteController.shared.setMuted(isMuted)
         return .result(value: updatedMuteState)
     }
 }
@@ -50,7 +50,7 @@ struct GetMicrophoneMuteStateIntent: CallShortcutIntent {
     static var description = IntentDescription("Get microphone mute state for the current call.")
 
     func perform() async throws -> some IntentResult & ReturnsValue<Bool> {
-        let isMuted = try await CallMuteController.live().isMuted()
+        let isMuted = try await CallMuteController.shared.isMuted()
         return .result(value: isMuted)
     }
 }
@@ -61,7 +61,7 @@ struct GetActiveCallStateIntent: CallShortcutIntent {
     static var description = IntentDescription("Get whether there is an active call.")
 
     func perform() async throws -> some IntentResult & ReturnsValue<Bool> {
-        let hasActiveCall = await CallMuteController.live().hasActiveCall
+        let hasActiveCall = await CallMuteController.shared.hasActiveCall
         return .result(value: hasActiveCall)
     }
 }
