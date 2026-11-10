@@ -495,6 +495,16 @@ def left_behind_branches(repo, branch, upstream='upstream/main'):
     return left
 
 
+def remote_commit_known(repo, bb):
+    '''
+    origin/<bb> is in local <bb>, or was at some point (its reflog), e.g. before
+    a rebase whose push was declined. the same rule as git push --force-if-includes
+    '''
+    if is_ancestor(repo, f'origin/{bb}', bb):
+        return True
+    return any(is_ancestor(repo, f'origin/{bb}', cc) for cc in git_lines(repo, 'reflog', '--format=%H', bb))
+
+
 def update(repo, branch, yes=False):
     '''rebase `branch` and the branches below it onto upstream/main and push them'''
     upstream = 'upstream/main'
@@ -509,14 +519,29 @@ def update(repo, branch, yes=False):
     run('git', '-C', repo, 'fetch', 'upstream')
     run('git', '-C', repo, 'fetch', 'origin')
 
+    # the fetch just refreshed origin/*, so a plain --force-with-lease would always pass and
+    # silently drop commits pushed from elsewhere. stop on those, and lease each branch on
+    # the origin commit seen here
+    stack = stack_branches(repo, branch, upstream)
+    pushed = [*stack, branch]
+    leases = {}
+    for bb in pushed:
+        remote = git_try(repo, 'rev-parse', '--verify', '--quiet', f'origin/{bb}')
+        if remote.returncode:
+            leases[bb] = ''  # must not exist on origin yet
+            continue
+        if not remote_commit_known(repo, bb):
+            raise Stop(f"origin/{bb} has commits that local '{bb}' doesn't",
+                       f'inspect them with: git log {bb}..origin/{bb}',
+                       f'bring them into {bb} (or drop them deliberately), then re-run')
+        leases[bb] = remote.stdout.decode().strip()
+
     # anything committed on a lower branch that personal doesn't have yet would be left behind
     for bb in left_behind_branches(repo, branch, upstream):
         raise Stop(f"'{bb}' has commits that '{branch}' doesn't",
                    f'rebase {branch} onto it first (git rebase --update-refs {bb} {branch}), then re-run')
 
-    stack = stack_branches(repo, branch, upstream)
     behind = int(git(repo, 'rev-list', '--count', f'{branch}..{upstream}'))
-    pushed = [*stack, branch]
 
     if git(repo, 'rev-parse', '--abbrev-ref', 'HEAD') != branch:
         run('git', '-C', repo, 'checkout', branch)
@@ -548,7 +573,8 @@ def update(repo, branch, yes=False):
                    if git(repo, 'rev-parse', bb) != git_try(repo, 'rev-parse', f'origin/{bb}').stdout.decode().strip()]
     if out_of_date:
         if confirm(f"force-push {', '.join(out_of_date)} to origin", yes):
-            run('git', '-C', repo, 'push', '--force-with-lease', 'origin', *out_of_date)
+            run('git', '-C', repo, 'push', *(f'--force-with-lease={bb}:{leases[bb]}' for bb in out_of_date),
+                'origin', *out_of_date)
 
     run('git', '-C', repo, 'submodule', 'update', '--init', '--recursive')
 
@@ -930,6 +956,26 @@ def _test_update(tmp):
         raise AssertionError('expected Stop')
     except Stop as e:
         assert "'app-intents' has commits" in str(e), e
+    git(repo, 'branch', '-f', 'app-intents', 'app-intents~')
+
+    # a local rewrite of what origin has (rebased, push declined, re-run) still pushes
+    git(repo, 'commit', '-q', '--amend', '-m', 'Personal signing (reworded)')
+    update(repo, 'personal', yes=True)
+    assert git(origin, 'rev-parse', 'personal') == git(repo, 'rev-parse', 'personal')
+
+    # commits pushed from elsewhere stop the update instead of being force-pushed away
+    other = tmp / 'other'
+    git(tmp, 'clone', '-q', '-b', 'personal', str(origin), str(other))
+    for kk, vv in (('user.name', 'test'), ('user.email', 'test@example.com'), ('commit.gpgsign', 'false')):
+        git(other, 'config', kk, vv)
+    theirs = _commit(other, 'Edited on github.com', **{'e.txt': 'e\n'})
+    git(other, 'push', '-q', 'origin', 'personal')
+    try:
+        update(repo, 'personal', yes=True)
+        raise AssertionError('expected Stop')
+    except Stop as e:
+        assert 'origin/personal has commits' in str(e), e
+    assert git(origin, 'rev-parse', 'personal') == theirs, 'remote-only commit was overwritten'
 
 
 def _test_archive_info(tmp):
