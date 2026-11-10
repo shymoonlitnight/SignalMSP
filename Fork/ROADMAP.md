@@ -59,10 +59,10 @@ To do:
      or a page-turner pedal in keyboard mode).
    - AssistiveTouch (extra mouse buttons) and Switch Control (adaptive
      switches such as the AbleNet Blue2).
-2. **Shared toggle.** Confirm or extract a single entry point (e.g.
-   `CallMuteController.toggle()`) that every trigger calls. It owns the mute
-   state plus feedback (earcon/haptic). Today the logic is
-   `setMicrophoneMuteState` in `CallMuteShortcuts.swift`.
+2. **Shared toggle.** ✅ Done. `CallMuteController.shared` is the single
+   entry point every trigger calls, with one debounce for all of them. It
+   owns the mute state plus feedback: a haptic and an earcon (falling tone
+   for mute, rising for unmute).
 Items 3 and 4 moved to `mute-triggers` on 2026-10-29 to keep `app-intents`
 small and easier to merge.
 
