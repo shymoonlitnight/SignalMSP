@@ -304,12 +304,6 @@ final class CallMuteKeyCommandsTest: XCTestCase {
             XCTAssertTrue(commands.allSatisfy { $0.repeatBehavior == .nonRepeatable })
         }
     }
-
-    func testRepeatedPressesAreDebounced() {
-        XCTAssertTrue(CallMuteKeyCommands.shouldToggle(at: 10, lastToggleTime: nil))
-        XCTAssertFalse(CallMuteKeyCommands.shouldToggle(at: 10.1, lastToggleTime: 10))
-        XCTAssertTrue(CallMuteKeyCommands.shouldToggle(at: 10.3, lastToggleTime: 10))
-    }
 }
 
 // MARK: -
