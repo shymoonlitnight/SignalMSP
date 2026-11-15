@@ -115,7 +115,7 @@ Known risks:
 
 From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
 `review-fixes`, one commit per step with its layer in the subject
-(`[app-intents]`, `[mute-triggers]`), to be moved into the stack.
+(`[app-intents]`, `[mute-triggers]`), then moved into the stack (below).
 
 - [x] **Stage 1 `release.py` safety.** No force-push over origin-only
   commits; archive bundle ID and commit checked before upload; ignored files
@@ -123,7 +123,9 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
   previous-tag choice, `assert`, exit code, token reuse; one xcconfig parser.
   **Verify:** `Fork/release.py self-test`.
 - [x] **Stage 2 Automation.** `.github/workflows/fork.yml`.
-  **Verify:** YAML parses. Owner: after pushing, the `fork` workflow is green.
+  **Verify:** YAML parses; after pushing, the `fork` workflow is green
+  (first run 2026-11-14, self-test passed). The by-hand Swift test job hasn't
+  been run on GitHub yet.
 - [x] **Stage 3 One mute controller.** `CallMuteController.shared` with one
   debounce; re-checks the call after waiting for the change.
   **Verify:** `CallMuteControllerTest`, `CallMuteKeyCommandsTest`,
@@ -133,8 +135,9 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
   (2026-11-14), as a new feature on its own branch later. A first attempt (a
   "Head Tilt: Left Mutes, Right Unmutes" switch with head tilt calling
   `setMuted` instead of `toggle`) broke unmuting on device with the switch on
-  or off, and was reset off `review-fixes` before release; commit
-  `f76a6b620c`, if still in the reflog, shows the approach.
+  or off, and was reset off `review-fixes` before release. Commit
+  `f76a6b620c` shows the approach while git still keeps it (unreferenced
+  commits are pruned after a few weeks).
   **Verify:** `CallMuteControllerTest` passes; app builds.
 - [x] **Stage 5 Trigger sources.** Start on connect / join; keep Now Playing
   claimed; head motion off the main thread; head movement logs opt-in.
@@ -150,9 +153,12 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
 - [x] **Stage 7 Tests and docs.** `SignalCallMuteTarget`'s decisions tested;
   README, ROADMAP and this section updated.
 
-Released as TestFlight 8.38 (1) on 2026-11-14 (`testflight/8.38-1`). The
-review-fix commits are all on top of `personal`; moving each into its layer
-(`app-intents` or `mute-triggers`, by its subject prefix) is still to do.
+Released as TestFlight 8.38 (1) on 2026-11-14 (`testflight/8.38-1`), with
+the review-fix commits on top of `personal`. Afterwards (2026-11-14) each was
+moved into its layer by its subject prefix: 3 to `app-intents`, 14 to
+`mute-triggers`. `personal`'s files are identical to before the move (same
+tree), so the next release builds what 8.38 did plus any new work. The old
+tips are tagged `pre-sort/<branch>`.
 
 Device checks (build of `review-fixes`, 2026-11-14):
 
@@ -181,4 +187,6 @@ Device checks (build of `review-fixes`, 2026-11-14):
   Likely cause: iOS asks the control for its value again only when something
   reloads it, and with the app gone nothing does, so the expiry in
   `displayedIsMuted` never runs.
-- [ ] **Each layer builds alone** (CP0.4) after the commits are moved into the stack.
+- [x] **Each layer builds alone** (CP0.4), after the move: `app-intents`
+  builds and its 19 mute tests pass; `build-config` builds; `mute-triggers`
+  passes `release.py self-test` and all 44 mute tests.

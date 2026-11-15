@@ -16,9 +16,9 @@ implementation checkpoints.
 | Branch | Contents |
 |---|---|
 | `upstream/main` | Signal's code. Never commit here; just `git fetch upstream`. |
-| `app-intents` | Upstream plus `CallMuteController` and the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`). Kept small and meant to stay upstreamable (an accessibility case). |
+| `app-intents` | Upstream plus `CallMuteController` (one shared, debounced entry point, with a haptic and mute/unmute tones) and the call-mute App Intents (`Signal/Shortcuts/CallMuteShortcuts.swift`). Kept small and meant to stay upstreamable (an accessibility case). |
 | `build-config` | `app-intents` plus building with your own team from `Config/User.xcconfig` alone: signing, bundle IDs, app name and App Store entitlements as overridable build settings. Unchanged builds without a `User.xcconfig`; could be offered upstream. |
-| `mute-triggers` | `build-config` plus the call-screen key commands, the Control Center toggle (`SignalControls` extension), fork-only mute triggers, the registration ID fix, these notes and `Fork/release.py`. Never sent upstream. |
+| `mute-triggers` | `build-config` plus the call-screen key commands, the Control Center toggle (`SignalControls` extension), fork-only mute triggers, the registration ID fix, these notes, `Fork/release.py` and the `fork` workflow (`.github/workflows/fork.yml`). Never sent upstream. |
 | `personal` | `mute-triggers` plus what only this build needs: the app icon and a notification extension entitlements file. This is what gets built, and is the fork's default branch on GitHub. |
 | `regid-warnings` | Side branch: upstream plus the registration ID fix only, for its own upstream PR. Not part of the stack. |
 
@@ -56,6 +56,14 @@ meant to be sent upstream separately.
   on `mute-triggers`. If you happen to
   be on `personal`, use `git commit --fixup` and rebase, or check out the
   lower branch to commit.
+- A batch of work can also be committed on `personal` (or a branch off it)
+  with the layer in each subject, `[app-intents]` or `[mute-triggers]`, then
+  sorted in one `git rebase -i --update-refs upstream/main` from `personal`:
+  move each pick to just above its layer's `update-ref refs/heads/<layer>`
+  line. Afterwards `git diff <old personal> personal` should be empty. Tag the
+  old tips first (`git tag pre-sort/personal personal`, and so on), and quit
+  Xcode: the rebase rewrites files under it. Done this way on 2026-11-14 for
+  the review fixes.
 - Lower branches must never depend on higher ones. Each branch must build on
   its own with Signal's settings (no `User.xcconfig`), and `personal` with
   your own. Every so often, check out each branch and build it.
