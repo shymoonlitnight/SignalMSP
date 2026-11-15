@@ -19,7 +19,7 @@ upstream/main  →  app-intents  →  build-config  →  mute-triggers  →  per
 |---|---|---|
 | `app-intents` | App Intents and the shared mute toggle (`CallMuteController`) | Small, tidy, always PR-ready. No personal config, experiments, or notes. |
 | `build-config` | Signing team, bundle IDs, app name and App Store entitlements as build settings that `Config/User.xcconfig` can override | Builds unchanged without a `User.xcconfig`. Could be offered upstream. |
-| `mute-triggers` | Call-screen key commands, Control Center control, trigger-source infrastructure, play/pause, volume double-tap, AirPods head gesture, and their settings; build script, these docs | Fork-only; never sent upstream. |
+| `mute-triggers` | Call-screen key commands, Control Center control, trigger-source infrastructure, media remote track skip, AirPods head tilt, and their settings; build script, `fork` workflow, these docs | Fork-only; never sent upstream. |
 | `personal` | Icon, anything else only this build needs | Top of stack; what gets built. |
 
 To do:
@@ -89,7 +89,7 @@ with CallKit, so upstream is unlikely to accept them.
   not keyboard keys. A slow click (~0.5 s) on − arrives as previous track and
   toggled mute with the call screen open, backgrounded, and locked (tested
   2026-10-23, see PLAN.md CP2.0).
-- **Volume double-tap (optional).** Observe `AVAudioSession.outputVolume` (KVO)
+- ~~**Volume double-tap (optional).**~~ Skipped (PLAN.md CP2.3). Observe `AVAudioSession.outputVolume` (KVO)
   during a call; exactly two steps within ~400 ms toggles mute and restores
   the volume. In testing, double clicks only registered with the call screen
   open, not backgrounded or locked, so it adds little over key commands.
@@ -110,8 +110,6 @@ with CallKit, so upstream is unlikely to accept them.
       First attempt broke unmuting (PLAN.md Stage 4); start again on its own branch.
 - [ ] **Control Center after the app is killed:** show Unmuted once a stored
       muted state is stale, which needs something to reload the control (PLAN.md Phase 4).
-- [ ] **Move the review-fix commits into their layers** and check each layer
-      builds alone (PLAN.md Phase 4).
 - [ ] **Command-line tasks** in Zed (`.zed/tasks.json`): simulator build, the
       mute tests, install and run on device, clean. Less time in Xcode.
 - [ ] Maybe: `release.py` runs `asc-check` before rebasing and pushing, so an
