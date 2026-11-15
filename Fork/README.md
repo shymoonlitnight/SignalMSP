@@ -167,6 +167,27 @@ stack. The fork's Swift test classes run there only when started by hand
 term's `term dev signal_release`, `testflight_notes` and `asc_check` run this
 script from the `personal` branch, with the API key from term's secrets.
 
+When a release goes wrong:
+
+- **Quit Xcode first.** The release rebases the stack, which rewrites files
+  under an open workspace. After a `git reset` with Xcode open (2026-11-14),
+  Xcode showed the wrong signing team and couldn't build until it was
+  restarted and the build folder cleaned (Product → Clean Build Folder). The
+  same applies to any reset, branch switch or rebase. The team comes from
+  `Config/User.xcconfig`; don't pick one in Signing & Capabilities, which
+  writes it into `project.pbxproj`.
+- **`App Store Connect API 403: This request requires an in-effect agreement`**
+  means Apple has a new or expired agreement. Accept it on
+  developer.apple.com (Account) **and** in App Store Connect → Business; then
+  wait: on 2026-11-14 the API took several minutes after the last acceptance
+  to work again. `Fork/release.py asc-check` tells when it does. Until then
+  the script stops (after the push and clean; nothing is uploaded).
+- **"You're using Xcode 27.2 but you should be using Xcode 27.1"** is only a
+  warning (`.xcode-version` is upstream's); builds and tests are fine on 27.2.
+- **`(forced update)`** in the push output is normal: the rebase gives the
+  stack new commit IDs. The script has already checked that `origin` had
+  nothing the local branches lacked.
+
 ## Differences from upstream for personal builds
 
 ### Signing and bundle IDs (on `build-config`: `project.pbxproj`, `Config/Project.xcconfig`)
@@ -275,8 +296,15 @@ debounce also covers keys and Shortcuts. Their messages start with
 subsystem `SignalMSP` or the text `MuteTriggers`).
 
 The Control Center toggle shows the state the app last stored. During a call
-the app refreshes it every minute; a muted state older than three minutes
-(the app was killed mid-call) shows as unmuted.
+the app refreshes it every minute. A muted state older than three minutes
+(the app was killed mid-call) is meant to show as unmuted, but on device it
+doesn't yet (2026-11-14): with the app gone, nothing asks iOS to reload the
+control, so it keeps showing Muted. It errs toward Muted, so it's not urgent.
+
+The call-screen key commands (Space, arrows, Page Up/Down) work only while the
+call screen is showing. With the call minimized, a hardware keyboard doesn't
+toggle mute (checked 2026-11-14); use a Full Keyboard Access command that runs
+the mute Shortcut instead, which works anywhere.
 
 ## Security notes
 
