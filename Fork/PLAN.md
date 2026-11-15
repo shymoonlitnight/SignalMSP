@@ -129,16 +129,20 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
   **Verify:** `CallMuteControllerTest`, `CallMuteKeyCommandsTest`,
   `MuteTriggerCoordinatorTest`, `CallMuteShortcutsTest` pass.
 - [x] **Stage 4 Audible feedback.** Falling tone on mute, rising on unmute.
-  Direction-specific head tilt (left mutes, right unmutes) not done; needs
-  an owner decision.
+  Direction-specific head tilt (left mutes, right unmutes): owner wants it
+  (2026-11-14), as a new feature on its own branch later. A first attempt (a
+  "Head Tilt: Left Mutes, Right Unmutes" switch with head tilt calling
+  `setMuted` instead of `toggle`) broke unmuting on device with the switch on
+  or off, and was reset off `review-fixes` before release; commit
+  `f76a6b620c`, if still in the reflog, shows the approach.
   **Verify:** `CallMuteControllerTest` passes; app builds.
 - [x] **Stage 5 Trigger sources.** Start on connect / join; keep Now Playing
   claimed; head motion off the main thread; head movement logs opt-in.
   **Verify:** `MuteTriggerCoordinatorTest`, `TrackSkipMuteTriggerTest`,
   `HeadTiltDetectorTest` pass.
-- [ ] **Stage 6.1 Key focus after minimizing the call.** Not changed: first
-  reproduce (below). If it reproduces, call `resignFirstResponder()` after
-  `isCallMinimized = true` in both call view controllers.
+- [x] ~~**Stage 6.1 Key focus after minimizing the call.**~~ **Skipped
+  (2026-11-14):** didn't reproduce; with the call minimized a Bluetooth
+  keyboard doesn't toggle mute.
 - [x] **Stage 6.2–6.3 Control Center.** Shared defaults cached; stale muted
   state expires after 180 s.
   **Verify:** `CallMuteControlUpdaterTest`, `CallMuteControlStateTest` pass;
@@ -146,27 +150,35 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
 - [x] **Stage 7 Tests and docs.** `SignalCallMuteTarget`'s decisions tested;
   README, ROADMAP and this section updated.
 
-Device checks still to do (from a build of `review-fixes`):
+Released as TestFlight 8.38 (1) on 2026-11-14 (`testflight/8.38-1`). The
+review-fix commits are all on top of `personal`; moving each into its layer
+(`app-intents` or `mute-triggers`, by its subject prefix) is still to do.
 
-- [ ] **Tones.** One-to-one call with AirPods, phone locked: mute and unmute by
+Device checks (build of `review-fixes`, 2026-11-14):
+
+- [x] **Tones.** One-to-one call with AirPods, phone locked: mute and unmute by
   Shortcut. A falling tone on mute and a rising tone on unmute, heard in the
   AirPods, not by the other party; call audio continues. If the other party
   hears it, or it interrupts call audio, revert the earcon commit.
-- [ ] **Tones and track skip.** With track skip on, toggle by track skip several
+- [x] **Tones and track skip.** With track skip on, toggle by track skip several
   times in a row: every toggle still works (the tone's player mustn't clear
   Now Playing).
-- [ ] **No prompt while ringing.** Head tilt on, Motion permission not yet
+- [x] **No prompt while ringing.** Head tilt on, Motion permission not yet
   granted: receive a call. No permission prompt while ringing; it appears
   after answering.
-- [ ] **Track skip after a voice message.** Start a call while a voice message
+- [x] **Track skip after a voice message.** Start a call while a voice message
   is playing; track skip still toggles mute (within 5 s of the voice
   message stopping). After the call, a music app's track skip works.
-- [ ] **Head tilt off the main thread.** Head tilt still toggles mute with the
+- [x] **Head tilt off the main thread.** Head tilt still toggles mute with the
   call screen open, backgrounded and locked.
-- [ ] **Key focus (B5).** In a call, minimize to picture-in-picture, open the
+- [x] **Key focus (B5).** In a call, minimize to picture-in-picture, open the
   chat list, press Space and the arrow keys on a hardware keyboard. Record
   whether mute toggles (then do or skip Stage 6.1).
-- [ ] **Control Center.** During a long muted call (over 3 minutes, app
-  backgrounded) the control still shows Muted; after force-quitting the app
-  mid-call while muted, it shows Unmuted within 3 minutes.
+- [ ] **Control Center.** Half passes. During a long muted call (over 3
+  minutes, app backgrounded) the control still shows Muted: **pass**. After
+  force-quitting the app mid-call while muted, it should show Unmuted within
+  3 minutes: **fails**, it stays Muted. Not urgent (it errs toward Muted).
+  Likely cause: iOS asks the control for its value again only when something
+  reloads it, and with the app gone nothing does, so the expiry in
+  `displayedIsMuted` never runs.
 - [ ] **Each layer builds alone** (CP0.4) after the commits are moved into the stack.

@@ -103,6 +103,20 @@ with CallKit, so upstream is unlikely to accept them.
   - Needs `NSMotionUsageDescription` in Info.plist.
   - Check that updates keep arriving while backgrounded or locked during a call.
 
+## Next
+
+- [ ] **Direction-specific head tilt:** left tilt mutes, right unmutes, as a
+      Settings switch. A false or doubled tilt then can't unmute by surprise.
+      First attempt broke unmuting (PLAN.md Stage 4); start again on its own branch.
+- [ ] **Control Center after the app is killed:** show Unmuted once a stored
+      muted state is stale, which needs something to reload the control (PLAN.md Phase 4).
+- [ ] **Move the review-fix commits into their layers** and check each layer
+      builds alone (PLAN.md Phase 4).
+- [ ] **Command-line tasks** in Zed (`.zed/tasks.json`): simulator build, the
+      mute tests, install and run on device, clean. Less time in Xcode.
+- [ ] Maybe: `release.py` runs `asc-check` before rebasing and pushing, so an
+      unsigned Apple agreement stops it before anything changes.
+
 ## Other ideas
 
 - **Live Activity** with a mute button (Lock Screen / Dynamic Island).
