@@ -72,4 +72,6 @@ jobs:
             -only-testing:SignalTests/CallMuteControlUpdaterTest \
             -only-testing:SignalTests/CallMuteShortcutsTest \
             -only-testing:SignalTests/HeadTiltDetectorTest \
-            -only-testing:SignalTests/MuteTriggerCoordinatorTest
+            -only-testing:SignalTests/MuteTriggerCoordinatorTest \
+            -only-testing:SignalTests/TrackSkipMuteTriggerTest \
+            -only-testing:SignalTests/CallMuteControlStateTest
