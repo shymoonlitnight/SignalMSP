@@ -114,6 +114,9 @@ with CallKit, so upstream is unlikely to accept them.
       mute tests, install and run on device, clean. Less time in Xcode.
 - [ ] Maybe: `release.py` runs `asc-check` before rebasing and pushing, so an
       unsigned Apple agreement stops it before anything changes.
+- [ ] Housekeeping (local only): delete the backup tags from sorting the
+      commits into layers, `git tag -d $(git tag -l 'pre-*')`, once happy;
+      decide on `git config pull.ff only` (README, "When a release goes wrong").
 
 ## Other ideas
 

@@ -192,6 +192,12 @@ When a release goes wrong:
   the script stops (after the push and clean; nothing is uploaded).
 - **"You're using Xcode 27.2 but you should be using Xcode 27.1"** is only a
   warning (`.xcode-version` is upstream's); builds and tests are fine on 27.2.
+- **Don't `git pull` on the stack branches**, before a release or after one
+  of these rebases. Local and `origin` hold the same work under different
+  commit IDs, so a pull starts a conflicted merge of the old commits (all of
+  `Fork/*.md`, 2026-11-17), and the release then stops on the unfinished
+  merge. Undo it with `git merge --abort`; the release fetches by itself.
+  `git config pull.ff only` makes a stray pull refuse instead.
 - **`(forced update)`** in the push output is normal: the rebase gives the
   stack new commit IDs. The script has already checked that `origin` had
   nothing the local branches lacked.
