@@ -34,6 +34,7 @@ xcbeautify is used for build output if it's installed.
 import argparse
 import base64
 import glob
+import io
 import json
 import os
 import plistlib
@@ -123,7 +124,11 @@ def confirm(query, yes=False):
     if yes:
         log(query)
         return True
-    return input(f'{query}? [y/N] ').strip().lower() in ('y', 'yes')
+    try:
+        return input(f'{query}? [y/N] ').strip().lower() in ('y', 'yes')
+    except EOFError:
+        raise Stop(f'{query}: needs an answer, but there is no terminal to ask on',
+                   're-run from a terminal')
 
 
 def xcconfig(repo, names=('Project.xcconfig', 'User.xcconfig')):
@@ -854,6 +859,7 @@ def self_test():
             _test_archive_info(tmp)
             _test_asc_token(tmp)
             _test_redact()
+            _test_confirm()
             _test_asc_paging()
     finally:
         _asc_token_cache = None
@@ -1230,6 +1236,23 @@ def _test_redact():
         run('true', 'SECRETVALUE', Path('/keys/AuthKey.p8'), redact=('SECRETVALUE', Path('/keys/AuthKey.p8')))
     assert 'SECRETVALUE' not in err.getvalue() and 'AuthKey' not in err.getvalue(), err.getvalue()
     assert 'true *** ***' in err.getvalue(), err.getvalue()
+
+
+def _test_confirm():
+    saved_stdin = sys.stdin
+    try:
+        sys.stdin = io.StringIO('')
+        assert confirm('upload', yes=True) is True
+        try:
+            confirm('upload')
+        except Stop as e:
+            assert 'no terminal' in str(e), e
+        else:
+            raise AssertionError('confirm() with no stdin should stop')
+        sys.stdin = io.StringIO('y\n')
+        assert confirm('upload') is True
+    finally:
+        sys.stdin = saved_stdin
 
 
 # ---------------------------------------------------------------------
