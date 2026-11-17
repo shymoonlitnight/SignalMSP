@@ -187,7 +187,7 @@ final class HeadTiltMuteTrigger: MuteTriggerSource {
         let processor = self.processor
         queue.addOperation { processor.logMovements = logMovements }
         isRunning = true
-        manager.startDeviceMotionUpdates(to: queue) { [weak self] motion, error in
+        manager.startDeviceMotionUpdates(to: queue) { @Sendable [weak self] motion, error in
             if processor.handle(motion: motion, error: error) {
                 Task { @MainActor in
                     // A sample processed just before stop() mustn't toggle afterwards.
