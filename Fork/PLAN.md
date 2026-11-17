@@ -124,8 +124,9 @@ From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
   **Verify:** `Fork/release.py self-test`.
 - [x] **Stage 2 Automation.** `.github/workflows/fork.yml`.
   **Verify:** YAML parses; after pushing, the `fork` workflow is green
-  (first run 2026-11-14, self-test passed). The by-hand Swift test job hasn't
-  been run on GitHub yet.
+  (first run 2026-11-14, self-test passed). The by-hand Swift test job passed
+  on 2026-11-17: 44 tests in the 8 fork classes, about 19 minutes on the
+  `xcode-27` runner (`macos-latest` has no Xcode 27).
 - [x] **Stage 3 One mute controller.** `CallMuteController.shared` with one
   debounce; re-checks the call after waiting for the change.
   **Verify:** `CallMuteControllerTest`, `CallMuteKeyCommandsTest`,
