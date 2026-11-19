@@ -116,6 +116,10 @@ Known risks:
 From the review of `personal` at `a7efbf4` (2026-11-09). Done on branch
 `review-fixes`, one commit per step with its layer in the subject
 (`[app-intents]`, `[mute-triggers]`), then moved into the stack (below).
+The findings and step-by-step instructions are in
+[REVIEW_PLAN.md](REVIEW_PLAN.md); the second review of `personal` at
+`a91cada` (2026-11-16) and its three follow-up steps are in
+[REVIEW_FOLLOWUP.md](REVIEW_FOLLOWUP.md).
 
 - [x] **Stage 1 `release.py` safety.** No force-push over origin-only
   commits; archive bundle ID and commit checked before upload; ignored files

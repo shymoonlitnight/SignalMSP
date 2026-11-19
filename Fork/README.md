@@ -9,7 +9,10 @@ This folder is committed on `mute-triggers`, so it's there and on `personal`
 docs (`BUILDING.md`, `CONTRIBUTING.md`) still apply; this file covers what's different.
 
 See [ROADMAP.md](ROADMAP.md) for planned work and [PLAN.md](PLAN.md) for the
-implementation checkpoints.
+implementation checkpoints. [REVIEW_PLAN.md](REVIEW_PLAN.md) (first code
+review, 2026-11-09) and [REVIEW_FOLLOWUP.md](REVIEW_FOLLOWUP.md) (second
+review, 2026-11-16) are the full review findings and the step-by-step fix
+plans that PLAN.md "Phase 4: Review fixes" tracks.
 
 ## Branches
 
