@@ -37,14 +37,14 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
     # macos-latest (macOS 26) has no Xcode 27. Upstream uses xcode-27-xlarge, a
     # larger runner only Signal's organization has; xcode-27 is the standard size
-    # (macOS 27, Xcode 27.1 as default).
+    # (macOS 27). Keep the Xcode below in step with upstream's .xcode-version.
     runs-on: xcode-27
     timeout-minutes: 90
     steps:
       # same Xcode selection and downloads as upstream's build_and_test job (main.yml)
       - name: Set Xcode version
         run: |
-          echo DEVELOPER_DIR=/Applications/Xcode_27.1.app >> "$GITHUB_ENV"
+          echo DEVELOPER_DIR=/Applications/Xcode_27.2.app >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v6
 
