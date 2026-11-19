@@ -681,10 +681,6 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
     if not workspace.exists():
         raise Stop(f'{workspace} not found')
 
-    xcode_check = run(repo / 'Scripts' / 'check_xcode_version.py', '--relaxed', cwd=repo, check=False)
-    if xcode_check.returncode and not confirm('Xcode version differs from .xcode-version, continue anyway', yes):
-        raise Stop('cancelled')
-
     # every build dirties Signal-Info.plist, which would block the update
     restore_plists(repo)
 
@@ -693,6 +689,11 @@ def release(repo, branch='personal', scheme='Signal', do_update=True, clean=True
     elif git(repo, 'rev-parse', '--abbrev-ref', 'HEAD') != branch:
         run('git', '-C', repo, 'checkout', branch)
         run('git', '-C', repo, 'submodule', 'update', '--init', '--recursive')
+
+    # after the update, so it compares against upstream's latest .xcode-version
+    xcode_check = run(repo / 'Scripts' / 'check_xcode_version.py', '--relaxed', cwd=repo, check=False)
+    if xcode_check.returncode and not confirm('Xcode version differs from .xcode-version, continue anyway', yes):
+        raise Stop('cancelled')
 
     build_args = ['-workspace', workspace, '-scheme', scheme, '-configuration', configuration]
     info = plistlib.loads((repo / info_plists[0]).read_bytes())

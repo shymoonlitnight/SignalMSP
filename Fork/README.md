@@ -193,8 +193,10 @@ When a release goes wrong:
   wait: on 2026-11-14 the API took several minutes after the last acceptance
   to work again. `Fork/release.py asc-check` tells when it does. Until then
   the script stops (after the push and clean; nothing is uploaded).
-- **"You're using Xcode 27.2 but you should be using Xcode 27.1"** is only a
-  warning (`.xcode-version` is upstream's); builds and tests are fine on 27.2.
+- **"You're using Xcode X but you should be using Xcode Y"** asks whether to
+  continue. It's checked after the upstream update, against upstream's
+  latest `.xcode-version`. When upstream moves to a new Xcode, also update
+  `DEVELOPER_DIR` in `.github/workflows/fork.yml`, or its Swift job fails.
 - **Don't `git pull` on the stack branches**, before a release or after one
   of these rebases. Local and `origin` hold the same work under different
   commit IDs, so a pull starts a conflicted merge of the old commits (all of
